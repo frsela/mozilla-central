@@ -55,6 +55,12 @@ interface nsIDOMMozMobileConnection : nsIDOMEventTarget
   attribute nsIDOMEventListener ondatachange;
 
   /**
+   * The 'dataerror' event is notified whenever the data connection object
+   * receives an error from the RIL
+   */
+  attribute nsIDOMEventListener ondataerror;
+
+  /**
    * Find out about the status of an ICC lock (e.g. the PIN lock).
    *
    * @param lockType

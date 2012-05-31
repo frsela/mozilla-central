@@ -288,6 +288,7 @@ RadioInterfaceLayer.prototype = {
         // 3G Network revoked the data connection, possible unavailable APN
         debug("Received data registration error message. Failed APN " +
               Services.prefs.getCharPref("ril.data.apn"));
+        ppmm.sendAsyncMessage("RIL:DataError", message);
         RILNetworkInterface.reset();
         break;
       case "signalstrengthchange":

@@ -33,11 +33,13 @@ const RIL_IPC_MSG_NAMES = [
   "RIL:SetCardLock:Return:KO",
   "RIL:UnlockCardLock:Return:OK",
   "RIL:UnlockCardLock:Return:KO",
+  "RIL:DataError",
 ];
 
 const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
+const kDataError  = "mobile-connection-data-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -295,6 +297,9 @@ RILContentHelper.prototype = {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
         break;
+      case "RIL:DataError":
+        // TODO: Revisar
+        this.Services.obs.notifyObservers(null, kDataError, null);
     }
   },
 
