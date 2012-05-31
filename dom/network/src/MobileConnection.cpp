@@ -14,7 +14,7 @@
 #define VOICECHANGE_EVENTNAME      NS_LITERAL_STRING("voicechange")
 #define DATACHANGE_EVENTNAME       NS_LITERAL_STRING("datachange")
 #define CARDSTATECHANGE_EVENTNAME  NS_LITERAL_STRING("cardstatechange")
-#define DATAEERROR_EVENTNAME       NS_LITERAL_STRING("dataerror")
+#define DATACALLERROR_EVENTNAME    NS_LITERAL_STRING("datacallerror")
 
 DOMCI_DATA(MozMobileConnection, mozilla::dom::network::MobileConnection)
 
@@ -25,7 +25,7 @@ namespace network {
 const char* kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const char* kDataChangedTopic      = "mobile-connection-data-changed";
 const char* kCardStateChangedTopic = "mobile-connection-cardstate-changed";
-const char* kDataError             = "mobile-connection-data-error";
+const char* kDataCallError         = "mobile-connection-datacall-error";
 
 NS_IMPL_CYCLE_COLLECTION_CLASS(MobileConnection)
 
@@ -34,7 +34,7 @@ NS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN_INHERITED(MobileConnection,
   NS_CYCLE_COLLECTION_TRAVERSE_EVENT_HANDLER(cardstatechange)
   NS_CYCLE_COLLECTION_TRAVERSE_EVENT_HANDLER(voicechange)
   NS_CYCLE_COLLECTION_TRAVERSE_EVENT_HANDLER(datachange)
-  NS_CYCLE_COLLECTION_TRAVERSE_EVENT_HANDLER(dataerror)
+  NS_CYCLE_COLLECTION_TRAVERSE_EVENT_HANDLER(datacallerror)
 NS_IMPL_CYCLE_COLLECTION_TRAVERSE_END
 
 NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(MobileConnection,
@@ -42,7 +42,7 @@ NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(MobileConnection,
   NS_CYCLE_COLLECTION_UNLINK_EVENT_HANDLER(cardstatechange)
   NS_CYCLE_COLLECTION_UNLINK_EVENT_HANDLER(voicechange)
   NS_CYCLE_COLLECTION_UNLINK_EVENT_HANDLER(datachange)
-  NS_CYCLE_COLLECTION_UNLINK_EVENT_HANDLER(dataerror)
+  NS_CYCLE_COLLECTION_UNLINK_EVENT_HANDLER(datacallerror)
   tmp->mProvider = nsnull;
 NS_IMPL_CYCLE_COLLECTION_UNLINK_END
 
@@ -80,7 +80,7 @@ MobileConnection::Init(nsPIDOMWindow* aWindow)
   obs->AddObserver(this, kVoiceChangedTopic, false);
   obs->AddObserver(this, kDataChangedTopic, false);
   obs->AddObserver(this, kCardStateChangedTopic, false);
-  obs->AddObserver(this, kDataError, false);
+  obs->AddObserver(this, kDataCallError, false);
 }
 
 void
@@ -95,7 +95,7 @@ MobileConnection::Shutdown()
   obs->RemoveObserver(this, kVoiceChangedTopic);
   obs->RemoveObserver(this, kDataChangedTopic);
   obs->RemoveObserver(this, kCardStateChangedTopic);
-  obs->RemoveObserver(this, kDataError);
+  obs->RemoveObserver(this, kDataCallError);
 }
 
 // nsIObserver
@@ -120,8 +120,8 @@ MobileConnection::Observe(nsISupports* aSubject,
     return NS_OK;
   }
 
-  if(!strcmp(aTopic, kDataError)) {
-    InternalDispatchEvent(DATAEERROR_EVENTNAME);
+  if(!strcmp(aTopic, kDataCallError)) {
+    InternalDispatchEvent(DATACALLERROR_EVENTNAME);
     return NS_OK;
   }
 
@@ -229,7 +229,7 @@ MobileConnection::InternalDispatchEvent(const nsAString& aType)
 NS_IMPL_EVENT_HANDLER(MobileConnection, cardstatechange)
 NS_IMPL_EVENT_HANDLER(MobileConnection, voicechange)
 NS_IMPL_EVENT_HANDLER(MobileConnection, datachange)
-NS_IMPL_EVENT_HANDLER(MobileConnection, dataerror)
+NS_IMPL_EVENT_HANDLER(MobileConnection, datacallerror)
 
 } // namespace network
 } // namespace dom

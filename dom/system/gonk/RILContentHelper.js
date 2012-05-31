@@ -13,7 +13,7 @@ Cu.import("resource://gre/modules/DOMRequestHelper.jsm");
 var RIL = {};
 Cu.import("resource://gre/modules/ril_consts.js", RIL);
 
-const DEBUG = false; // set to true to see debug messages
+const DEBUG = true; // set to true to see debug messages
 
 const RILCONTENTHELPER_CID =
   Components.ID("{472816e1-1fd6-4405-996c-806f9ea68174}");
@@ -33,13 +33,13 @@ const RIL_IPC_MSG_NAMES = [
   "RIL:SetCardLock:Return:KO",
   "RIL:UnlockCardLock:Return:OK",
   "RIL:UnlockCardLock:Return:KO",
-  "RIL:DataError",
+  "RIL:DataCallError",
 ];
 
 const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
-const kDataError  = "mobile-connection-data-error";
+const kDataCallError         = "mobile-connection-datacall-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -297,9 +297,9 @@ RILContentHelper.prototype = {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
         break;
-      case "RIL:DataError":
-        // TODO: Revisar
-        this.Services.obs.notifyObservers(null, kDataError, null);
+      case "RIL:DataCallError":
+        this._deliverDataCallCallback("notifyerror"); // -----------------------------------------, [msg.json.type]);
+        break;
     }
   },
 
@@ -344,6 +344,10 @@ RILContentHelper.prototype = {
         debug("callback handler for " + name + " threw an exception: " + e);
       }
     }
+  },
+
+  _deliverDataCallCallback: function _deliverDataCallCallback() { // ------------------------------name) {
+    Services.obs.notifyObservers(null, kDataCallError, null);
   },
 };
 
