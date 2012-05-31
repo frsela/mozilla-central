@@ -285,11 +285,7 @@ RadioInterfaceLayer.prototype = {
         this.updateDataConnection(message);
         break;
       case "datacallerror":
-        // 3G Network revoked the data connection, possible unavailable APN
-        debug("Received data registration error message. Failed APN " +
-              Services.prefs.getCharPref("ril.data.apn"));
-        ppmm.sendAsyncMessage("RIL:DataError", message);
-        RILNetworkInterface.reset();
+        this.handleDataCallError(message);
         break;
       case "signalstrengthchange":
         this.handleSignalStrengthChange(message);
@@ -426,6 +422,16 @@ RadioInterfaceLayer.prototype = {
     //TODO need to keep track of some of the state information, and then
     // notify the content when state changes (connected, technology
     // changes, etc.). This should be done in RILNetworkInterface.
+  },
+
+  /**
+   * Handle data errors
+   */
+  handleDataCallError: function handleDataCallError(message) {
+    // 3G Network revoked the data connection, possible unavailable APN
+    debug("Received data registration error message. Failed APN " + Services.prefs.getCharPref("ril.data.apn"));
+    RILNetworkInterface.reset();
+    ppmm.sendAsyncMessage("RIL:DataCallError", message);
   },
 
   handleSignalStrengthChange: function handleSignalStrengthChange(message) {
