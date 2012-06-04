@@ -16,6 +16,9 @@
 #define CARDSTATECHANGE_EVENTNAME  NS_LITERAL_STRING("cardstatechange")
 #define DATACALLERROR_EVENTNAME    NS_LITERAL_STRING("datacallerror")
 
+#include <android/log.h>
+#define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "MobileConnection" , ## args)
+
 DOMCI_DATA(MozMobileConnection, mozilla::dom::network::MobileConnection)
 
 namespace mozilla {
@@ -105,6 +108,7 @@ MobileConnection::Observe(nsISupports* aSubject,
                           const char* aTopic,
                           const PRUnichar* aData)
 {
+  LOG("HOLA_--------------------------------------------------------------_____");
   if (!strcmp(aTopic, kVoiceChangedTopic)) {
     InternalDispatchEvent(VOICECHANGE_EVENTNAME);
     return NS_OK;
@@ -121,6 +125,7 @@ MobileConnection::Observe(nsISupports* aSubject,
   }
 
   if(!strcmp(aTopic, kDataCallError)) {
+    LOG("kDataCallError");
     InternalDispatchEvent(DATACALLERROR_EVENTNAME);
     return NS_OK;
   }
