@@ -298,7 +298,9 @@ RILContentHelper.prototype = {
         }
         break;
       case "RIL:DataCallError":
-        this._deliverDataCallCallback("notifyerror"); // -----------------------------------------, [msg.json.type]);
+        this._deliverDataCallCallback("notifyerror",
+	                              [msg.json.rilRequestType,
+					msg.json.rilRequestError]);
         break;
     }
   },
@@ -346,7 +348,8 @@ RILContentHelper.prototype = {
     }
   },
 
-  _deliverDataCallCallback: function _deliverDataCallCallback() { // ------------------------------name) {
+  _deliverDataCallCallback: function _deliverDataCallCallback(name, args) {
+    debug("callback handlser for " + name + " args: " + args);
     Services.obs.notifyObservers(null, kDataCallError, null);
   },
 };

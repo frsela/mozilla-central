@@ -108,7 +108,6 @@ MobileConnection::Observe(nsISupports* aSubject,
                           const char* aTopic,
                           const PRUnichar* aData)
 {
-  LOG("HOLA_--------------------------------------------------------------_____");
   if (!strcmp(aTopic, kVoiceChangedTopic)) {
     InternalDispatchEvent(VOICECHANGE_EVENTNAME);
     return NS_OK;
@@ -125,7 +124,7 @@ MobileConnection::Observe(nsISupports* aSubject,
   }
 
   if(!strcmp(aTopic, kDataCallError)) {
-    LOG("kDataCallError");
+    LOG("kDataCallError =====================================================================================");
     InternalDispatchEvent(DATACALLERROR_EVENTNAME);
     return NS_OK;
   }

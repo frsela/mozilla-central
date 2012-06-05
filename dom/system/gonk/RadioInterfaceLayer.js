@@ -432,7 +432,6 @@ RadioInterfaceLayer.prototype = {
     debug("Received data registration error message. Failed APN " + Services.prefs.getCharPref("ril.data.apn"));
     RILNetworkInterface.reset();
     ppmm.sendAsyncMessage("RIL:DataCallError", message);
-    debug("=========================== ppmm.sendAsyncMessage(RIL:DataCallError) ==========: " + JSON.stringify(message));
   },
 
   handleSignalStrengthChange: function handleSignalStrengthChange(message) {
