@@ -8,7 +8,7 @@ interface nsIDOMEventListener;
 interface nsIDOMDOMRequest;
 interface nsIDOMMozMobileConnectionInfo;
 
-[scriptable, uuid(962298cd-3443-423e-9e47-f22e24ad850b)]
+[scriptable, uuid(c07309ee-a424-11e1-a75c-00265511db39)]
 interface nsIDOMMozMobileConnection : nsIDOMEventTarget
 {
   /**
@@ -53,6 +53,12 @@ interface nsIDOMMozMobileConnection : nsIDOMEventTarget
    * changes values.
    */
   attribute nsIDOMEventListener ondatachange;
+
+  /**
+   * The 'datacallerror' event is notified whenever the data connection object
+   * receives an error from the RIL
+   */
+  attribute nsIDOMEventListener ondatacallerror;
 
   /**
    * Find out about the status of an ICC lock (e.g. the PIN lock).
@@ -206,5 +212,15 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
    * signal) and 100 (full signal).
    */
   readonly attribute jsval relSignalStrength;
+
+  /**
+   * Error code
+   */
+  readonly attribute jsval errorCode;
+
+  /**
+   * Retry connection counter
+   */
+  readonly attribute jsval connectionRetryCounter;
 
 };

@@ -33,11 +33,13 @@ const RIL_IPC_MSG_NAMES = [
   "RIL:SetCardLock:Return:KO",
   "RIL:UnlockCardLock:Return:OK",
   "RIL:UnlockCardLock:Return:KO",
+  "RIL:DataCallError",
 ];
 
 const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
+const kDataCallError         = "mobile-connection-datacall-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -62,7 +64,9 @@ MobileConnectionInfo.prototype = {
   operator: null,
   type: null,
   signalStrength: null,
-  relSignalStrength: null
+  relSignalStrength: null,
+  errorCode: 0,
+  connectionRetryCounter: 0
 };
 
 
@@ -295,6 +299,11 @@ RILContentHelper.prototype = {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
         break;
+      case "RIL:DataCallError":
+        this._deliverDataCallCallback("notifyerror",
+                                      [msg.json.rilRequestType,
+                                      msg.json.rilRequestError]);
+        break;
     }
   },
 
@@ -339,6 +348,11 @@ RILContentHelper.prototype = {
         debug("callback handler for " + name + " threw an exception: " + e);
       }
     }
+  },
+
+  _deliverDataCallCallback: function _deliverDataCallCallback(name, args) {
+    debug("callback handlser for " + name + " args: " + args);
+    Services.obs.notifyObservers(null, kDataCallError, null);
   },
 };
 
