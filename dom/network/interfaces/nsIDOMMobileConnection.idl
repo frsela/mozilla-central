@@ -213,4 +213,14 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
    */
   readonly attribute jsval relSignalStrength;
 
+  /**
+   * Error code
+   */
+  readonly attribute jsval errorCode;
+
+  /**
+   * Retry connection counter
+   */
+  readonly attribute jsval connectionRetryCounter;
+
 };

@@ -64,7 +64,9 @@ MobileConnectionInfo.prototype = {
   operator: null,
   type: null,
   signalStrength: null,
-  relSignalStrength: null
+  relSignalStrength: null,
+  errorCode: 0,
+  connectionRetryCounter: 0
 };
 
 
@@ -299,8 +301,8 @@ RILContentHelper.prototype = {
         break;
       case "RIL:DataCallError":
         this._deliverDataCallCallback("notifyerror",
-	                              [msg.json.rilRequestType,
-					msg.json.rilRequestError]);
+                                      [msg.json.rilRequestType,
+                                      msg.json.rilRequestError]);
         break;
     }
   },
