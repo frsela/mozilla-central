@@ -23,6 +23,9 @@
 #include "nsIAsyncVerifyRedirectCallback.h"
 #include "nsThreadUtils.h"
 
+#include <android/log.h>
+#define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "nsBaseChannel.h" , ## args)
+
 //-----------------------------------------------------------------------------
 // nsBaseChannel is designed to be subclassed.  The subclass is responsible for
 // implementing the OpenContentStream method, which will be called by the
@@ -124,6 +127,7 @@ public:
     return mURI;
   }
   void SetURI(nsIURI *uri) {
+LOG("SetURI<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     NS_ASSERTION(uri, "must specify a non-null URI");
     NS_ASSERTION(!mURI, "must not modify URI");
     NS_ASSERTION(!mOriginalURI, "how did that get set so early?");

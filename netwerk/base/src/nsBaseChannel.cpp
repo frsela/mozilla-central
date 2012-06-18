@@ -17,6 +17,9 @@
 #include "nsChannelClassifier.h"
 #include "nsAsyncRedirectVerifyHelper.h"
 
+#include <android/log.h>
+#define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "nsBaseChannel" , ## args)
+
 static PLDHashOperator
 CopyProperties(const nsAString &key, nsIVariant *data, void *closure)
 {
@@ -61,6 +64,7 @@ nsBaseChannel::nsBaseChannel()
   , mWaitingOnAsyncRedirect(false)
   , mStatus(NS_OK)
 {
+LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<   nsBaseChannel::nsBaseChannel()");
   mContentType.AssignLiteral(UNKNOWN_CONTENT_TYPE);
 }
 
@@ -526,6 +530,7 @@ nsBaseChannel::SetContentLength(PRInt32 aContentLength)
 NS_IMETHODIMP
 nsBaseChannel::Open(nsIInputStream **result)
 {
+LOG("OPEN---------------------------___");
   NS_ENSURE_TRUE(mURI, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(!mPump, NS_ERROR_IN_PROGRESS);
   NS_ENSURE_TRUE(!mWasOpened, NS_ERROR_IN_PROGRESS);
@@ -552,6 +557,7 @@ nsBaseChannel::Open(nsIInputStream **result)
 NS_IMETHODIMP
 nsBaseChannel::AsyncOpen(nsIStreamListener *listener, nsISupports *ctxt)
 {
+LOG("AsyncOpen-------------------------------");
   NS_ENSURE_TRUE(mURI, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(!mPump, NS_ERROR_IN_PROGRESS);
   NS_ENSURE_TRUE(!mWasOpened, NS_ERROR_ALREADY_OPENED);
