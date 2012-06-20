@@ -127,7 +127,9 @@ public:
     return mURI;
   }
   void SetURI(nsIURI *uri) {
-LOG("SetURI<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+LOG("SetURI<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" );
+LOG(uri->asciiSpec.BeginReading());
+LOG("SetURI>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" );
     NS_ASSERTION(uri, "must specify a non-null URI");
     NS_ASSERTION(!mURI, "must not modify URI");
     NS_ASSERTION(!mOriginalURI, "how did that get set so early?");
