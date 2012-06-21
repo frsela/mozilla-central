@@ -157,8 +157,7 @@ function RadioInterfaceLayer() {
                      type: null,
                      signalStrength: null,
                      relSignalStrength: null,
-                     errorCode: 0,
-                     connectionRetryCounter: 0},
+                     errorCode: 0},
   };
 
   // Read the 'ril.radio.disabled' setting in order to start with a known
@@ -562,8 +561,7 @@ RadioInterfaceLayer.prototype = {
     RILNetworkInterface.reset();
     // Notify datacall error
     this.rilContext.data.errorCode = message.datacall.rilRequestError;
-    this.rilContext.data.connectionRetryCounter = RILNetworkInterface.apnRetryCounter;
-    ppmm.sendAsyncMessage("RIL:DataCallError", message);
+    ppmm.sendAsyncMessage("RIL:DataError", message);
   },
 
   handleSignalStrengthChange: function handleSignalStrengthChange(message) {

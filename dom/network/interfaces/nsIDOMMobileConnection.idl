@@ -222,10 +222,10 @@ interface nsIDOMMozMobileConnection : nsIDOMEventTarget
   attribute nsIDOMEventListener onussdreceived;
 
   /**
-   * The 'datacallerror' event is notified whenever the data connection object
+   * The 'dataerror' event is notified whenever the data connection object
    * receives an error from the RIL
    */
-  attribute nsIDOMEventListener ondatacallerror;
+  attribute nsIDOMEventListener ondataerror;
 };
 
 [scriptable, uuid(46321d6e-bbce-4b7b-aa32-d17b6aa984fe)]
@@ -278,11 +278,6 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
    * Error code
    */
   readonly attribute jsval errorCode;
-
-  /**
-   * Retry connection counter
-   */
-  readonly attribute jsval connectionRetryCounter;
 
 };
 

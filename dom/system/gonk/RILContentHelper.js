@@ -45,14 +45,14 @@ const RIL_IPC_MSG_NAMES = [
   "RIL:SendUssd:Return:KO",
   "RIL:CancelUssd:Return:OK",
   "RIL:CancelUssd:Return:KO",
-  "RIL:DataCallError"
+  "RIL:DataError"
 ];
 
 const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
 const kUssdReceivedTopic     = "mobile-connection-ussd-received";
-const kDataCallError         = "mobile-connection-datacall-error";
+const kDataError             = "mobile-connection-data-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -527,10 +527,10 @@ RILContentHelper.prototype = {
         if (request) {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
-      case "RIL:DataCallError":
-        this._deliverDataCallCallback("notifyerror",
-                                      [msg.json.rilRequestType,
-                                      msg.json.rilRequestError]);
+      case "RIL:DataError":
+        this._deliverDataCallback("notifyerror",
+                                   [msg.json.rilRequestType,
+                                    msg.json.rilRequestError]);
         break;
     }
   },
@@ -620,9 +620,9 @@ RILContentHelper.prototype = {
     }
   },
 
-  _deliverDataCallCallback: function _deliverDataCallCallback(name, args) {
+  _deliverDataCallback: function _deliverDataCallback(name, args) {
     debug("callback handlser for " + name + " args: " + args);
-    Services.obs.notifyObservers(null, kDataCallError, null);
+    Services.obs.notifyObservers(null, kDataError, null);
   },
 };
 
