@@ -44,13 +44,15 @@ const RIL_IPC_MSG_NAMES = [
   "RIL:SendUssd:Return:OK",
   "RIL:SendUssd:Return:KO",
   "RIL:CancelUssd:Return:OK",
-  "RIL:CancelUssd:Return:KO"
+  "RIL:CancelUssd:Return:KO",
+  "RIL:DataCallError"
 ];
 
 const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
 const kUssdReceivedTopic     = "mobile-connection-ussd-received";
+const kDataCallError         = "mobile-connection-datacall-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -75,7 +77,9 @@ MobileConnectionInfo.prototype = {
   network: null,
   type: null,
   signalStrength: null,
-  relSignalStrength: null
+  relSignalStrength: null,
+  errorCode: 0,
+  connectionRetryCounter: 0
 };
 
 function MobileNetworkInfo() {}
@@ -523,6 +527,10 @@ RILContentHelper.prototype = {
         if (request) {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
+      case "RIL:DataCallError":
+        this._deliverDataCallCallback("notifyerror",
+                                      [msg.json.rilRequestType,
+                                      msg.json.rilRequestError]);
         break;
     }
   },
@@ -610,6 +618,11 @@ RILContentHelper.prototype = {
         debug("callback handler for " + name + " threw an exception: " + e);
       }
     }
+  },
+
+  _deliverDataCallCallback: function _deliverDataCallCallback(name, args) {
+    debug("callback handlser for " + name + " args: " + args);
+    Services.obs.notifyObservers(null, kDataCallError, null);
   },
 };
 

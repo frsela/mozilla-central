@@ -9,7 +9,7 @@ interface nsIDOMDOMRequest;
 interface nsIDOMMozMobileConnectionInfo;
 interface nsIDOMMozMobileNetworkInfo;
 
-[scriptable, builtinclass, uuid(e7309c47-9a2e-4e12-84ab-f8f39214eaba)]
+[scriptable, builtinclass, uuid(c07309ee-a424-11e1-a75c-00265511db39)]
 interface nsIDOMMozMobileConnection : nsIDOMEventTarget
 {
   /**
@@ -220,6 +220,12 @@ interface nsIDOMMozMobileConnection : nsIDOMEventTarget
    * received.
    */
   attribute nsIDOMEventListener onussdreceived;
+
+  /**
+   * The 'datacallerror' event is notified whenever the data connection object
+   * receives an error from the RIL
+   */
+  attribute nsIDOMEventListener ondatacallerror;
 };
 
 [scriptable, uuid(46321d6e-bbce-4b7b-aa32-d17b6aa984fe)]
@@ -267,6 +273,16 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
    * signal) and 100 (full signal).
    */
   readonly attribute jsval relSignalStrength;
+
+  /**
+   * Error code
+   */
+  readonly attribute jsval errorCode;
+
+  /**
+   * Retry connection counter
+   */
+  readonly attribute jsval connectionRetryCounter;
 
 };
 
