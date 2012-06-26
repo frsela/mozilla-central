@@ -3,6 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "nsIDOMEventTarget.idl"
+#include "nsIDOMDOMError.idl"
 
 interface nsIDOMEventListener;
 interface nsIDOMDOMRequest;
@@ -277,7 +278,7 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
   /**
    * Error code
    */
-  readonly attribute jsval errorCode;
+  readonly attribute nsIDOMDOMError error;
 
 };
 

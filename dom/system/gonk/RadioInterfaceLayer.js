@@ -73,6 +73,11 @@ XPCOMUtils.defineLazyServiceGetter(this, "gSettingsService",
                                    "@mozilla.org/settingsService;1",
                                    "nsISettingsService");
 
+XPCOMUtils.defineLazyServiceGetter(this, "gDOMDOMError",
+                                   "@mozilla.org/base/domdomerror;1",
+                                   "nsIDOMError");
+});
+
 XPCOMUtils.defineLazyGetter(this, "WAP", function () {
   let WAP = {};
   Cu.import("resource://gre/modules/WapPushManager.js", WAP);
@@ -157,12 +162,12 @@ function RadioInterfaceLayer() {
                      type: null,
                      signalStrength: null,
                      relSignalStrength: null,
-                     errorCode: 0},
+                     error: 0},
   };
 
   // Read the 'ril.radio.disabled' setting in order to start with a known
   // value at boot time.
-  gSettingsService.getLock().get("ril.radio.disabled", this);
+//   gSettingsService.getLock().get("ril.radio.disabled", this);
 
   for each (let msgname in RIL_IPC_MSG_NAMES) {
     ppmm.addMessageListener(msgname, this);
@@ -560,7 +565,9 @@ RadioInterfaceLayer.prototype = {
          );
     RILNetworkInterface.reset();
     // Notify datacall error
-    this.rilContext.data.errorCode = message.datacall.rilRequestError;
+    this.rilContext.data.error = gDOMDOMError.CreateWithName("NetworkError");
+    debug(JSON.stringify(this.rilContext.data.error);
+    debug(this.rilContext.data.error);
     ppmm.sendAsyncMessage("RIL:DataError", message);
   },
 

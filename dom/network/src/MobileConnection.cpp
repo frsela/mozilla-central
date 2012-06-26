@@ -18,6 +18,10 @@
 #define USSDRECEIVED_EVENTNAME     NS_LITERAL_STRING("ussdreceived")
 #define DATAERROR_EVENTNAME        NS_LITERAL_STRING("dataerror")
 
+#include <android/log.h>
+#define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "MobileConnection" , ## args) 
+
+
 DOMCI_DATA(MozMobileConnection, mozilla::dom::network::MobileConnection)
 
 namespace mozilla {
@@ -140,6 +144,7 @@ MobileConnection::Observe(nsISupports* aSubject,
   }
 
   if(!strcmp(aTopic, kDataError)) {
+    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DATAERROR>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     InternalDispatchEvent(DATAERROR_EVENTNAME);
     return NS_OK;
   }
