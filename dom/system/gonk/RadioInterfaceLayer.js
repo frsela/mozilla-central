@@ -157,7 +157,8 @@ function RadioInterfaceLayer() {
                      type: null,
                      signalStrength: null,
                      relSignalStrength: null,
-                     errorCode: 0},
+                     errorCode: 0,
+                     error: null},
   };
 
   // Read the 'ril.radio.disabled' setting in order to start with a known

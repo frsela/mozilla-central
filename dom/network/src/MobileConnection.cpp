@@ -18,6 +18,9 @@
 #define USSDRECEIVED_EVENTNAME     NS_LITERAL_STRING("ussdreceived")
 #define DATAERROR_EVENTNAME        NS_LITERAL_STRING("dataerror")
 
+#include <android/log.h>
+#define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "MobileConnection" , ## args) 
+
 DOMCI_DATA(MozMobileConnection, mozilla::dom::network::MobileConnection)
 
 namespace mozilla {
@@ -82,6 +85,8 @@ MobileConnection::Init(nsPIDOMWindow* aWindow)
     return;
   }
 
+  this->mError = nsnull;
+
   obs->AddObserver(this, kVoiceChangedTopic, false);
   obs->AddObserver(this, kDataChangedTopic, false);
   obs->AddObserver(this, kCardStateChangedTopic, false);
@@ -140,6 +145,26 @@ MobileConnection::Observe(nsISupports* aSubject,
   }
 
   if(!strcmp(aTopic, kDataError)) {
+    if(mProvider) {
+      LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DOMError init >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+      // Set the error string
+      NS_ASSERTION(!mError, "Already have an error?");
+
+      //  mError = DOMError::CreateWithName("APN Error");
+
+      // Notify the error event
+      //  nsRefPtr<CallEvent> event = CallEvent::Create(this);
+      //  NS_ASSERTION(event, "This should never fail!");
+      //  if (NS_FAILED(event->Dispatch(ToIDOMEventTarget(),
+      //      NS_LITERAL_STRING("error")))) {
+      //    NS_WARNING("Failed to dispatch error event!");
+      //  }
+
+      nsIDOMMozMobileConnectionInfo *data;
+      this->GetData(&data);
+      // Notify through DOMError
+      data->errorCode = this->mError;
+    }
     InternalDispatchEvent(DATAERROR_EVENTNAME);
     return NS_OK;
   }

@@ -10,6 +10,7 @@
 #include "nsIMobileConnectionProvider.h"
 #include "nsDOMEventTargetHelper.h"
 #include "nsCycleCollectionParticipant.h"
+#include "DOMError.h"
 
 namespace mozilla {
 namespace dom {
@@ -51,6 +52,8 @@ private:
   NS_DECL_EVENT_HANDLER(datachange)
   NS_DECL_EVENT_HANDLER(ussdreceived)
   NS_DECL_EVENT_HANDLER(dataerror)
+
+  nsCOMPtr<nsIDOMDOMError> mError;
 };
 
 } // namespace network
