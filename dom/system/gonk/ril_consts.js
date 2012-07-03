@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // Set to true to debug all RIL layers
-const DEBUG_ALL = false;
+const DEBUG_ALL = true;
 
 // Set individually to debug specific layers
 const DEBUG_WORKER = false || DEBUG_ALL;

@@ -278,6 +278,7 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
   /**
    * Error code
    */
+  readonly attribute jsval errorCode;
   readonly attribute nsIDOMDOMError error;
 
 };

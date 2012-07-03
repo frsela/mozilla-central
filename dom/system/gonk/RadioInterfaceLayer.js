@@ -162,7 +162,8 @@ function RadioInterfaceLayer() {
                      type: null,
                      signalStrength: null,
                      relSignalStrength: null,
-                     error: 0},
+                     errorCode: 0,
+                     error: null},
   };
 
   // Read the 'ril.radio.disabled' setting in order to start with a known
@@ -566,8 +567,8 @@ RadioInterfaceLayer.prototype = {
     RILNetworkInterface.reset();
     // Notify datacall error
     this.rilContext.data.error = gDOMDOMError.CreateWithName("NetworkError");
-    debug(JSON.stringify(this.rilContext.data.error);
-    debug(this.rilContext.data.error);
+    debug(JSON.stringify(this.rilContext.data.errorCode);
+    debug(this.rilContext.data.errorerrorCode);
     ppmm.sendAsyncMessage("RIL:DataError", message);
   },
 

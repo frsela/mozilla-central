@@ -78,7 +78,8 @@ MobileConnectionInfo.prototype = {
   type: null,
   signalStrength: null,
   relSignalStrength: null,
-  errorCode: 0
+  errorCode: 0,
+  error: null
 };
 
 function MobileNetworkInfo() {}
