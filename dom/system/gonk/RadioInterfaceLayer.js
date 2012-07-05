@@ -561,7 +561,7 @@ RadioInterfaceLayer.prototype = {
     RILNetworkInterface.reset();
     // Notify datacall error
     this.rilContext.data.errorCode = message.datacall.rilRequestError;
-    ppmm.sendAsyncMessage("RIL:DataError", message);
+    ppmm.sendAsyncMessage("RIL:DataError", this.rilContext.data);
   },
 
   handleSignalStrengthChange: function handleSignalStrengthChange(message) {

@@ -28,6 +28,7 @@ CPPSRCS = \
   MobileConnection.cpp \
   Utils.cpp \
   USSDReceivedEvent.cpp \
+  DataErrorEvent.cpp \
   $(NULL)
 
 LOCAL_INCLUDES = \

@@ -8,6 +8,7 @@
 #include "nsDOMEvent.h"
 #include "nsIObserverService.h"
 #include "USSDReceivedEvent.h"
+#include "DataErrorEvent.h"
 #include "mozilla/Services.h"
 
 #define NS_RILCONTENTHELPER_CONTRACTID "@mozilla.org/ril/content-helper;1"
@@ -17,6 +18,9 @@
 #define CARDSTATECHANGE_EVENTNAME  NS_LITERAL_STRING("cardstatechange")
 #define USSDRECEIVED_EVENTNAME     NS_LITERAL_STRING("ussdreceived")
 #define DATAERROR_EVENTNAME        NS_LITERAL_STRING("dataerror")
+ 
+#include <android/log.h>
+#define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "MobileConnection" , ## args) 
 
 DOMCI_DATA(MozMobileConnection, mozilla::dom::network::MobileConnection)
 
@@ -140,8 +144,30 @@ MobileConnection::Observe(nsISupports* aSubject,
   }
 
   if(!strcmp(aTopic, kDataError)) {
+    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Entrando dataerror <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    nsString dataerror;
+    dataerror.Assign(aData);
+    nsRefPtr<DataErrorEvent> event = DataErrorEvent::Create(dataerror);
+    NS_ASSERTION(event, "This should never fail!");
+
+    LOG(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Lanzando evento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    nsresult rv =
+      event->Dispatch(ToIDOMEventTarget(), DATAERROR_EVENTNAME);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Saliendo dataerror <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    return NS_OK;
+
+/*
+    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Entrando dataerror <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    nsIDOMMozMobileConnectionInfo* data;
+    GetData(&data);
+//    if(data != nsnull) {
+//      data->errorCode = 5;
+//    }
+    LOG(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Lanzando evento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     InternalDispatchEvent(DATAERROR_EVENTNAME);
     return NS_OK;
+*/
   }
 
   MOZ_NOT_REACHED("Unknown observer topic!");

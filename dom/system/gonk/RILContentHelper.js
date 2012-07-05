@@ -527,9 +527,10 @@ RILContentHelper.prototype = {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
       case "RIL:DataError":
-        this._deliverDataCallback("notifyerror",
-                                   [msg.json.rilRequestType,
-                                    msg.json.rilRequestError]);
+        this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
+        this._deliverDataCallback("notifyerror",msg.json);
+//                                   [msg.json.rilRequestType,
+//                                    msg.json.rilRequestError]);
         break;
     }
   },
