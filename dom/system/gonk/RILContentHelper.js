@@ -528,9 +528,8 @@ RILContentHelper.prototype = {
         }
       case "RIL:DataError":
         this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
-        this._deliverDataCallback("notifyerror", msg.json);
-//                                   [msg.json.rilRequestType,
-//                                    msg.json.rilRequestError]);
+	if(msg.json.errorCode != 0)
+	  this._deliverDataCallback("notifyerror", "APN Connection Error");
         break;
     }
   },
@@ -622,7 +621,7 @@ RILContentHelper.prototype = {
 
   _deliverDataCallback: function _deliverDataCallback(name, args) {
     debug("callback handlser for " + name + " args: " + args);
-    Services.obs.notifyObservers(null, kDataError, JSON.stringify(args));
+    Services.obs.notifyObservers(null, kDataError, args);
   },
 };
 
