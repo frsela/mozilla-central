@@ -3126,7 +3126,9 @@ RIL.readSetupDataCall_v5 = function readSetupDataCall_v5(options) {
 RIL[REQUEST_SETUP_DATA_CALL] = function REQUEST_SETUP_DATA_CALL(length, options) {
   if (options.rilRequestError) {
     // On Data Call error, we shall notify caller
-    this.sendDOMMessage({type: "datacallerror"});
+    options.type = "datacallerror";
+    options.error = RIL_DATACALL_FAILCAUSE_TO_GECKO_DATACALL_ERROR[options.rilRequestError];
+    this.sendDOMMessage(options);
     return;
   }
 

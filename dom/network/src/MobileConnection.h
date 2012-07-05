@@ -50,6 +50,7 @@ private:
   NS_DECL_EVENT_HANDLER(voicechange)
   NS_DECL_EVENT_HANDLER(datachange)
   NS_DECL_EVENT_HANDLER(ussdreceived)
+  NS_DECL_EVENT_HANDLER(dataerror)
 };
 
 } // namespace network
