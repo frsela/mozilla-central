@@ -156,18 +156,6 @@ MobileConnection::Observe(nsISupports* aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Saliendo dataerror <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     return NS_OK;
-
-/*
-    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Entrando dataerror <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-    nsIDOMMozMobileConnectionInfo* data;
-    GetData(&data);
-//    if(data != nsnull) {
-//      data->errorCode = 5;
-//    }
-    LOG(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Lanzando evento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    InternalDispatchEvent(DATAERROR_EVENTNAME);
-    return NS_OK;
-*/
   }
 
   MOZ_NOT_REACHED("Unknown observer topic!");

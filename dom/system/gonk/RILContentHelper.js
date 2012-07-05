@@ -528,7 +528,7 @@ RILContentHelper.prototype = {
         }
       case "RIL:DataError":
         this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
-        this._deliverDataCallback("notifyerror",msg.json);
+        this._deliverDataCallback("notifyerror", msg.json);
 //                                   [msg.json.rilRequestType,
 //                                    msg.json.rilRequestError]);
         break;
@@ -622,7 +622,7 @@ RILContentHelper.prototype = {
 
   _deliverDataCallback: function _deliverDataCallback(name, args) {
     debug("callback handlser for " + name + " args: " + args);
-    Services.obs.notifyObservers(null, kDataError, null);
+    Services.obs.notifyObservers(null, kDataError, JSON.stringify(args));
   },
 };
 
