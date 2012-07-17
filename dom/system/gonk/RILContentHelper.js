@@ -52,7 +52,7 @@ const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
 const kUssdReceivedTopic     = "mobile-connection-ussd-received";
-const kDataError             = "mobile-connection-data-error";
+const kDataErrorTopic        = "mobile-connection-data-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -620,7 +620,7 @@ RILContentHelper.prototype = {
 
   _deliverDataCallback: function _deliverDataCallback(name, args) {
     debug("callback handler for " + name + " args: " + args);
-    Services.obs.notifyObservers(null, kDataError, args);
+    Services.obs.notifyObservers(null, kDataErrorTopic, args);
   },
 };
 

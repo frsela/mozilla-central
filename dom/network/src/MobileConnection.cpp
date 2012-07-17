@@ -29,7 +29,7 @@ const char* kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const char* kDataChangedTopic      = "mobile-connection-data-changed";
 const char* kCardStateChangedTopic = "mobile-connection-cardstate-changed";
 const char* kUssdReceivedTopic     = "mobile-connection-ussd-received";
-const char* kDataError             = "mobile-connection-data-error";
+const char* kDataErrorTopic        = "mobile-connection-data-error";
 
 NS_IMPL_CYCLE_COLLECTION_CLASS(MobileConnection)
 
@@ -87,7 +87,7 @@ MobileConnection::Init(nsPIDOMWindow* aWindow)
   obs->AddObserver(this, kDataChangedTopic, false);
   obs->AddObserver(this, kCardStateChangedTopic, false);
   obs->AddObserver(this, kUssdReceivedTopic, false);
-  obs->AddObserver(this, kDataError, false);
+  obs->AddObserver(this, kDataErrorTopic, false);
 }
 
 void
@@ -103,7 +103,7 @@ MobileConnection::Shutdown()
   obs->RemoveObserver(this, kDataChangedTopic);
   obs->RemoveObserver(this, kCardStateChangedTopic);
   obs->RemoveObserver(this, kUssdReceivedTopic);
-  obs->RemoveObserver(this, kDataError);
+  obs->RemoveObserver(this, kDataErrorTopic);
 }
 
 // nsIObserver
@@ -140,7 +140,7 @@ MobileConnection::Observe(nsISupports* aSubject,
     return NS_OK;
   }
 
-  if(!strcmp(aTopic, kDataError)) {
+  if(!strcmp(aTopic, kDataErrorTopic)) {
     nsString dataerror;
     dataerror.Assign(aData);
     nsRefPtr<DataErrorEvent> event = DataErrorEvent::Create(dataerror);
