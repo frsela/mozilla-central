@@ -274,11 +274,6 @@ interface nsIDOMMozMobileConnectionInfo : nsISupports
    */
   readonly attribute jsval relSignalStrength;
 
-  /**
-   * Error code
-   */
-  readonly attribute jsval errorCode;
-
 };
 
 [scriptable, uuid(3bd866c7-98a5-4ef4-a464-c22d8cc6b992)]

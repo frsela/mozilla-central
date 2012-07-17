@@ -156,8 +156,7 @@ function RadioInterfaceLayer() {
                      network: null,
                      type: null,
                      signalStrength: null,
-                     relSignalStrength: null,
-                     errorCode: 0},
+                     relSignalStrength: null},
   };
 
   // Read the 'ril.radio.disabled' setting in order to start with a known
@@ -560,8 +559,7 @@ RadioInterfaceLayer.prototype = {
          );
     RILNetworkInterface.reset();
     // Notify datacall error
-    this.rilContext.data.errorCode = message.datacall.rilRequestError;
-    ppmm.sendAsyncMessage("RIL:DataError", this.rilContext.data);
+    ppmm.sendAsyncMessage("RIL:DataError", message);
   },
 
   handleSignalStrengthChange: function handleSignalStrengthChange(message) {

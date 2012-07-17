@@ -77,8 +77,7 @@ MobileConnectionInfo.prototype = {
   network: null,
   type: null,
   signalStrength: null,
-  relSignalStrength: null,
-  errorCode: 0
+  relSignalStrength: null
 };
 
 function MobileNetworkInfo() {}
@@ -528,8 +527,8 @@ RILContentHelper.prototype = {
         }
       case "RIL:DataError":
         this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
-        if(msg.json.errorCode != 0)
-          this._deliverDataCallback("notifyerror", "APN Connection Error");
+	// TODO: DE DATACONNECTIONINFO COGER LA INFO DEL ERROR :)
+        this._deliverDataCallback("notifyerror", "APN Connection Error");
         break;
     }
   },
