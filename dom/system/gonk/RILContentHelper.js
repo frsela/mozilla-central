@@ -527,8 +527,9 @@ RILContentHelper.prototype = {
         }
       case "RIL:DataError":
         this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
-	// TODO: DE DATACONNECTIONINFO COGER LA INFO DEL ERROR :)
-        this._deliverDataCallback("notifyerror", "APN Connection Error");
+        // TODO: DE DATACONNECTIONINFO COGER LA INFO DEL ERROR :)
+        //this._deliverDataCallback("notifyerror", JSON.stringify(msg.json));
+	this._deliverDataCallback("notifyerror", msg.json.error);
         break;
     }
   },

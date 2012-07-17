@@ -3127,6 +3127,7 @@ RIL[REQUEST_SETUP_DATA_CALL] = function REQUEST_SETUP_DATA_CALL(length, options)
   if (options.rilRequestError) {
     // On Data Call error, we shall notify caller
     options.type = "datacallerror";
+    options.error = RIL_DATACALL_FAILCAUSE_TO_GECKO_DATACALL_ERROR[options.rilRequestError];
     this.sendDOMMessage(options);
     return;
   }
@@ -3320,7 +3321,7 @@ RIL.readDataCall_v6 = function readDataCall_v6(options) {
   if (!options) {
     options = {};
   }
-  options.status = Buf.readUint32();  // DATACALL_FAIL_*
+  options.status = Buf.readUInt32();  // DATACALL_FAIL_*
   if (!RILQUIRKS_DATACALLSTATE_NO_SUGGESTEDRETRYTIME) {
     options.suggestedRetryTime = Buf.readUint32();
   }
