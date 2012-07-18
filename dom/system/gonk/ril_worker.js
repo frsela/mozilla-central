@@ -3321,7 +3321,7 @@ RIL.readDataCall_v6 = function readDataCall_v6(options) {
   if (!options) {
     options = {};
   }
-  options.status = Buf.readUInt32();  // DATACALL_FAIL_*
+  options.status = Buf.readUint32();  // DATACALL_FAIL_*
   if (!RILQUIRKS_DATACALLSTATE_NO_SUGGESTEDRETRYTIME) {
     options.suggestedRetryTime = Buf.readUint32();
   }
