@@ -6,7 +6,7 @@
 const DEBUG_ALL = false;
 
 // Set individually to debug specific layers
-const DEBUG_WORKER = false || DEBUG_ALL;
+const DEBUG_WORKER = true || DEBUG_ALL;
 const DEBUG_CONTENT_HELPER = false || DEBUG_ALL;
 const DEBUG_RIL = false || DEBUG_ALL;
 

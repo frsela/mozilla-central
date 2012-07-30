@@ -3127,8 +3127,11 @@ RIL[REQUEST_SETUP_DATA_CALL] = function REQUEST_SETUP_DATA_CALL(length, options)
   if (options.rilRequestError) {
     // On Data Call error, we shall notify caller
     options.type = "datacallerror";
+    debug("<<<<<<<<<<<<<<<<<<<<<<<<<A> " + JSON.stringify(options));
     options.error = RIL_DATACALL_FAILCAUSE_TO_GECKO_DATACALL_ERROR[options.rilRequestError];
     this.sendDOMMessage(options);
+    this._processDataCallList(null);//this[REQUEST_DATA_CALL_LIST](length, options);    //this.getDataCallList();
+    debug("<<<<<<<<<<<<<<<<<<<<<<<<<B> " + JSON.stringify(options));
     return;
   }
 
