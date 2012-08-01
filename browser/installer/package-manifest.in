@@ -489,6 +489,9 @@
 @BINPATH@/components/marionettecomponent.js
 #endif
 
+@BINPATH@/components/NetworkPolicies.js
+@BINPATH@/components/NetworkPolicies.manifest
+
 ; Modules
 @BINPATH@/modules/*
 

@@ -1,0 +1,38 @@
+/* -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: nil; tab-width: 40 -*- */
+/* vim: set ts=2 et sw=2 tw=40: */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "nsISupports.idl"
+#include "nsIArray.idl"
+/*
+[scriptable, uuid(9f599498-b087-11e1-956e-00265511db39)]
+interface nsIDOMNetworkPoliciesConnectionTypes : nsISupports
+{
+  attribute DOMString connectionType;
+  attribute boolean allowed;
+  attribute boolean prefered;
+  attribute long max;
+};
+
+[scriptable, uuid(9a454d00-afe5-11e1-8477-00265511db39)]
+interface nsIDOMNetworkPoliciesApplicationPolicies : nsISupports
+{
+  attribute DOMString app;
+  attribute boolean allowNetworkAccess;
+  attribute [array] nsIDOMNetworkPoliciesConnectionTypes policiesPerConnectionType;
+};
+*/
+[scriptable, uuid(3d2bdc60-afe5-11e1-8477-00265511db39)]
+interface nsIDOMMozNetworkPolicies : nsISupports
+{
+//  readonly attribute nsIArray installedApplications;  // Array of DOMString
+//  readonly attribute nsIArray connectionTypes;        // Array of DOMString
+  readonly attribute boolean test;
+
+//  attribute nsIDOMNetworkPoliciesApplicationPolicies defaultPolicies;
+
+//  DOMRequest get(in DOMString application, out nsIDOMNetworkPoliciesApplicationPolicies policies);
+//  DOMRequest set(in DOMString application, in nsIDOMNetworkPoliciesApplicationPolicies policies);
+};
