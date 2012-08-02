@@ -1,0 +1,16 @@
+/* -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: nil; tab-width: 40 -*- */
+/* vim: set ts=2 et sw=2 tw=40: */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "nsISupports.idl"
+
+[scriptable, uuid(87f201d2-3baf-49a4-82cb-ad20961b5e17)]
+interface nsIDOMMozNetworkPoliciesPolicyConnection : nsISupports
+{
+  attribute DOMString connectionType;
+  attribute boolean allowed;
+  attribute boolean prefered;
+  attribute long max;
+};
