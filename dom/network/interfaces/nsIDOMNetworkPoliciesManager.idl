@@ -27,10 +27,6 @@ interface nsIDOMMozNetworkPoliciesManager : nsISupports
   readonly attribute jsval installedApplications;  // DOMString[]
   readonly attribute jsval connectionTypes;        // DOMString[]
 
-//  readonly attribute NetworkPoliciesPolicy defaultPolicies;
-
-//  DOMRequest get(in DOMString application, out nsIDOMNetworkPoliciesApplicationPolicies policies);
-
   /**
    * Assing new policy
    *

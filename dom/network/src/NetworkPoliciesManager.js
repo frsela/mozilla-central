@@ -19,6 +19,7 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/DOMRequestHelper.jsm");
+Cu.import("resource://gre/modules/NetworkPoliciesService.jsm");
 
 XPCOMUtils.defineLazyGetter(Services, "DOMRequest", function() {
   return Cc["@mozilla.org/dom/dom-request-service;1"].getService(Ci.nsIDOMRequestService);
@@ -30,7 +31,7 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
 
 const nsIClassInfo                      = Ci.nsIClassInfo;
 
-// NetworkPoliciesPolicy & NetworkPoliciesPolicyConnection are not directly instantiated. They are used as interfaces.
+// NetworkPoliciesPolicyConnection & NetworkPoliciesPolicy are not directly instantiated. They are used as interfaces.
 
 // NetworkPoliciesPolicyConnection
 const NETWORKPOLICIESPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPoliciesPolicyConnection;1";
@@ -92,7 +93,6 @@ const NETWORKPOLICIESPOLICY_CONTRACTID  = "@mozilla.org/networkPoliciesPolicy;1"
 const NETWORKPOLICIESPOLICY_CID         = Components.ID("{9084e8d8-8c28-4017-a843-5dad38f18daf}");
 const nsIDOMMozNetworkPoliciesPolicy    = Ci.nsIDOMMozNetworkPoliciesPolicy;
 
-
 function NetworkPoliciesPolicy(policy) {
   debug("NetworkPoliciesPolicy Constructor");
   if(policy == null) {
@@ -153,28 +153,20 @@ const nsIDOMMozNetworkPoliciesManager   = Ci.nsIDOMMozNetworkPoliciesManager;
 
 function NetworkPoliciesManager() {
   debug("NetworkPoliciesManager Constructor");
-  this._connectionTypes = [ "wifi", "mobile" ];
 }
 
 NetworkPoliciesManager.prototype = {
   __proto__: DOMRequestIpcHelper.prototype,
 
   get installedApplications() {
-    debug("get installedApplications");
-    // TODO: Recover apps.
-    return ['uno', 'dos'];
+    debug("get installedApplications: " + JSON.stringify(NetworkPoliciesService.installedApplications));
+    return NetworkPoliciesService.installedApplications;
   },
 
   get connectionTypes() {
-    debug("get connectionTypes: " + JSON.stringify(this._connectionTypes));
-    return this._connectionTypes;
+    debug("get connectionTypes: " + JSON.stringify(NetworkPoliciesService.connectionTypes));
+    return NetworkPoliciesService.connectionTypes;
   },
-/*
-  get defaultPolicies() {
-    debug("get defaultPolicies");
-    return null;
-  },
-*/
 
   set: function(policy) {
     debug("set new policy: " + policy);
@@ -215,12 +207,12 @@ NetworkPoliciesManager.prototype = {
     debug("init");
 /*
     // Set navigator.mozNetworkPolicies to null.
-    if (!Services.prefs.getBoolPref("dom.mozNetworkStats.enabled")){
+    if (!Services.prefs.getBoolPref("dom.mozNetworkPolicies.enabled")){
       return null;
     }
 
     this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK", "NetworkPolicies:Get:Return:KO",
-                              "NetworkPolicies:Clear:Return:OK", "NetworkPolicies:Clear:Return:KO"]);
+                              "NetworkPolicies:Set:Return:OK", "NetworkPolicies:Set:Return:KO"]);
 
     let principal = aWindow.document.nodePrincipal;
     let secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].getService(Ci.nsIScriptSecurityManager);
