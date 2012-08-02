@@ -1,3 +1,3 @@
-component {3d2bdc60-afe5-11e1-8477-00265511db40} NetworkPoliciesManager.js
-contract @mozilla.org/networkPoliciesManager;1 {3d2bdc60-afe5-11e1-8477-00265511db40}
+component {d7dcbc77-edf4-40c8-9497-4dca4cf750c7} NetworkPoliciesManager.js
+contract @mozilla.org/networkPoliciesManager;1 {d7dcbc77-edf4-40c8-9497-4dca4cf750c7}
 category JavaScript-navigator-property mozNetworkPolicies @mozilla.org/networkPoliciesManager;1

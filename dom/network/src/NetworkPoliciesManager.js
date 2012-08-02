@@ -30,34 +30,68 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
 
 const nsIClassInfo                      = Ci.nsIClassInfo;
 const NETWORKPOLICIESMANAGER_CONTRACTID = "@mozilla.org/networkPoliciesManager;1";
-const NETWORKPOLICIESMANAGER_CID        = Components.ID("{3d2bdc60-afe5-11e1-8477-00265511db40}");
+const NETWORKPOLICIESMANAGER_CID        = Components.ID("{d7dcbc77-edf4-40c8-9497-4dca4cf750c7}");
 const nsIDOMMozNetworkPoliciesManager   = Ci.nsIDOMMozNetworkPoliciesManager;
 
 // NetworkPolicies is not directly instantiated. It is used as interface.
 
 function NetworkPoliciesManager() {
-  debug("NetworkPoliciesManager Constructor");
+  debug("Constructor");
+  this._connectionTypes = [ "wifi", "mobile" ];
 }
 
 NetworkPoliciesManager.prototype = {
   __proto__: DOMRequestIpcHelper.prototype,
 
-  get test() {
+  get installedApplications() {
+    debug("get installedApplications");
+    // TODO: Recover apps.
+    return ['uno', 'dos'];
+  },
+
+  get connectionTypes() {
+    debug("get connectionTypes: " + JSON.stringify(this._connectionTypes));
+    return this._connectionTypes;
+  },
+/*
+  get defaultPolicies() {
+    debug("get defaultPolicies");
+    return null;
+  },
+*/
+
+  set: function(policy) {
+    debug("set new policy: " + policy);
+    if(typeof(policy) != "object") {
+      return false;
+    }
+
+    debug(JSON.stringify(policy));
+    if(!policy.app || policy.app == "") {
+      debug("default policy");
+    }
     return true;
   },
 
+  get: function(appName) {
+    debug("get policy for: " + appName);
+    return { app: appName };
+  },
+
   init: function(aWindow) {
-    // Set navigator.mozNetworkPolicies to null.
-//    if (!Services.prefs.getBoolPref("dom.mozNetworkStats.enabled")){
-//      return null;
-//    }
-
-//    this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK", "NetworkPolicies:Get:Return:KO",
-//                              "NetworkPolicies:Clear:Return:OK", "NetworkPolicies:Clear:Return:KO"]);
-
-//    let principal = aWindow.document.nodePrincipal;
-//    let secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].getService(Ci.nsIScriptSecurityManager);
+    debug("init");
 /*
+    // Set navigator.mozNetworkPolicies to null.
+    if (!Services.prefs.getBoolPref("dom.mozNetworkStats.enabled")){
+      return null;
+    }
+
+    this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK", "NetworkPolicies:Get:Return:KO",
+                              "NetworkPolicies:Clear:Return:OK", "NetworkPolicies:Clear:Return:KO"]);
+
+    let principal = aWindow.document.nodePrincipal;
+    let secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].getService(Ci.nsIScriptSecurityManager);
+
     let perm = principal == secMan.getSystemPrincipal() ?
                  Ci.nsIPermissionManager.ALLOW_ACTION :
                  Services.perms.testExactPermission(principal.URI, "networkpolicies-manager");
@@ -70,7 +104,7 @@ NetworkPoliciesManager.prototype = {
 
   // Called from DOMRequestIpcHelper
   uninit: function uninit() {
-    debug("uninit call");
+    debug("uninit");
   },
 
   classID : NETWORKPOLICIESMANAGER_CID,
