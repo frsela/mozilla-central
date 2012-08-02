@@ -20,6 +20,8 @@ XPIDLSRCS = \
   nsIMobileConnectionProvider.idl \
   nsIDOMUSSDReceivedEvent.idl \
   nsIDOMNetworkPoliciesManager.idl \
+  nsIDOMNetworkPoliciesPolicy.idl \
+  nsIDOMNetworkPoliciesPolicyConnection.idl \
   $(NULL)
 
 include $(topsrcdir)/config/rules.mk

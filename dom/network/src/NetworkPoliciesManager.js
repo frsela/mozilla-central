@@ -29,14 +29,86 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
 });
 
 const nsIClassInfo                      = Ci.nsIClassInfo;
+
+// NetworkPoliciesPolicy & NetworkPoliciesPolicyConnection are not directly instantiated. They are used as interfaces.
+
+// NetworkPoliciesPolicyConnection
+const NETWORKPOLICIESPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPoliciesPolicyConnection;1";
+const NETWORKPOLICIESPOLICYCONNECTION_CID        = Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
+const nsIDOMMozNetworkPoliciesPolicyConnection   = Ci.nsIDOMMozNetworkPoliciesPolicyConnection;
+
+function NetworkPoliciesPolicyConnection() {
+  debug("NetworkPoliciesPolicyConnection Constructor");
+}
+
+NetworkPoliciesPolicyConnection.prototype = {
+  get connectionType() {
+    return "wifi";
+  },
+
+  get allowed() {
+    return true;
+  },
+
+  get prefered() {
+    return false;
+  },
+
+  get max() {
+    return 1000;
+  },
+
+  classID : NETWORKPOLICIESPOLICYCONNECTION_CID,
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesPolicyConnection, Ci.nsIDOMGlobalPropertyInitializer]),
+  classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICIESPOLICYCONNECTION_CID,
+                                     contractID: NETWORKPOLICIESPOLICYCONNECTION_CONTRACTID,
+                                     classDescription: "NetworkPoliciesPolicyConnection",
+                                     interfaces: [nsIDOMMozNetworkPoliciesPolicyConnection],
+                                     flags: nsIClassInfo.DOM_OBJECT})
+}
+
+// NetworkPoliciesPolicy
+const NETWORKPOLICIESPOLICY_CONTRACTID  = "@mozilla.org/networkPoliciesPolicy;1";
+const NETWORKPOLICIESPOLICY_CID         = Components.ID("{9084e8d8-8c28-4017-a843-5dad38f18daf}");
+const nsIDOMMozNetworkPoliciesPolicy    = Ci.nsIDOMMozNetworkPoliciesPolicy;
+
+
+function NetworkPoliciesPolicy() {
+  debug("NetworkPoliciesPolicy Constructor");
+}
+
+NetworkPoliciesPolicy.prototype = {
+  get app() {
+    return "uno";
+  },
+
+  get allowNetworkAccess() {
+    return true;
+  },
+
+  get policies() {
+    let policies = [];
+    policies.push(new NetworkPoliciesPolicyConnection());
+    policies.push(new NetworkPoliciesPolicyConnection());
+    return policies;
+  },
+
+  classID : NETWORKPOLICIESPOLICY_CID,
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesPolicy, Ci.nsIDOMGlobalPropertyInitializer]),
+  classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICIESPOLICY_CID,
+                                     contractID: NETWORKPOLICIESPOLICY_CONTRACTID,
+                                     classDescription: "NetworkPoliciesPolicy",
+                                     interfaces: [nsIDOMMozNetworkPoliciesPolicy],
+                                     flags: nsIClassInfo.DOM_OBJECT})
+}
+
+// NetworkPoliciesManager
 const NETWORKPOLICIESMANAGER_CONTRACTID = "@mozilla.org/networkPoliciesManager;1";
 const NETWORKPOLICIESMANAGER_CID        = Components.ID("{d7dcbc77-edf4-40c8-9497-4dca4cf750c7}");
 const nsIDOMMozNetworkPoliciesManager   = Ci.nsIDOMMozNetworkPoliciesManager;
 
-// NetworkPolicies is not directly instantiated. It is used as interface.
-
 function NetworkPoliciesManager() {
-  debug("Constructor");
+  debug("NetworkPoliciesManager Constructor");
   this._connectionTypes = [ "wifi", "mobile" ];
 }
 
@@ -75,7 +147,7 @@ NetworkPoliciesManager.prototype = {
 
   get: function(appName) {
     debug("get policy for: " + appName);
-    return { app: appName };
+    return new NetworkPoliciesPolicy();
   },
 
   init: function(aWindow) {
@@ -109,7 +181,6 @@ NetworkPoliciesManager.prototype = {
 
   classID : NETWORKPOLICIESMANAGER_CID,
   QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesManager, Ci.nsIDOMGlobalPropertyInitializer]),
-
   classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICIESMANAGER_CID,
                                      contractID: NETWORKPOLICIESMANAGER_CONTRACTID,
                                      classDescription: "NetworkPoliciesManager",
@@ -118,4 +189,4 @@ NetworkPoliciesManager.prototype = {
 }
 
 const NSGetFactory = XPCOMUtils.generateNSGetFactory(
-                       [NetworkPoliciesManager])
+                       [NetworkPoliciesManager, NetworkPoliciesPolicy, NetworkPoliciesPolicyConnection])
