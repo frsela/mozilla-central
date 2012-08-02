@@ -37,25 +37,45 @@ const NETWORKPOLICIESPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPolicies
 const NETWORKPOLICIESPOLICYCONNECTION_CID        = Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
 const nsIDOMMozNetworkPoliciesPolicyConnection   = Ci.nsIDOMMozNetworkPoliciesPolicyConnection;
 
-function NetworkPoliciesPolicyConnection() {
+function NetworkPoliciesPolicyConnection(policyConnection) {
   debug("NetworkPoliciesPolicyConnection Constructor");
+  this.connectionType = policyConnection.connectionType || null;
+  this.allowed = policyConnection.allowed || false;
+  this.prefered = policyConnection.prefered || false;
+  this.max = policyConnection.max || 0;
 }
 
 NetworkPoliciesPolicyConnection.prototype = {
   get connectionType() {
-    return "wifi";
+    return this._connectionType;
+  },
+
+  set connectionType(aConnectionType) {
+    this._connectionType = aConnectionType;
   },
 
   get allowed() {
-    return true;
+    return this._allowed;
+  },
+
+  set allowed(aAllowed) {
+    this._allowed = aAllowed;
   },
 
   get prefered() {
-    return false;
+    return this._prefered;
+  },
+
+  set prefered(aPrefered) {
+    this._prefered = aPrefered;
   },
 
   get max() {
-    return 1000;
+    return this._max;
+  },
+
+  set max(aMax) {
+    this._max = aMax;
   },
 
   classID : NETWORKPOLICIESPOLICYCONNECTION_CID,
@@ -73,24 +93,48 @@ const NETWORKPOLICIESPOLICY_CID         = Components.ID("{9084e8d8-8c28-4017-a84
 const nsIDOMMozNetworkPoliciesPolicy    = Ci.nsIDOMMozNetworkPoliciesPolicy;
 
 
-function NetworkPoliciesPolicy() {
+function NetworkPoliciesPolicy(policy) {
   debug("NetworkPoliciesPolicy Constructor");
+  if(policy == null) {
+    this.app = "";
+    this.allowNetworkAccess = false;
+    this.policies = [];
+    return;
+  }
+
+  this.app = policy.app || "";
+  this.allowNetworkAccess = policy.allowNetworkAccess || false;
+  this.policies = policy.policies || [];
 }
 
 NetworkPoliciesPolicy.prototype = {
   get app() {
-    return "uno";
+    return this._app;
+  },
+
+  set app(aApp) {
+    this._app = aApp;
   },
 
   get allowNetworkAccess() {
-    return true;
+    return this._allowNetworkAccess;
+  },
+
+  set allowNetworkAccess(aAllowNetworkAccess) {
+    this._allowNetworkAccess = aAllowNetworkAccess;
   },
 
   get policies() {
+    return this._policies;
+  },
+
+  set policies(aPolicies) {
     let policies = [];
-    policies.push(new NetworkPoliciesPolicyConnection());
-    policies.push(new NetworkPoliciesPolicyConnection());
-    return policies;
+    debug(aPolicies);
+    for (let i in aPolicies) {
+      policies.push(new NetworkPoliciesPolicyConnection(aPolicies[i]));
+    }
+    this._policies = policies;
   },
 
   classID : NETWORKPOLICIESPOLICY_CID,
@@ -138,16 +182,33 @@ NetworkPoliciesManager.prototype = {
       return false;
     }
 
-    debug(JSON.stringify(policy));
-    if(!policy.app || policy.app == "") {
-      debug("default policy");
-    }
+    let _policy = new NetworkPoliciesPolicy(policy);
+    debug(JSON.stringify(_policy));
     return true;
   },
 
   get: function(appName) {
     debug("get policy for: " + appName);
-    return new NetworkPoliciesPolicy();
+    return new NetworkPoliciesPolicy(
+      {
+	app: appName,
+	allowNetworkAccess: true,
+	policies: [
+	  {
+	    connectionType: "wifi",
+	    allowed: true,
+	    prefered: true,
+	    max: 1000
+          },
+	  {
+	    connectionType: "mobile",
+	    allowed: true,
+	    prefered: false,
+	    max: 400
+          }
+        ]
+      }
+    );
   },
 
   init: function(aWindow) {
