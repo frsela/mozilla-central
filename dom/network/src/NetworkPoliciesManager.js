@@ -157,11 +157,6 @@ function NetworkPoliciesManager() {
 NetworkPoliciesManager.prototype = {
   __proto__: DOMRequestIpcHelper.prototype,
 
-  get installedApplications() {
-    debug("get installedApplications: " + JSON.stringify(NetworkPoliciesService.installedApplications));
-    return NetworkPoliciesService.installedApplications;
-  },
-
   get connectionTypes() {
     debug("get connectionTypes: " + JSON.stringify(NetworkPoliciesService.connectionTypes));
     return NetworkPoliciesService.connectionTypes;

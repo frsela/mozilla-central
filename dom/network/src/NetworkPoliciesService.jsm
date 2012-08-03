@@ -120,17 +120,6 @@ let NetworkPoliciesService = {
     return connTypes;
   },
 
-  get installedApplications() {
-    debug("installedApplications");
-    let apps = [];
-    // TODO: Recover apps.
-    apps.push("uno");
-    apps.push("dos");
-    apps.push("tres");
-    apps.push("cuatro");
-    return apps;
-  },
-
   setPolicy: function setPolicy(msg) {
     debug("setPolicy for: " + JSON.stringify(msg));
     let _policy = msg.data;
