@@ -377,8 +377,8 @@
 @BINPATH@/components/amWebInstallListener.js
 @BINPATH@/components/nsBlocklistService.js
 
-@BINPATH@/components/NetworkPolicies.js
-@BINPATH@/components/NetworkPolicies.manifest
+@BINPATH@/components/NetworkPoliciesManager.js
+@BINPATH@/components/NetworkPoliciesManager.manifest
 
 #ifdef MOZ_UPDATER
 @BINPATH@/components/nsUpdateService.manifest
