@@ -386,6 +386,9 @@ pref("dom.mozAlarms.enabled", true);
 // WebSettings
 pref("dom.mozSettings.enabled", true);
 
+// NetworkPolicies
+pref("dom.mozNetworkPolicies.enabled", true);
+
 // controls if we want camera support
 pref("device.camera.enabled", true);
 pref("media.realtime_decoder.enabled", true);
