@@ -40,5 +40,5 @@ interface nsIDOMMozNetworkPoliciesManager : nsISupports
   /**
    * Recover a policy
    */
-  jsval get(in DOMString application);
+  nsIDOMDOMRequest get(in DOMString application);
 };
