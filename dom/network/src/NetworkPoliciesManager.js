@@ -168,26 +168,34 @@ NetworkPoliciesManager.prototype = {
   },
 
   set: function(policy) {
-    debug("set new policy: " + JSON.stringify(policy));
-    let request = this.createRequest();
-    cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
-                                                  id: this.getRequestId(request)});
-    return request;
+    if(this.hasPrivileges) {
+      debug("set new policy: " + JSON.stringify(policy));
+      let request = this.createRequest();
+      cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
+                                                    id: this.getRequestId(request)});
+      return request;
+    } else {
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    }
   },
 
   get: function(appName) {
-    debug("get policy for: " + appName);
-    let request = this.createRequest();
-    cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
-                                                  id: this.getRequestId(request)});
-    return request;
+    if(this.hasPrivileges) {
+      debug("get policy for: " + appName);
+      let request = this.createRequest();
+      cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
+                                                    id: this.getRequestId(request)});
+      return request;
+    } else {
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    }
   },
 
   receiveMessage: function(aMessage) {
     debug("receiveMessage: " + aMessage.name);
     let msg = aMessage.json;
     let req = null;
-    
+
     switch(aMessage.name) {
       case "NetworkPolicies:Set:Return:OK":
       case "NetworkPolicies:Get:Return:OK":
@@ -218,26 +226,25 @@ NetworkPoliciesManager.prototype = {
 
   init: function(aWindow) {
     debug("init");
-/*
+
     // Set navigator.mozNetworkPolicies to null.
     if (!Services.prefs.getBoolPref("dom.mozNetworkPolicies.enabled")){
       return null;
     }
-*/
+
     this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK", "NetworkPolicies:Get:Return:KO",
                               "NetworkPolicies:Set:Return:OK", "NetworkPolicies:Set:Return:KO"]);
-/*
+
     let principal = aWindow.document.nodePrincipal;
     let secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].getService(Ci.nsIScriptSecurityManager);
 
     let perm = principal == secMan.getSystemPrincipal() ?
                  Ci.nsIPermissionManager.ALLOW_ACTION :
-                 Services.perms.testExactPermission(principal.URI, "networkpolicies-manager");
+                 Services.perms.testExactPermission(principal.URI, "networkpolicies-manage");
 
     // Only pages with perm set can use the netstats.
     this.hasPrivileges = perm == Ci.nsIPermissionManager.ALLOW_ACTION;
     debug("has privileges :" + this.hasPrivileges);
-*/
   },
 
   // Called from DOMRequestIpcHelper

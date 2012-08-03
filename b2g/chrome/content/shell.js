@@ -57,7 +57,7 @@ function addPermissions(urls) {
     'indexedDB-unlimited', 'webapps-manage', 'offline-app', 'pin-app',
     'websettings-read', 'websettings-readwrite',
     'content-camera', 'webcontacts-manage', 'wifi-manage', 'desktop-notification',
-    'geolocation', 'device-storage', 'alarms'
+    'geolocation', 'device-storage', 'alarms', 'networkpolicies-manage'
   ];
 
   urls.forEach(function(url) {
