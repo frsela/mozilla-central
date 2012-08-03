@@ -137,11 +137,11 @@ let NetworkPoliciesService = {
     let aErrorMsg = "";
 
     // TODO: Validate input data
-    if(typeof(_policy) != "object") {
-      aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
-    }
     if(_policy == null) {
       aErrorMsg = "Policy not valid";
+    }
+    if(typeof(_policy) != "object") {
+      aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
     }
     if(aErrorMsg != "") {
       ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
@@ -154,30 +154,39 @@ let NetworkPoliciesService = {
 
   getPolicy: function getPolicy(msg) {
     debug("getPolicy for: " + JSON.stringify(msg));
-//    let options = msg.data;
-//    debug("getstats for:-" + options.connectionType + "-");
+    let _appName = msg.data;
+    let aErrorMsg = "";
 
-//    if (!options.connectionType || options.connectionType.length == 0){
-//      this._db.findAll(
-//       function(result) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, stats: result }); }.bind(this),
-//        function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }.bind(this),
-//        options
-//      );
-//      return;
-//    }
-    
-    for (let i in this.connections){
-      if (this.connections[i] == options.connectionType){
-        this._db.find(
-          function(result) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, stats: result }); }.bind(this),
-          function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }.bind(this),
-          options
-        );
-        return;
-      }
+    // TODO: Validate input data
+    if(typeof(_appName) != "string") {
+      aErrorMsg = "Application name shall be a string";
+    }_appName
+    if(aErrorMsg != "") {
+      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
+      return;
     }
 
-    ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: "Error, invalid connection type" });
+    // TODO: Get policy
+    let _policy =  {
+      app: _appName,
+      allowNetworkAccess: true,
+      policies: [
+        {
+          connectionType: "wifi",
+          allowed: true,
+          prefered: true,
+          max: 1000
+        },
+        {
+          connectionType: "mobile",
+          allowed: true,
+          prefered: false,
+          max: 400
+        }
+      ]
+    };
+
+    ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: _policy });
   }
 };
 

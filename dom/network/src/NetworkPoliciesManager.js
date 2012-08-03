@@ -130,7 +130,6 @@ NetworkPoliciesPolicy.prototype = {
 
   set policies(aPolicies) {
     let policies = [];
-    debug(aPolicies);
     for (let i in aPolicies) {
       policies.push(new NetworkPoliciesPolicyConnection(aPolicies[i]));
     }
@@ -178,26 +177,10 @@ NetworkPoliciesManager.prototype = {
 
   get: function(appName) {
     debug("get policy for: " + appName);
-    return new NetworkPoliciesPolicy(
-      {
-	app: appName,
-	allowNetworkAccess: true,
-	policies: [
-	  {
-	    connectionType: "wifi",
-	    allowed: true,
-	    prefered: true,
-	    max: 1000
-          },
-	  {
-	    connectionType: "mobile",
-	    allowed: true,
-	    prefered: false,
-	    max: 400
-          }
-        ]
-      }
-    );
+    let request = this.createRequest();
+    cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
+                                                  id: this.getRequestId(request)});
+    return request;
   },
 
   receiveMessage: function(aMessage) {
@@ -207,6 +190,7 @@ NetworkPoliciesManager.prototype = {
     
     switch(aMessage.name) {
       case "NetworkPolicies:Set:Return:OK":
+      case "NetworkPolicies:Get:Return:OK":
         req = this.takeRequest(msg.id);
         if(req) {
           let _policy = new NetworkPoliciesPolicy(msg.policy);
