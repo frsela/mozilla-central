@@ -169,14 +169,11 @@ NetworkPoliciesManager.prototype = {
   },
 
   set: function(policy) {
-    debug("set new policy: " + policy);
-    if(typeof(policy) != "object") {
-      return false;
-    }
-
-    let _policy = new NetworkPoliciesPolicy(policy);
-    debug(JSON.stringify(_policy));
-    return true;
+    debug("set new policy: " + JSON.stringify(policy));
+    let request = this.createRequest();
+    cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
+                                                  id: this.getRequestId(request)});
+    return request;
   },
 
   get: function(appName) {
@@ -203,6 +200,38 @@ NetworkPoliciesManager.prototype = {
     );
   },
 
+  receiveMessage: function(aMessage) {
+    debug("receiveMessage: " + aMessage.name);
+    let msg = aMessage.json;
+    let req = null;
+    
+    switch(aMessage.name) {
+      case "NetworkPolicies:Set:Return:OK":
+        req = this.takeRequest(msg.id);
+        if(req) {
+          let _policy = new NetworkPoliciesPolicy(msg.policy);
+          debug("firing success: " + JSON.stringify(_policy));
+          Services.DOMRequest.fireSuccess(req, _policy);
+        } else {
+          debug("setPolicy: No request !")
+        }
+        break;
+
+      case "NetworkPolicies:Set:Return:KO":
+      case "NetworkPolicies:Get:Return:KO":
+        req = this.takeRequest(msg.id);
+        if(req) {
+          debug("firing error: " + msg.errorMsg);
+          Services.DOMRequest.fireError(req, msg.errorMsg);
+        }
+        break;
+
+      default:
+	debug("Wrong message: " + aMessage.name);
+    }
+    this.removeRequest(msg.id);
+  },
+
   init: function(aWindow) {
     debug("init");
 /*
@@ -210,10 +239,10 @@ NetworkPoliciesManager.prototype = {
     if (!Services.prefs.getBoolPref("dom.mozNetworkPolicies.enabled")){
       return null;
     }
-
+*/
     this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK", "NetworkPolicies:Get:Return:KO",
                               "NetworkPolicies:Set:Return:OK", "NetworkPolicies:Set:Return:KO"]);
-
+/*
     let principal = aWindow.document.nodePrincipal;
     let secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].getService(Ci.nsIScriptSecurityManager);
 

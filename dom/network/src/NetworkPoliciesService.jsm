@@ -131,16 +131,29 @@ let NetworkPoliciesService = {
     return apps;
   },
 
-  setPolicy: function setPolicy(policy) {
-    debug("setPolicy: " + JSON.stringify(policy));
-//    debug("Update stats for " + this.connections[connectionType]);
-//    if(!this.networkManager.getNetworkInterfaceStats(connectionType, this.networkStatsAvailable.bind(this))){
-//      debug("There is no interface registered for network type " + this.connections[connectionType]);
-//    }
+  setPolicy: function setPolicy(msg) {
+    debug("setPolicy for: " + JSON.stringify(msg));
+    let _policy = msg.data;
+    let aErrorMsg = "";
+
+    // TODO: Validate input data
+    if(typeof(_policy) != "object") {
+      aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
+    }
+    if(_policy == null) {
+      aErrorMsg = "Policy not valid";
+    }
+    if(aErrorMsg != "") {
+      ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
+      return;
+    }
+
+    // TODO: Set new policy
+    ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:OK", { id: msg.id, policy: _policy });
   },
 
-  getPolicy: function getPolicy(appName) {
-    debug("getPolicy for: " + appName);
+  getPolicy: function getPolicy(msg) {
+    debug("getPolicy for: " + JSON.stringify(msg));
 //    let options = msg.data;
 //    debug("getstats for:-" + options.connectionType + "-");
 

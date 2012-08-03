@@ -6,6 +6,8 @@
 
 #include "nsISupports.idl"
 
+interface nsIDOMDOMRequest;
+
 dictionary NetworkPoliciesPolicyConnection
 {
   DOMString connectionType;
@@ -34,7 +36,7 @@ interface nsIDOMMozNetworkPoliciesManager : nsISupports
    *
    * If policy.app is not provided, assing default policy
    */
-  boolean set(in jsval policy);
+  nsIDOMDOMRequest set(in jsval policy);
 
   /**
    * Recover a policy
