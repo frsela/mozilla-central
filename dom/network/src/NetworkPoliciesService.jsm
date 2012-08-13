@@ -43,6 +43,7 @@ let myGlobal = this;
 let NetworkPoliciesService = {
   policiesCache: null,
   cacheCounter: 0,
+  defaultPolicy: "_default",
 
   init: function() {
     debug("Service started");
@@ -121,6 +122,11 @@ let NetworkPoliciesService = {
     return connTypes;
   },
 
+  get defaultPolicyName() {
+    debug("defaultPolicyName");
+    return this.defaultPolicy;
+  },
+
   setPolicy: function setPolicy(msg) {
     debug("setPolicy for: " + JSON.stringify(msg));
     let _policy = msg.data;
@@ -155,6 +161,7 @@ let NetworkPoliciesService = {
   getPolicy: function getPolicy(msg) {
     debug("getPolicy for: " + JSON.stringify(msg));
     let _appName = msg.data;
+
     let aErrorMsg = "";
 
     // TODO: Validate input data
@@ -174,19 +181,34 @@ let NetworkPoliciesService = {
     } else {
       this._db.findPolicy(
         _appName,
-        function(result) { 
+        function(result) {
+          if (!result && _appName != this.defaultPolicy) {
+            // Not found, Recover default policy
+            debug("Not found policies for " + _appName + " - Recovering default one");
+            msg.data = this.defaultPolicy;
+            msg.realAppName = _appName;
+            this.getPolicy(msg);
+            return;
+          }
+
           ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: result });
 
-          debug("Add policies for " + _appName + " in cache");
-          if (result) {
-            this.policiesCache[_appName] = { value: result,
-                                             timestamp: new Date().getTime(),
-                                             queries: 1 };
-            this.cacheCounter++;
+          // Adding policy into cache
 
-            if (this.cacheCounter > CACHE_MAX_SIZE) {
-              this.freeCache();
-            }
+          // If response of the default policy, we got the real application name
+          if(_appName == this.defaultPolicy && msg.realAppName) {
+            _appName = msg.realAppName;
+          }
+
+          debug("Add policies for " + _appName + " in cache");
+
+          this.policiesCache[_appName] = { value: result,
+                                            timestamp: new Date().getTime(),
+                                            queries: 1 };
+          this.cacheCounter++;
+
+          if (this.cacheCounter > CACHE_MAX_SIZE) {
+            this.freeCache();
           }
         }.bind(this),
         function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }

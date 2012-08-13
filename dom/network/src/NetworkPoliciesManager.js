@@ -162,6 +162,11 @@ NetworkPoliciesManager.prototype = {
     return NetworkPoliciesService.connectionTypes;
   },
 
+  get defaultPolicyName() {
+    debug("get defaultPolicyName: " + JSON.stringify(NetworkPoliciesService.defaultPolicyName));
+    return NetworkPoliciesService.defaultPolicyName;
+  },
+
   set: function(policy) {
     if(this.hasPrivileges) {
       debug("set new policy: " + JSON.stringify(policy));
