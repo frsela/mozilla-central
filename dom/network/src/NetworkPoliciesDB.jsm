@@ -53,6 +53,12 @@ NetworkPoliciesDB.prototype = {
   },
 
   makeImport: function makeImport(aPolicy) {
+    if(aPolicy.app == null ||
+       aPolicy.allowNetworkAccess == null ||
+       aPolicy.policies == null
+      ) {
+      return null;
+    }
     let policy = {
       app:                 aPolicy.app,
       allowNetworkAccess:  aPolicy.allowNetworkAccess,
@@ -63,6 +69,10 @@ NetworkPoliciesDB.prototype = {
 
   addPolicy: function addPolicy(aPolicy, successCb, errorCb) {
     let policy = this.makeImport(aPolicy);
+    if(policy == null) {
+      errorCb("Policy definition error");
+      return;
+    }
 
     this.newTxn("readwrite", function(txn, store) {
       debug("Going to store " + JSON.stringify(policy));
