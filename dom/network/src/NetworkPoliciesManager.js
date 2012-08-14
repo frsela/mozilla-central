@@ -201,9 +201,19 @@ NetworkPoliciesManager.prototype = {
       case "NetworkPolicies:Get:Return:OK":
         req = this.takeRequest(msg.id);
         if(req) {
-          let _policy = new NetworkPoliciesPolicy(msg.policy);
-          debug("firing success: " + JSON.stringify(_policy));
-          Services.DOMRequest.fireSuccess(req, _policy);
+          debug(JSON.stringify(msg));
+          if(msg.policy) {
+            let _policy = new NetworkPoliciesPolicy(msg.policy);
+            debug("firing success: " + JSON.stringify(_policy));
+            Services.DOMRequest.fireSuccess(req, _policy);
+          } else {
+            let _policies = [];
+            for(let _policy in msg.policies) {
+              _policies.push(new NetworkPoliciesPolicy(msg.policies[_policy]));
+            }
+            debug("firing success: " + JSON.stringify(_policies));
+            Services.DOMRequest.fireSuccess(req, _policies);
+          }
         } else {
           debug("setPolicy: No request !")
         }

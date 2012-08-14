@@ -121,9 +121,22 @@ NetworkPoliciesDB.prototype = {
 
     }.bind(this), aSuccessCb, aFailureCb);
   },
+  
+  getAllPolicies: function getAllPolicies(aSuccessCb, aFailureCb) {
+    debug("getAllPolicies");
+
+    this.newTxn("readonly", function (txn, store) {
+      if (!txn.result)
+        txn.result = [];
+
+      store.mozGetAll().onsuccess = function onsuccess(event) {
+        txn.result = event.target.result;
+        debug("getAllPolicies - request successful. Record count: " + txn.result.length + " = " + JSON.stringify(txn.result));
+      }
+    }, aSuccessCb, aFailureCb);
+  },
 
   init: function init(aGlobal) {
       this.initDBHelper(DB_NAME, DB_VERSION, STORE_NAME, aGlobal);
   }
 };
-

@@ -56,7 +56,7 @@ let NetworkPoliciesService = {
     this.connections[NETWORK_TYPE_WIFI] = "wifi";
     this.connections[NETWORK_TYPE_MOBILE] = "mobile";
 
-    this.messages = ["NetworkPolicies:Get", "NetworkPolicies:Set"];
+    this.messages = ["NetworkPolicies:GetAll", "NetworkPolicies:Get", "NetworkPolicies:Set"];
     this.messages.forEach(function(msgName) {
       ppmm.addMessageListener(msgName, this);
     }, this);
@@ -84,7 +84,11 @@ let NetworkPoliciesService = {
     let msg = aMessage.json;
     switch (aMessage.name) {
       case "NetworkPolicies:Get":
-        this.getPolicy(msg);
+        if(msg.data == "") {        // All policies?
+          this.getAllPolicies(msg);
+        } else {
+          this.getPolicy(msg);
+        }
         break;
       case "NetworkPolicies:Set":
         this.setPolicy(msg);
@@ -214,6 +218,14 @@ let NetworkPoliciesService = {
         function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
       );
     }
+  },
+
+  getAllPolicies: function getAllPolicies(msg) {
+    debug("getAllPolicies");
+    this._db.getAllPolicies(
+      function(aResult) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policies: aResult }); },
+      function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
+    );
   },
 
   freeCache: function freeCache() {
