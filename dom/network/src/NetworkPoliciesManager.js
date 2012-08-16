@@ -191,6 +191,15 @@ NetworkPoliciesManager.prototype = {
     }
   },
 
+  getSync: function(appName) {
+    if(this.hasPrivileges) {
+      debug("get policy (synchronously) for: " + appName);
+      return NetworkPoliciesService.getPolicySync(appName);
+    } else {
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    }
+  },
+
   receiveMessage: function(aMessage) {
     debug("receiveMessage: " + aMessage.name);
     let msg = aMessage.json;

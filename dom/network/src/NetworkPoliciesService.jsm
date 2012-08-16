@@ -77,7 +77,7 @@ let NetworkPoliciesCache = {
 
     this.policiesCache[_key].queries++;
     debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[_key].queries + " times");
-    return this.policiesCache[_key];
+    return this.policiesCache[_key].value;
   },
   
   free: function free() {
@@ -268,6 +268,11 @@ let NetworkPoliciesService = {
         function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
       );
     }
+  },
+
+  getPolicySync: function getSync(appName) {
+    debug("getPolicy synchronous for: " + appName);
+    return NetworkPoliciesCache.read(appName);
   },
 
   getAllPolicies: function getAllPolicies(msg) {
