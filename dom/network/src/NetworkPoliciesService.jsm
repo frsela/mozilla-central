@@ -40,9 +40,74 @@ XPCOMUtils.defineLazyGetter(this, "ppmm", function() {
 
 let myGlobal = this;
 
-let NetworkPoliciesService = {
+// NetworkPoliciesCache
+let NetworkPoliciesCache = {
   policiesCache: null,
   cacheCounter: 0,
+
+  init: function() {
+    debug("NetworkPoliciesCache: init");
+    this.policiesCache = Object.create(null);
+  },
+
+  write: function write(_key, _value) {
+    debug("NetworkPoliciesCache: write");
+
+    if (this.policiesCache[_key]) {
+      debug("NetworkPoliciesCache: Update cache for " + _key);
+      this.policiesCache[_key].value = _value;
+    } else {
+      debug("NetworkPoliciesCache: Add " + _key + " in cache");
+      this.policiesCache[_key] = { value: _value,
+                                        timestamp: new Date().getTime(),
+                                        queries: 1 };
+      this.cacheCounter++;
+      if (this.cacheCounter > CACHE_MAX_SIZE) {
+        this.freeCache();
+      }
+    }
+  },
+
+  read: function read(_key) {
+    debug("NetworkPoliciesCache: read");
+    if (!this.policiesCache[_key]) {
+      debug("NetworkPoliciesCache: Not found ! ");
+      return null;
+    }
+
+    this.policiesCache[_key].queries++;
+    debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[_key].queries + " times");
+    return this.policiesCache[_key];
+  },
+  
+  free: function free() {
+    debug("NetworkPoliciesCache: free");
+    debug(JSON.stringify(this.policiesCache));
+
+    let time = new Date().getTime();
+    debug("NetworkPoliciesCache: Free time threshold: " + time);
+    let alfa = 0;
+    let itemId = null;
+    for (let i in this.policiesCache) {
+      let itemAlfa = (time - this.policiesCache[i].timestamp) / this.policiesCache[i].queries;
+      debug("Alfa for " + i + ": " + itemAlfa);
+      if (itemAlfa > alfa) {
+        alfa = itemAlfa;
+        itemId = i;
+      }
+    }
+
+    if (itemId) {
+      delete this.policiesCache[itemId];
+      this.cacheCounter--;
+    }
+
+    debug(JSON.stringify(this.policiesCache));
+  }
+}
+
+// NetworkPoliciesService
+let NetworkPoliciesService = {
   defaultPolicy: "_default",
 
   init: function() {
@@ -76,7 +141,7 @@ let NetworkPoliciesService = {
     } catch(e) { debug(e); }
 */
 
-    this.policiesCache = Object.create(null);
+    NetworkPoliciesCache.init();
   },
 
   receiveMessage: function(aMessage) {
@@ -153,10 +218,8 @@ let NetworkPoliciesService = {
       function(result) { 
         ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:OK", { id: msg.id, policy: result });
 
-        if (this.policiesCache[_policy.app]) {
-          debug("Update cache for " + _policy.app);
-          this.policiesCache[_policy.app].value = _policy;
-        }
+        // Update cache
+        NetworkPoliciesCache.write(_policy.app, _policy);
       }.bind(this),
       function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
     );
@@ -177,11 +240,9 @@ let NetworkPoliciesService = {
       return;
     }
 
-    if (this.policiesCache[_appName]) {
+    if (NetworkPoliciesCache.read(_appName)) {
       debug("Return policy from cache");
-      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: this.policiesCache[_appName].value });
-
-      this.policiesCache[_appName].queries++;
+      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: NetworkPoliciesCache.read(_appName) });
     } else {
       this._db.findPolicy(
         _appName,
@@ -198,22 +259,11 @@ let NetworkPoliciesService = {
           ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: result });
 
           // Adding policy into cache
-
           // If response of the default policy, we got the real application name
           if(_appName == this.defaultPolicy && msg.realAppName) {
             _appName = msg.realAppName;
           }
-
-          debug("Add policies for " + _appName + " in cache");
-
-          this.policiesCache[_appName] = { value: result,
-                                            timestamp: new Date().getTime(),
-                                            queries: 1 };
-          this.cacheCounter++;
-
-          if (this.cacheCounter > CACHE_MAX_SIZE) {
-            this.freeCache();
-          }
+          NetworkPoliciesCache.write(_appName, result);
         }.bind(this),
         function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
       );
@@ -223,34 +273,17 @@ let NetworkPoliciesService = {
   getAllPolicies: function getAllPolicies(msg) {
     debug("getAllPolicies");
     this._db.getAllPolicies(
-      function(aResult) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policies: aResult }); },
+      function(aResult) {
+        // Update cache for all
+        for(let _policy in aResult) {
+          NetworkPoliciesCache.write(aResult[_policy].app, aResult[_policy]);
+        }
+
+        // notify result
+        ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policies: aResult }); 
+      },
       function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
     );
-  },
-
-  freeCache: function freeCache() {
-    debug("Free cache");
-    debug(JSON.stringify(this.policiesCache));
-
-    let time = new Date().getTime();
-    debug("Free time threshold: " + time);
-    let alfa = 0;
-    let itemId = null;
-    for (let i in this.policiesCache) {
-      let itemAlfa = (time - this.policiesCache[i].timestamp) / this.policiesCache[i].queries;
-      debug("Alfa for " + i + ": " + itemAlfa);
-      if (itemAlfa > alfa) {
-        alfa = itemAlfa;
-        itemId = i;
-      }
-    }
-
-    if (itemId) {
-      delete this.policiesCache[itemId];
-      this.cacheCounter--;
-    }
-
-    debug(JSON.stringify(this.policiesCache));
   }
 };
 
