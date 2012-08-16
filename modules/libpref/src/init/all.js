@@ -3646,6 +3646,9 @@ pref("dom.mozAlarms.enabled", false);
 // WebSettings
 pref("dom.mozSettings.enabled", false);
 
+// NetworkPolicies
+pref("dom.mozNetworkPolicies.enabled", false);
+
 // enable JS dump() function.
 pref("browser.dom.window.dump.enabled", false);
 
