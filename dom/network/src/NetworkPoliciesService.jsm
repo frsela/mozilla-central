@@ -76,7 +76,7 @@ let NetworkPoliciesCache = {
     }
 
     this.policiesCache[_key].queries++;
-    debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[_key].queries + " times");
+    debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[_key].queries + " times. Value = " + JSON.stringify(this.policiesCache[_key].value));
     return this.policiesCache[_key].value;
   },
   
@@ -121,7 +121,11 @@ let NetworkPoliciesService = {
     this.connections[NETWORK_TYPE_WIFI] = "wifi";
     this.connections[NETWORK_TYPE_MOBILE] = "mobile";
 
-    this.messages = ["NetworkPolicies:GetAll", "NetworkPolicies:Get", "NetworkPolicies:Set"];
+    this.messages = [
+      "NetworkPolicies:GetConnectionTypes", "NetworkPolicies:GetDefaultPolicyName",
+      "NetworkPolicies:GetAll", "NetworkPolicies:Get",
+      "NetworkPolicies:Set"
+    ];
     this.messages.forEach(function(msgName) {
       ppmm.addMessageListener(msgName, this);
     }, this);
@@ -148,13 +152,25 @@ let NetworkPoliciesService = {
     debug("receiveMessage " + aMessage.name);
     let msg = aMessage.json;
     switch (aMessage.name) {
+      case "NetworkPolicies:GetConnectionTypes":
+        return this.connectionTypes;
+
+      case "NetworkPolicies:GetDefaultPolicyName":
+        return this.defaultPolicyName;
+
       case "NetworkPolicies:Get":
+        if(aMessage.sync) {
+          return this.getPolicySync(msg);
+        }
+
+        // Async
         if(msg.data == "") {        // All policies?
           this.getAllPolicies(msg);
         } else {
           this.getPolicy(msg);
         }
         break;
+
       case "NetworkPolicies:Set":
         this.setPolicy(msg);
         break;
@@ -259,7 +275,7 @@ let NetworkPoliciesService = {
           ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: result });
 
           // Adding policy into cache
-          // If response of the default policy, we got the real application name
+          // If response is the default policy, we got the real application name
           if(_appName == this.defaultPolicy && msg.realAppName) {
             _appName = msg.realAppName;
           }
@@ -270,9 +286,9 @@ let NetworkPoliciesService = {
     }
   },
 
-  getPolicySync: function getSync(appName) {
-    debug("getPolicy synchronous for: " + appName);
-    return NetworkPoliciesCache.read(appName);
+  getPolicySync: function getSync(msg) {
+    debug("getPolicy synchronous for: " + JSON.stringify(msg));
+    return NetworkPoliciesCache.read(msg.data);
   },
 
   getAllPolicies: function getAllPolicies(msg) {

@@ -26,7 +26,9 @@ XPCOMUtils.defineLazyGetter(Services, "DOMRequest", function() {
 });
 
 XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
-  return Cc["@mozilla.org/childprocessmessagemanager;1"].getService(Ci.nsIFrameMessageManager);
+  return Cc["@mozilla.org/childprocessmessagemanager;1"]
+                .getService(Ci.nsIFrameMessageManager)
+                .QueryInterface(Ci.nsISyncMessageSender);
 });
 
 const nsIClassInfo                      = Ci.nsIClassInfo;
@@ -158,13 +160,21 @@ NetworkPoliciesManager.prototype = {
   __proto__: DOMRequestIpcHelper.prototype,
 
   get connectionTypes() {
-    debug("get connectionTypes: " + JSON.stringify(NetworkPoliciesService.connectionTypes));
-    return NetworkPoliciesService.connectionTypes;
+    debug("get connectionTypes");
+    if(this.hasPrivileges) {
+      return cpmm.sendSyncMessage("NetworkPolicies:GetConnectionTypes")[0];
+    } else {
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    }
   },
 
   get defaultPolicyName() {
     debug("get defaultPolicyName: " + JSON.stringify(NetworkPoliciesService.defaultPolicyName));
-    return NetworkPoliciesService.defaultPolicyName;
+    if(this.hasPrivileges) {
+      return cpmm.sendSyncMessage("NetworkPolicies:GetDefaultPolicyName")[0];
+    } else {
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    }
   },
 
   set: function(policy) {
@@ -194,7 +204,7 @@ NetworkPoliciesManager.prototype = {
   getSync: function(appName) {
     if(this.hasPrivileges) {
       debug("get policy (synchronously) for: " + appName);
-      return NetworkPoliciesService.getPolicySync(appName);
+      return cpmm.sendSyncMessage("NetworkPolicies:Get", {data: appName})[0];
     } else {
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
     }
