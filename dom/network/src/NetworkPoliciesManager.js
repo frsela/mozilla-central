@@ -33,22 +33,22 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
 
 const nsIClassInfo                      = Ci.nsIClassInfo;
 
-// NetworkPoliciesPolicyConnection & NetworkPoliciesPolicy are not directly instantiated. They are used as interfaces.
+// NetworkPolicyConnection & NetworkPolicy are not directly instantiated. They are used as interfaces.
 
-// NetworkPoliciesPolicyConnection
-const NETWORKPOLICIESPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPoliciesPolicyConnection;1";
-const NETWORKPOLICIESPOLICYCONNECTION_CID        = Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
-const nsIDOMMozNetworkPoliciesPolicyConnection   = Ci.nsIDOMMozNetworkPoliciesPolicyConnection;
+// NetworkPolicyConnection
+const NETWORKPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPolicyConnection;1";
+const NETWORKPOLICYCONNECTION_CID        = Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
+const nsIDOMMozNetworkPolicyConnection   = Ci.nsIDOMMozNetworkPolicyConnection;
 
-function NetworkPoliciesPolicyConnection(policyConnection) {
-  debug("NetworkPoliciesPolicyConnection Constructor");
+function NetworkPolicyConnection(policyConnection) {
+  debug("NetworkPolicyConnection Constructor");
   this.connectionType = policyConnection.connectionType || null;
   this.allowed = policyConnection.allowed || false;
   this.prefered = policyConnection.prefered || false;
   this.max = policyConnection.max || 0;
 }
 
-NetworkPoliciesPolicyConnection.prototype = {
+NetworkPolicyConnection.prototype = {
   get connectionType() {
     return this._connectionType;
   },
@@ -81,22 +81,22 @@ NetworkPoliciesPolicyConnection.prototype = {
     this._max = aMax;
   },
 
-  classID : NETWORKPOLICIESPOLICYCONNECTION_CID,
-  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesPolicyConnection, Ci.nsIDOMGlobalPropertyInitializer]),
-  classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICIESPOLICYCONNECTION_CID,
-                                     contractID: NETWORKPOLICIESPOLICYCONNECTION_CONTRACTID,
-                                     classDescription: "NetworkPoliciesPolicyConnection",
-                                     interfaces: [nsIDOMMozNetworkPoliciesPolicyConnection],
+  classID : NETWORKPOLICYCONNECTION_CID,
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicyConnection, Ci.nsIDOMGlobalPropertyInitializer]),
+  classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICYCONNECTION_CID,
+                                     contractID: NETWORKPOLICYCONNECTION_CONTRACTID,
+                                     classDescription: "NetworkPolicyConnection",
+                                     interfaces: [nsIDOMMozNetworkPolicyConnection],
                                      flags: nsIClassInfo.DOM_OBJECT})
 }
 
-// NetworkPoliciesPolicy
-const NETWORKPOLICIESPOLICY_CONTRACTID  = "@mozilla.org/networkPoliciesPolicy;1";
-const NETWORKPOLICIESPOLICY_CID         = Components.ID("{9084e8d8-8c28-4017-a843-5dad38f18daf}");
-const nsIDOMMozNetworkPoliciesPolicy    = Ci.nsIDOMMozNetworkPoliciesPolicy;
+// NetworkPolicy
+const NETWORKPOLICY_CONTRACTID  = "@mozilla.org/networkPolicy;1";
+const NETWORKPOLICY_CID         = Components.ID("{9084e8d8-8c28-4017-a843-5dad38f18daf}");
+const nsIDOMMozNetworkPolicy    = Ci.nsIDOMMozNetworkPolicy;
 
-function NetworkPoliciesPolicy(policy) {
-  debug("NetworkPoliciesPolicy Constructor");
+function NetworkPolicy(policy) {
+  debug("NetworkPolicy Constructor");
   if(policy == null) {
     this.app = "";
     this.allowNetworkAccess = false;
@@ -109,7 +109,7 @@ function NetworkPoliciesPolicy(policy) {
   this.policies = policy.policies || [];
 }
 
-NetworkPoliciesPolicy.prototype = {
+NetworkPolicy.prototype = {
   get app() {
     return this._app;
   },
@@ -133,17 +133,17 @@ NetworkPoliciesPolicy.prototype = {
   set policies(aPolicies) {
     let policies = [];
     for (let i in aPolicies) {
-      policies.push(new NetworkPoliciesPolicyConnection(aPolicies[i]));
+      policies.push(new NetworkPolicyConnection(aPolicies[i]));
     }
     this._policies = policies;
   },
 
-  classID : NETWORKPOLICIESPOLICY_CID,
-  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesPolicy, Ci.nsIDOMGlobalPropertyInitializer]),
-  classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICIESPOLICY_CID,
-                                     contractID: NETWORKPOLICIESPOLICY_CONTRACTID,
-                                     classDescription: "NetworkPoliciesPolicy",
-                                     interfaces: [nsIDOMMozNetworkPoliciesPolicy],
+  classID : NETWORKPOLICY_CID,
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicy, Ci.nsIDOMGlobalPropertyInitializer]),
+  classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICY_CID,
+                                     contractID: NETWORKPOLICY_CONTRACTID,
+                                     classDescription: "NetworkPolicy",
+                                     interfaces: [nsIDOMMozNetworkPolicy],
                                      flags: nsIClassInfo.DOM_OBJECT})
 }
 
@@ -172,6 +172,15 @@ NetworkPoliciesManager.prototype = {
     debug("get defaultPolicyName: " + JSON.stringify(NetworkPoliciesService.defaultPolicyName));
     if(this.hasPrivileges) {
       return cpmm.sendSyncMessage("NetworkPolicies:GetDefaultPolicyName")[0];
+    } else {
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    }
+  },
+
+  get interfacePolicyName() {
+    debug("get interfacePolicyName: " + JSON.stringify(NetworkPoliciesService.interfacePolicyName));
+    if(this.hasPrivileges) {
+      return cpmm.sendSyncMessage("NetworkPolicies:GetInterfacePolicyName")[0];
     } else {
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
     }
@@ -222,13 +231,13 @@ NetworkPoliciesManager.prototype = {
         if(req) {
           debug(JSON.stringify(msg));
           if(msg.policy) {
-            let _policy = new NetworkPoliciesPolicy(msg.policy);
+            let _policy = new NetworkPolicy(msg.policy);
             debug("firing success: " + JSON.stringify(_policy));
             Services.DOMRequest.fireSuccess(req, _policy);
           } else {
             let _policies = [];
             for(let _policy in msg.policies) {
-              _policies.push(new NetworkPoliciesPolicy(msg.policies[_policy]));
+              _policies.push(new NetworkPolicy(msg.policies[_policy]));
             }
             debug("firing success: " + JSON.stringify(_policies));
             Services.DOMRequest.fireSuccess(req, _policies);
@@ -292,4 +301,4 @@ NetworkPoliciesManager.prototype = {
 }
 
 const NSGetFactory = XPCOMUtils.generateNSGetFactory(
-                       [NetworkPoliciesManager, NetworkPoliciesPolicy, NetworkPoliciesPolicyConnection])
+                       [NetworkPoliciesManager, NetworkPolicy, NetworkPolicyConnection])

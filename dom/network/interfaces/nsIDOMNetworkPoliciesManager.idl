@@ -8,7 +8,7 @@
 
 interface nsIDOMDOMRequest;
 
-dictionary NetworkPoliciesPolicyConnection
+dictionary NetworkPolicyConnection
 {
   DOMString connectionType;
   boolean allowed;
@@ -16,11 +16,11 @@ dictionary NetworkPoliciesPolicyConnection
   long max;
 };
 
-dictionary NetworkPoliciesPolicy
+dictionary NetworkPolicy
 {
   DOMString app;
   boolean allowNetworkAccess;
-  jsval policies;                                  // NetworkPoliciesPolicyConnection[]
+  jsval policies;                                  // NetworkPolicyConnection[]
 };
 
 [scriptable, uuid(d7dcbc77-edf4-40c8-9497-4dca4cf750c7)]
@@ -28,23 +28,53 @@ interface nsIDOMMozNetworkPoliciesManager : nsISupports
 {
   readonly attribute jsval connectionTypes;             // DOMString[]
   readonly attribute DOMString defaultPolicyName;       // Name for the default settings (to be used instead the application name)
+  readonly attribute DOMString interfacePolicyName;     // Name for the global interface policy (to be used instead the application name)
 
   /**
-   * Assing new policy
+   * Set a policy
    *
-   * typeof policies = NetworkPoliciesPolicy
+   * @param policy [optional]
+   *        A NetworkPolicy object that describes the policy to put
+   *        in effect. If `policy.app` is `defaultPolicyName`,
+   *        the default network policy is affected.
+   *        If `policy.app` is `interfacePolicyName`,
+   *        the generic interface policy is affected.
    *
-   * If policy.app is not provided, assing default policy
+   * @return NetworkPolicy object with the new policy
    */
   nsIDOMDOMRequest set(in jsval policy);
 
   /**
-   * Recover a policy
+   * Get a policy
+   *
+   * @param application
+   *        Application name to recover policies.
+   *        If application is an empty string, all stored policies
+   *        will be delivered. If application is `defaultPolicyName`,
+   *        the default network policy is affected.
+   *        If application is `interfacePolicyName`,
+   *        the generic interface policy is affected.
+   *
+   * @return NetworkPolicy object with the queried policy.
+   *         If all policies should be returned, an array of
+   *         NetworkPolicy objects will be returned.
    */
   nsIDOMDOMRequest get(in DOMString application);
 
   /**
-   * Recover a policy synchronously
+   * Get a policy synchronously (if previously cached)
+   *
+   * @param application
+   *        Application name to recover policies.
+   *        If application is `defaultPolicyName`,
+   *        the default network policy is affected.
+   *        If application is `interfacePolicyName`,
+   *        the generic interface policy is affected.
+   *
+   * @return NetworkPolicy object with the queried policy.
+   *         If not cached, null will be returned.
    */
   jsval getSync(in DOMString application);
+
+
 };

@@ -108,7 +108,8 @@ let NetworkPoliciesCache = {
 
 // NetworkPoliciesService
 let NetworkPoliciesService = {
-  defaultPolicy: "_default",
+  defaultPolicy: "__default_policy__",
+  interfacePolicy: "__interface_policy__",
 
   init: function() {
     debug("Service started");
@@ -122,7 +123,9 @@ let NetworkPoliciesService = {
     this.connections[NETWORK_TYPE_MOBILE] = "mobile";
 
     this.messages = [
-      "NetworkPolicies:GetConnectionTypes", "NetworkPolicies:GetDefaultPolicyName",
+      "NetworkPolicies:GetConnectionTypes",
+      "NetworkPolicies:GetDefaultPolicyName",
+      "NetworkPolicies:GetInterfacePolicyName",
       "NetworkPolicies:GetAll", "NetworkPolicies:Get",
       "NetworkPolicies:Set"
     ];
@@ -157,6 +160,9 @@ let NetworkPoliciesService = {
 
       case "NetworkPolicies:GetDefaultPolicyName":
         return this.defaultPolicyName;
+
+      case "NetworkPolicies:GetInterfacePolicyName":
+        return this.interfacePolicyName;
 
       case "NetworkPolicies:Get":
         if(aMessage.sync) {
@@ -210,6 +216,11 @@ let NetworkPoliciesService = {
   get defaultPolicyName() {
     debug("defaultPolicyName");
     return this.defaultPolicy;
+  },
+
+  get interfacePolicyName() {
+    debug("interfacePolicyName");
+    return this.interfacePolicy;
   },
 
   setPolicy: function setPolicy(msg) {
