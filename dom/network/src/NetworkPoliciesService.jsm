@@ -139,16 +139,6 @@ let NetworkPoliciesService = {
     this._db = new NetworkPoliciesDB(myGlobal);
     this._db.init(myGlobal);
 
-/*    try {
-      let hosts = Services.prefs.getCharPref("dom.mozNetworkPolicies.whitelist")
-      hosts.split(",").forEach(function(aHost) {
-        if (aHost)
-          Services.perms.add(Services.io.newURI(aHost, null, null), "networkpolicies-manage",
-                             Ci.nsIPermissionManager.ALLOW_ACTION);
-      });
-    } catch(e) { debug(e); }
-*/
-
     NetworkPoliciesCache.init();
   },
 
