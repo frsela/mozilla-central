@@ -22,8 +22,6 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
 
 const nsIClassInfo = Ci.nsIClassInfo;
 
-// NetworkPolicyConnection & NetworkPolicy are not directly instantiated. They are used as interfaces.
-
 // NetworkPolicyConnection
 const NETWORKPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPolicyConnection;1";
 const NETWORKPOLICYCONNECTION_CID        = Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
