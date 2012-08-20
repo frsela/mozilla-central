@@ -14,10 +14,6 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/DOMRequestHelper.jsm");
 Cu.import("resource://gre/modules/NetworkPoliciesService.jsm");
 
-XPCOMUtils.defineLazyGetter(Services, "DOMRequest", function() {
-  return Cc["@mozilla.org/dom/dom-request-service;1"].getService(Ci.nsIDOMRequestService);
-});
-
 XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
   return Cc["@mozilla.org/childprocessmessagemanager;1"]
                 .getService(Ci.nsIFrameMessageManager)
