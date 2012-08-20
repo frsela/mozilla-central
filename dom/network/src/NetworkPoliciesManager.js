@@ -94,64 +94,58 @@ function NetworkPoliciesManager() {
 NetworkPoliciesManager.prototype = {
   __proto__: DOMRequestIpcHelper.prototype,
 
+  checkPrivileges: function() {
+    if(!this.hasPrivileges) {
+      throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+    }
+  },
+
   get connectionTypes() {
     debug("get connectionTypes");
-    if (this.hasPrivileges) {
-      return cpmm.sendSyncMessage("NetworkPolicies:GetConnectionTypes")[0];
-    } else {
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    }
+    this.checkPrivileges();
+
+    return cpmm.sendSyncMessage("NetworkPolicies:GetConnectionTypes")[0];
   },
 
   get defaultPolicyName() {
     debug("get defaultPolicyName: " + JSON.stringify(NetworkPoliciesService.defaultPolicyName));
-    if (this.hasPrivileges) {
-      return cpmm.sendSyncMessage("NetworkPolicies:GetDefaultPolicyName")[0];
-    } else {
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    }
+    this.checkPrivileges();
+
+    return cpmm.sendSyncMessage("NetworkPolicies:GetDefaultPolicyName")[0];
   },
 
   get interfacePolicyName() {
     debug("get interfacePolicyName: " + JSON.stringify(NetworkPoliciesService.interfacePolicyName));
-    if (this.hasPrivileges) {
-      return cpmm.sendSyncMessage("NetworkPolicies:GetInterfacePolicyName")[0];
-    } else {
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    }
+    this.checkPrivileges();
+
+    return cpmm.sendSyncMessage("NetworkPolicies:GetInterfacePolicyName")[0];
   },
 
   set: function(policy) {
-    if (this.hasPrivileges) {
-      debug("set new policy: " + JSON.stringify(policy));
-      let request = this.createRequest();
-      cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
-                                                    id: this.getRequestId(request)});
-      return request;
-    } else {
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    }
+    debug("set new policy: " + JSON.stringify(policy));
+    this.checkPrivileges();
+
+    let request = this.createRequest();
+    cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
+                                                  id: this.getRequestId(request)});
+    return request;
   },
 
   get: function(appName) {
-    if (this.hasPrivileges) {
-      debug("get policy for: " + appName);
-      let request = this.createRequest();
-      cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
-                                                    id: this.getRequestId(request)});
-      return request;
-    } else {
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    }
+    debug("get policy for: " + appName);
+    this.checkPrivileges();
+
+    let request = this.createRequest();
+    cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
+                                                  id: this.getRequestId(request)});
+    return request;
   },
 
   getSync: function(appName) {
-    if (this.hasPrivileges) {
-      debug("get policy (synchronously) for: " + appName);
-      return cpmm.sendSyncMessage("NetworkPolicies:Get", {data: appName})[0];
-    } else {
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    }
+    debug("get policy (synchronously) for: " + appName);
+    this.checkPrivileges();
+
+    return cpmm.sendSyncMessage("NetworkPolicies:Get", {data: appName})[0];
   },
 
   receiveMessage: function(aMessage) {
