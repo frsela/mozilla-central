@@ -4,14 +4,10 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = ['NetworkPoliciesDB'];
+// set to true to see debug messages
+const DEBUG = true;
 
-let DEBUG = true;
-if (DEBUG) {
-  debug = function (s) { dump("-*- NetworkPoliciesDB: " + s + "\n"); }
-} else {
-  debug = function (s) {}
-}
+const EXPORTED_SYMBOLS = ['NetworkPoliciesDB'];
 
 const Cu = Components.utils;
 const Cc = Components.classes;
@@ -144,3 +140,12 @@ NetworkPoliciesDB.prototype = {
       this.initDBHelper(DB_NAME, DB_VERSION, STORE_NAME, aGlobal);
   }
 };
+
+let debug;
+if (DEBUG) {
+  debug = function (s) {
+    dump("-*- NetworkPoliciesDB: " + s + "\n");
+  };
+} else {
+  debug = function (s) {};
+}

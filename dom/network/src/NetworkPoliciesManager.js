@@ -4,12 +4,8 @@
 
 "use strict"
 
-let DEBUG = true;
-if (DEBUG) {
-  debug = function (s) { dump("-*- NetworkPoliciesManager: " + s + "\n"); }
-} else {
-  debug = function (s) {}
-}
+// set to true to see debug messages
+const DEBUG = true;
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -301,3 +297,12 @@ NetworkPoliciesManager.prototype = {
 
 const NSGetFactory = XPCOMUtils.generateNSGetFactory(
                        [NetworkPoliciesManager, NetworkPolicy, NetworkPolicyConnection])
+
+let debug;
+if (DEBUG) {
+  debug = function (s) {
+    dump("-*- NetworkPoliciesManager: " + s + "\n");
+  };
+} else {
+  debug = function (s) {};
+}

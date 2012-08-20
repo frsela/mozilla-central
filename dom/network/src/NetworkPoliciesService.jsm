@@ -4,14 +4,8 @@
 
 "use strict";
 
-let DEBUG = true;
-if (DEBUG) {
-  debug = function (s) {
-    dump("-*- NetworkPoliciesService: " + s + "\n");
-  };
-} else {
-  debug = function (s) {};
-}
+// set to true to see debug messages
+const DEBUG = true;
 
 const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;
 
@@ -320,3 +314,12 @@ let NetworkPoliciesService = {
 };
 
 NetworkPoliciesService.init();
+
+let debug;
+if (DEBUG) {
+  debug = function (s) {
+    dump("-*- NetworkPoliciesService: " + s + "\n");
+  };
+} else {
+  debug = function (s) {};
+}
