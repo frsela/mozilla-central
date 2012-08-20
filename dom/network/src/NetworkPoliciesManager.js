@@ -36,38 +36,6 @@ function NetworkPolicyConnection(policyConnection) {
 }
 
 NetworkPolicyConnection.prototype = {
-  get connectionType() {
-    return this._connectionType;
-  },
-
-  set connectionType(aConnectionType) {
-    this._connectionType = aConnectionType;
-  },
-
-  get allowed() {
-    return this._allowed;
-  },
-
-  set allowed(aAllowed) {
-    this._allowed = aAllowed;
-  },
-
-  get prefered() {
-    return this._prefered;
-  },
-
-  set prefered(aPrefered) {
-    this._prefered = aPrefered;
-  },
-
-  get max() {
-    return this._max;
-  },
-
-  set max(aMax) {
-    this._max = aMax;
-  },
-
   classID : NETWORKPOLICYCONNECTION_CID,
   QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicyConnection, Ci.nsIDOMGlobalPropertyInitializer]),
   classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICYCONNECTION_CID,
@@ -93,36 +61,16 @@ function NetworkPolicy(policy) {
 
   this.app = policy.app || "";
   this.allowNetworkAccess = policy.allowNetworkAccess || false;
-  this.policies = policy.policies || [];
+  this.addPolicies(policy.policies || []);
 }
 
 NetworkPolicy.prototype = {
-  get app() {
-    return this._app;
-  },
-
-  set app(aApp) {
-    this._app = aApp;
-  },
-
-  get allowNetworkAccess() {
-    return this._allowNetworkAccess;
-  },
-
-  set allowNetworkAccess(aAllowNetworkAccess) {
-    this._allowNetworkAccess = aAllowNetworkAccess;
-  },
-
-  get policies() {
-    return this._policies;
-  },
-
-  set policies(aPolicies) {
+  addPolicies: function(aPolicies) {
     let policies = [];
     for (let i in aPolicies) {
       policies.push(new NetworkPolicyConnection(aPolicies[i]));
     }
-    this._policies = policies;
+    this.policies = policies;
   },
 
   classID : NETWORKPOLICY_CID,

@@ -102,8 +102,8 @@ let NetworkPoliciesCache = {
 
 // NetworkPoliciesService
 let NetworkPoliciesService = {
-  defaultPolicy: "__default_policy__",
-  interfacePolicy: "__interface_policy__",
+  defaultPolicyName: "__default_policy__",
+  interfacePolicyName: "__interface_policy__",
 
   init: function() {
     debug("Service started");
@@ -207,16 +207,6 @@ let NetworkPoliciesService = {
     return connTypes;
   },
 
-  get defaultPolicyName() {
-    debug("defaultPolicyName");
-    return this.defaultPolicy;
-  },
-
-  get interfacePolicyName() {
-    debug("interfacePolicyName");
-    return this.interfacePolicy;
-  },
-
   setPolicy: function setPolicy(msg) {
     debug("setPolicy for: " + JSON.stringify(msg));
     let _policy = msg.data;
@@ -268,10 +258,10 @@ let NetworkPoliciesService = {
       this._db.findPolicy(
         _appName,
         function(result) {
-          if (!result && _appName != this.defaultPolicy) {
+          if (!result && _appName != this.defaultPolicyName) {
             // Not found, Recover default policy
             debug("Not found policies for " + _appName + " - Recovering default one");
-            msg.data = this.defaultPolicy;
+            msg.data = this.defaultPolicyName;
             msg.realAppName = _appName;
             this.getPolicy(msg);
             return;
@@ -281,7 +271,7 @@ let NetworkPoliciesService = {
 
           // Adding policy into cache
           // If response is the default policy, we got the real application name
-          if(_appName == this.defaultPolicy && msg.realAppName) {
+          if (_appName == this.defaultPolicyName && msg.realAppName) {
             _appName = msg.realAppName;
           }
           NetworkPoliciesCache.write(_appName, result);
