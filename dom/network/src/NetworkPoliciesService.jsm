@@ -53,7 +53,7 @@ let NetworkPoliciesCache = {
     } else {
       debug("NetworkPoliciesCache: Add " + policyKey + " in cache");
       this.policiesCache[policyKey] = { value: policyValue,
-                                        timestamp: new Date().getTime(),
+                                        timestamp: Date.now(),
                                         queries: 1 };
       this.cacheCounter++;
       if (this.cacheCounter > CACHE_MAX_SIZE) {
@@ -78,7 +78,7 @@ let NetworkPoliciesCache = {
     debug("NetworkPoliciesCache: free");
     debug(JSON.stringify(this.policiesCache));
 
-    let time = new Date().getTime();
+    let time = Date.now();
     debug("NetworkPoliciesCache: Free time threshold: " + time);
     let alfa = 0;
     let itemId = null;
