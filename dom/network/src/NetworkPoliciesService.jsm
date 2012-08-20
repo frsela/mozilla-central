@@ -250,34 +250,34 @@ let NetworkPoliciesService = {
 
   getPolicy: function getPolicy(msg) {
     debug("getPolicy for: " + JSON.stringify(msg));
-    let _appName = msg.data;
+    let appName = msg.data;
 
     let aErrorMsg = "";
 
     // TODO: Validate input data
-    if (typeof(_appName) != "string") {
+    if (typeof(appName) != "string") {
       aErrorMsg = "Application name shall be a string";
-    }_appName
+    }
     if (aErrorMsg != "") {
       ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
                             { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
 
-    if (NetworkPoliciesCache.read(_appName)) {
+    if (NetworkPoliciesCache.read(appName)) {
       debug("Return policy from cache");
       ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
                             { id: msg.id,
-                              policy: NetworkPoliciesCache.read(_appName) });
+                              policy: NetworkPoliciesCache.read(appName) });
     } else {
       this._db.findPolicy(
-        _appName,
+        appName,
         function(result) {
-          if (!result && _appName != this.defaultPolicyName) {
+          if (!result && appName != this.defaultPolicyName) {
             // Not found, Recover default policy
-            debug("Not found policies for " + _appName + ". Get default one");
+            debug("Not found policies for " + appName + ". Get default one");
             msg.data = this.defaultPolicyName;
-            msg.realAppName = _appName;
+            msg.realAppName = appName;
             this.getPolicy(msg);
             return;
           }
@@ -287,10 +287,10 @@ let NetworkPoliciesService = {
 
           // Adding policy into cache
           // If response is the default policy, we got the real application name
-          if (_appName == this.defaultPolicyName && msg.realAppName) {
-            _appName = msg.realAppName;
+          if (appName == this.defaultPolicyName && msg.realAppName) {
+            appName = msg.realAppName;
           }
-          NetworkPoliciesCache.write(_appName, result);
+          NetworkPoliciesCache.write(appName, result);
         }.bind(this),
         function(aErrorMsg) {
           ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
