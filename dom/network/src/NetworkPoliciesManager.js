@@ -216,10 +216,8 @@ NetworkPoliciesManager.prototype = {
                               "NetworkPolicies:Set:Return:KO"]);
 
     let principal = aWindow.document.nodePrincipal;
-    let secMan =
-      Cc["@mozilla.org/scriptsecuritymanager;1"].getService(
-        Ci.nsIScriptSecurityManager);
 
+    let secMan = Services.scriptSecurityManager;
     let perm = principal == secMan.getSystemPrincipal() ?
                  Ci.nsIPermissionManager.ALLOW_ACTION :
                  Services.perms.testExactPermission(principal.URI,
@@ -227,7 +225,7 @@ NetworkPoliciesManager.prototype = {
 
     // Only pages with perm set can use the netstats.
     this.hasPrivileges = perm == Ci.nsIPermissionManager.ALLOW_ACTION;
-    debug("has privileges :" + this.hasPrivileges);
+    debug("Has privileges: " + this.hasPrivileges);
   },
 
   // Called from DOMRequestIpcHelper
