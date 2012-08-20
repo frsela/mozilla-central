@@ -47,7 +47,7 @@ NetworkPoliciesDB.prototype = {
   },
 
   makeImport: function makeImport(aPolicy) {
-    if(aPolicy.app == null ||
+    if (aPolicy.app == null ||
        aPolicy.allowNetworkAccess == null ||
        aPolicy.policies == null
       ) {
@@ -63,7 +63,7 @@ NetworkPoliciesDB.prototype = {
 
   addPolicy: function addPolicy(aPolicy, successCb, errorCb) {
     let policy = this.makeImport(aPolicy);
-    if(policy == null) {
+    if (policy == null) {
       errorCb("Policy definition error");
       return;
     }

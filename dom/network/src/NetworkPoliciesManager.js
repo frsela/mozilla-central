@@ -52,7 +52,7 @@ const nsIDOMMozNetworkPolicy    = Ci.nsIDOMMozNetworkPolicy;
 
 function NetworkPolicy(policy) {
   debug("NetworkPolicy Constructor");
-  if(policy == null) {
+  if (policy == null) {
     this.app = "";
     this.allowNetworkAccess = false;
     this.policies = [];
@@ -96,7 +96,7 @@ NetworkPoliciesManager.prototype = {
 
   get connectionTypes() {
     debug("get connectionTypes");
-    if(this.hasPrivileges) {
+    if (this.hasPrivileges) {
       return cpmm.sendSyncMessage("NetworkPolicies:GetConnectionTypes")[0];
     } else {
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
@@ -105,7 +105,7 @@ NetworkPoliciesManager.prototype = {
 
   get defaultPolicyName() {
     debug("get defaultPolicyName: " + JSON.stringify(NetworkPoliciesService.defaultPolicyName));
-    if(this.hasPrivileges) {
+    if (this.hasPrivileges) {
       return cpmm.sendSyncMessage("NetworkPolicies:GetDefaultPolicyName")[0];
     } else {
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
@@ -114,7 +114,7 @@ NetworkPoliciesManager.prototype = {
 
   get interfacePolicyName() {
     debug("get interfacePolicyName: " + JSON.stringify(NetworkPoliciesService.interfacePolicyName));
-    if(this.hasPrivileges) {
+    if (this.hasPrivileges) {
       return cpmm.sendSyncMessage("NetworkPolicies:GetInterfacePolicyName")[0];
     } else {
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
@@ -122,7 +122,7 @@ NetworkPoliciesManager.prototype = {
   },
 
   set: function(policy) {
-    if(this.hasPrivileges) {
+    if (this.hasPrivileges) {
       debug("set new policy: " + JSON.stringify(policy));
       let request = this.createRequest();
       cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
@@ -134,7 +134,7 @@ NetworkPoliciesManager.prototype = {
   },
 
   get: function(appName) {
-    if(this.hasPrivileges) {
+    if (this.hasPrivileges) {
       debug("get policy for: " + appName);
       let request = this.createRequest();
       cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
@@ -146,7 +146,7 @@ NetworkPoliciesManager.prototype = {
   },
 
   getSync: function(appName) {
-    if(this.hasPrivileges) {
+    if (this.hasPrivileges) {
       debug("get policy (synchronously) for: " + appName);
       return cpmm.sendSyncMessage("NetworkPolicies:Get", {data: appName})[0];
     } else {
@@ -159,19 +159,19 @@ NetworkPoliciesManager.prototype = {
     let msg = aMessage.json;
     let req = null;
     
-    switch(aMessage.name) {
+    switch (aMessage.name) {
       case "NetworkPolicies:Set:Return:OK":
       case "NetworkPolicies:Get:Return:OK":
         req = this.takeRequest(msg.id);
-        if(req) {
+        if (req) {
           debug(JSON.stringify(msg));
-          if(msg.policy) {
+          if (msg.policy) {
             let _policy = new NetworkPolicy(msg.policy);
             debug("firing success: " + JSON.stringify(_policy));
             Services.DOMRequest.fireSuccess(req, _policy);
           } else {
             let _policies = [];
-            for(let _policy in msg.policies) {
+            for (let _policy in msg.policies) {
               _policies.push(new NetworkPolicy(msg.policies[_policy]));
             }
             debug("firing success: " + JSON.stringify(_policies));
@@ -185,7 +185,7 @@ NetworkPoliciesManager.prototype = {
       case "NetworkPolicies:Set:Return:KO":
       case "NetworkPolicies:Get:Return:KO":
         req = this.takeRequest(msg.id);
-        if(req) {
+        if (req) {
           debug("firing error: " + msg.errorMsg);
           Services.DOMRequest.fireError(req, msg.errorMsg);
         }

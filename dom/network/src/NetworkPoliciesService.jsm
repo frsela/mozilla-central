@@ -159,12 +159,12 @@ let NetworkPoliciesService = {
         return this.interfacePolicyName;
 
       case "NetworkPolicies:Get":
-        if(aMessage.sync) {
+        if (aMessage.sync) {
           return this.getPolicySync(msg);
         }
 
         // Async
-        if(msg.data == "") {        // All policies?
+        if (msg.data == "") {        // All policies?
           this.getAllPolicies(msg);
         } else {
           this.getPolicy(msg);
@@ -213,13 +213,13 @@ let NetworkPoliciesService = {
     let aErrorMsg = "";
 
     // TODO: Validate input data
-    if(_policy == null) {
+    if (_policy == null) {
       aErrorMsg = "Policy not valid";
     }
-    if(typeof(_policy) != "object") {
+    if (typeof(_policy) != "object") {
       aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
     }
-    if(aErrorMsg != "") {
+    if (aErrorMsg != "") {
       ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
@@ -243,10 +243,10 @@ let NetworkPoliciesService = {
     let aErrorMsg = "";
 
     // TODO: Validate input data
-    if(typeof(_appName) != "string") {
+    if (typeof(_appName) != "string") {
       aErrorMsg = "Application name shall be a string";
     }_appName
-    if(aErrorMsg != "") {
+    if (aErrorMsg != "") {
       ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
@@ -291,7 +291,7 @@ let NetworkPoliciesService = {
     this._db.getAllPolicies(
       function(aResult) {
         // Update cache for all
-        for(let _policy in aResult) {
+        for (let _policy in aResult) {
           NetworkPoliciesCache.write(aResult[_policy].app, aResult[_policy]);
         }
 
