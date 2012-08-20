@@ -23,9 +23,12 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
 const nsIClassInfo = Ci.nsIClassInfo;
 
 // NetworkPolicyConnection
-const NETWORKPOLICYCONNECTION_CONTRACTID = "@mozilla.org/networkPolicyConnection;1";
-const NETWORKPOLICYCONNECTION_CID        = Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
-const nsIDOMMozNetworkPolicyConnection   = Ci.nsIDOMMozNetworkPolicyConnection;
+const NETWORKPOLICYCONNECTION_CONTRACTID =
+  "@mozilla.org/networkPolicyConnection;1";
+const NETWORKPOLICYCONNECTION_CID        =
+  Components.ID("{87f201d2-3baf-49a4-82cb-ad20961b5e17}");
+const nsIDOMMozNetworkPolicyConnection   =
+  Ci.nsIDOMMozNetworkPolicyConnection;
 
 function NetworkPolicyConnection(policyConnection) {
   debug("NetworkPolicyConnection Constructor");
@@ -37,7 +40,8 @@ function NetworkPolicyConnection(policyConnection) {
 
 NetworkPolicyConnection.prototype = {
   classID : NETWORKPOLICYCONNECTION_CID,
-  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicyConnection, Ci.nsIDOMGlobalPropertyInitializer]),
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicyConnection,
+                                         Ci.nsIDOMGlobalPropertyInitializer]),
   classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICYCONNECTION_CID,
                                      contractID: NETWORKPOLICYCONNECTION_CONTRACTID,
                                      classDescription: "NetworkPolicyConnection",
@@ -46,9 +50,10 @@ NetworkPolicyConnection.prototype = {
 }
 
 // NetworkPolicy
-const NETWORKPOLICY_CONTRACTID  = "@mozilla.org/networkPolicy;1";
-const NETWORKPOLICY_CID         = Components.ID("{9084e8d8-8c28-4017-a843-5dad38f18daf}");
-const nsIDOMMozNetworkPolicy    = Ci.nsIDOMMozNetworkPolicy;
+const NETWORKPOLICY_CONTRACTID = "@mozilla.org/networkPolicy;1";
+const NETWORKPOLICY_CID =
+  Components.ID("{9084e8d8-8c28-4017-a843-5dad38f18daf}");
+const nsIDOMMozNetworkPolicy = Ci.nsIDOMMozNetworkPolicy;
 
 function NetworkPolicy(policy) {
   debug("NetworkPolicy Constructor");
@@ -74,7 +79,8 @@ NetworkPolicy.prototype = {
   },
 
   classID : NETWORKPOLICY_CID,
-  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicy, Ci.nsIDOMGlobalPropertyInitializer]),
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPolicy,
+                                         Ci.nsIDOMGlobalPropertyInitializer]),
   classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICY_CID,
                                      contractID: NETWORKPOLICY_CONTRACTID,
                                      classDescription: "NetworkPolicy",
@@ -83,9 +89,12 @@ NetworkPolicy.prototype = {
 }
 
 // NetworkPoliciesManager
-const NETWORKPOLICIESMANAGER_CONTRACTID = "@mozilla.org/networkPoliciesManager;1";
-const NETWORKPOLICIESMANAGER_CID        = Components.ID("{d7dcbc77-edf4-40c8-9497-4dca4cf750c7}");
-const nsIDOMMozNetworkPoliciesManager   = Ci.nsIDOMMozNetworkPoliciesManager;
+const NETWORKPOLICIESMANAGER_CONTRACTID =
+  "@mozilla.org/networkPoliciesManager;1";
+const NETWORKPOLICIESMANAGER_CID =
+  Components.ID("{d7dcbc77-edf4-40c8-9497-4dca4cf750c7}");
+const nsIDOMMozNetworkPoliciesManager =
+  Ci.nsIDOMMozNetworkPoliciesManager;
 
 function NetworkPoliciesManager() {
   debug("NetworkPoliciesManager Constructor");
@@ -108,14 +117,16 @@ NetworkPoliciesManager.prototype = {
   },
 
   get defaultPolicyName() {
-    debug("get defaultPolicyName: " + JSON.stringify(NetworkPoliciesService.defaultPolicyName));
+    debug("get defaultPolicyName: " +
+          JSON.stringify(NetworkPoliciesService.defaultPolicyName));
     this.checkPrivileges();
 
     return cpmm.sendSyncMessage("NetworkPolicies:GetDefaultPolicyName")[0];
   },
 
   get interfacePolicyName() {
-    debug("get interfacePolicyName: " + JSON.stringify(NetworkPoliciesService.interfacePolicyName));
+    debug("get interfacePolicyName: " +
+          JSON.stringify(NetworkPoliciesService.interfacePolicyName));
     this.checkPrivileges();
 
     return cpmm.sendSyncMessage("NetworkPolicies:GetInterfacePolicyName")[0];
@@ -125,20 +136,20 @@ NetworkPoliciesManager.prototype = {
     debug("set new policy: " + JSON.stringify(policy));
     this.checkPrivileges();
 
-    let request = this.createRequest();
+    let req = this.createRequest();
     cpmm.sendAsyncMessage("NetworkPolicies:Set", {data: policy,
-                                                  id: this.getRequestId(request)});
-    return request;
+                                                  id: this.getRequestId(req)});
+    return req;
   },
 
   get: function(appName) {
     debug("get policy for: " + appName);
     this.checkPrivileges();
 
-    let request = this.createRequest();
+    let req = this.createRequest();
     cpmm.sendAsyncMessage("NetworkPolicies:Get", {data: appName,
-                                                  id: this.getRequestId(request)});
-    return request;
+                                                  id: this.getRequestId(req)});
+    return req;
   },
 
   getSync: function(appName) {
@@ -199,15 +210,20 @@ NetworkPoliciesManager.prototype = {
       return null;
     }
 
-    this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK", "NetworkPolicies:Get:Return:KO",
-                              "NetworkPolicies:Set:Return:OK", "NetworkPolicies:Set:Return:KO"]);
+    this.initHelper(aWindow, ["NetworkPolicies:Get:Return:OK",
+                              "NetworkPolicies:Get:Return:KO",
+                              "NetworkPolicies:Set:Return:OK",
+                              "NetworkPolicies:Set:Return:KO"]);
 
     let principal = aWindow.document.nodePrincipal;
-    let secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].getService(Ci.nsIScriptSecurityManager);
+    let secMan =
+      Cc["@mozilla.org/scriptsecuritymanager;1"].getService(
+        Ci.nsIScriptSecurityManager);
 
     let perm = principal == secMan.getSystemPrincipal() ?
                  Ci.nsIPermissionManager.ALLOW_ACTION :
-                 Services.perms.testExactPermission(principal.URI, "networkpolicies-manage");
+                 Services.perms.testExactPermission(principal.URI,
+                                                    "networkpolicies-manage");
 
     // Only pages with perm set can use the netstats.
     this.hasPrivileges = perm == Ci.nsIPermissionManager.ALLOW_ACTION;
@@ -220,7 +236,8 @@ NetworkPoliciesManager.prototype = {
   },
 
   classID : NETWORKPOLICIESMANAGER_CID,
-  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesManager, Ci.nsIDOMGlobalPropertyInitializer]),
+  QueryInterface : XPCOMUtils.generateQI([nsIDOMMozNetworkPoliciesManager,
+                                         Ci.nsIDOMGlobalPropertyInitializer]),
   classInfo : XPCOMUtils.generateCI({classID: NETWORKPOLICIESMANAGER_CID,
                                      contractID: NETWORKPOLICIESMANAGER_CONTRACTID,
                                      classDescription: "NetworkPoliciesManager",
@@ -229,7 +246,9 @@ NetworkPoliciesManager.prototype = {
 }
 
 const NSGetFactory = XPCOMUtils.generateNSGetFactory(
-                       [NetworkPoliciesManager, NetworkPolicy, NetworkPolicyConnection])
+                       [NetworkPoliciesManager,
+                        NetworkPolicy,
+                        NetworkPolicyConnection])
 
 let debug;
 if (DEBUG) {

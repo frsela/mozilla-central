@@ -25,8 +25,9 @@ function NetworkPoliciesDB(aGlobal) {
 NetworkPoliciesDB.prototype = {
   __proto__: IndexedDBHelper.prototype,
 
-  upgradeSchema: function upgradeSchema(aTransaction, aDb, aOldVersion, aNewVersion) {
-    debug("upgrade schema from: " + aOldVersion + " to " + aNewVersion + " called!");
+  upgradeSchema: function upgradeSchema(aTransaction, aDb, aOldVersion,
+                                        aNewVersion) {
+    debug("upgrade schema from: " + aOldVersion + " to " + aNewVersion);
     let db = aDb;
     let objectStore;
     for (let currVersion = aOldVersion; currVersion < aNewVersion; currVersion++) {
@@ -36,11 +37,18 @@ NetworkPoliciesDB.prototype = {
          */
         objectStore = db.createObjectStore(STORE_NAME, { keyPath: "app" });
 
-        objectStore.createIndex("app",                "app",                   { unique: true });
-        objectStore.createIndex("allowNetworkAccess", "allowNetworkAccess",    { unique: false });
-
-        objectStore.createIndex("policies",           "policies",              { unique: false, multiEntry: true });
-
+        objectStore.createIndex("app",
+                                "app",
+                                { unique: true }
+                    );
+        objectStore.createIndex("allowNetworkAccess",
+                                "allowNetworkAccess",
+                                { unique: false }
+                    );
+        objectStore.createIndex("policies",
+                                "policies",
+                                { unique: false, multiEntry: true }
+                    );
         debug("Created object stores and indexes");
       }
     }
@@ -48,9 +56,9 @@ NetworkPoliciesDB.prototype = {
 
   makeImport: function makeImport(aPolicy) {
     if (aPolicy.app == null ||
-       aPolicy.allowNetworkAccess == null ||
-       aPolicy.policies == null
-      ) {
+        aPolicy.allowNetworkAccess == null ||
+        aPolicy.policies == null
+    ) {
       return null;
     }
     let policy = {
@@ -118,7 +126,7 @@ NetworkPoliciesDB.prototype = {
 
     }.bind(this), aSuccessCb, aFailureCb);
   },
-  
+
   getAllPolicies: function getAllPolicies(aSuccessCb, aFailureCb) {
     debug("getAllPolicies");
 
@@ -129,7 +137,9 @@ NetworkPoliciesDB.prototype = {
 
       store.mozGetAll().onsuccess = function onsuccess(event) {
         txn.result = event.target.result;
-        debug("getAllPolicies - request successful. Record count: " + txn.result.length + " = " + JSON.stringify(txn.result));
+        debug("getAllPolicies - request successful. Record count: " +
+              txn.result.length + " = " + JSON.stringify(txn.result)
+             );
       }
     }, aSuccessCb, aFailureCb);
   },

@@ -15,8 +15,10 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/NetworkPoliciesDB.jsm");
 
-const NET_NETWORKPOLICIESSSERVICE_CONTRACTID = "@mozilla.org/network/networkpoliciessservice;1";
-const NET_NETWORKPOLICIESSSERVICE_CID = Components.ID("{b82a7470-9e20-4b8b-89d7-bb775eb7904b}");
+const NET_NETWORKPOLICIESSSERVICE_CONTRACTID =
+  "@mozilla.org/network/networkpoliciessservice;1";
+const NET_NETWORKPOLICIESSSERVICE_CID =
+  Components.ID("{b82a7470-9e20-4b8b-89d7-bb775eb7904b}");
 
 const TOPIC_INTERFACE_REGISTERED = "network-interface-registered";
 const NETWORK_TYPE_WIFI = Ci.nsINetworkInterface.NETWORK_TYPE_WIFI;
@@ -29,7 +31,8 @@ XPCOMUtils.defineLazyServiceGetter(this, "gIDBManager",
                                    "nsIIndexedDatabaseManager");
 
 XPCOMUtils.defineLazyGetter(this, "ppmm", function() {
-  return Cc["@mozilla.org/parentprocessmessagemanager;1"].getService(Ci.nsIFrameMessageManager);
+  return Cc["@mozilla.org/parentprocessmessagemanager;1"].getService(
+    Ci.nsIFrameMessageManager);
 });
 
 let myGlobal = this;
@@ -70,7 +73,9 @@ let NetworkPoliciesCache = {
     }
 
     this.policiesCache[policyKey].queries++;
-    debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[policyKey].queries + " times. Value = " + JSON.stringify(this.policiesCache[policyKey].value));
+    debug("NetworkPoliciesCache: found ! - Readed " +
+          this.policiesCache[policyKey].queries + " times. Value = " +
+          JSON.stringify(this.policiesCache[policyKey].value));
     return this.policiesCache[policyKey].value;
   },
 
@@ -83,7 +88,8 @@ let NetworkPoliciesCache = {
     let cacheInvalidationIndex = 0;
     let itemId = null;
     for (let i in this.policiesCache) {
-      let itemCII = (time - this.policiesCache[i].timestamp) / this.policiesCache[i].queries;
+      let itemCII = (time - this.policiesCache[i].timestamp) /
+                    this.policiesCache[i].queries;
       debug("Cache Invalidation Index for " + i + ": " + itemCII);
       if (itemCII > cacheInvalidationIndex) {
         cacheInvalidationIndex = itemCII;
@@ -127,7 +133,8 @@ let NetworkPoliciesService = {
       ppmm.addMessageListener(msgName, this);
     }, this);
 
-    var idbManager = Components.classes["@mozilla.org/dom/indexeddb/manager;1"].getService(Ci.nsIIndexedDatabaseManager);
+    var idbManager = Cc["@mozilla.org/dom/indexeddb/manager;1"].getService(
+      Ci.nsIIndexedDatabaseManager);
     idbManager.initWindowless(myGlobal);
     this._db = new NetworkPoliciesDB(myGlobal);
     this._db.init(myGlobal);
@@ -220,19 +227,24 @@ let NetworkPoliciesService = {
       aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
     }
     if (aErrorMsg != "") {
-      ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
+      ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
+                            { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
 
     this._db.addPolicy(
       policy,
       function(result) { 
-        ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:OK", { id: msg.id, policy: result });
+        ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:OK",
+                              { id: msg.id, policy: result });
 
         // Update cache
         NetworkPoliciesCache.write(policy.app, policy);
       }.bind(this),
-      function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
+      function(aErrorMsg) {
+        ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
+                              { id: msg.id, errorMsg: aErrorMsg });
+      }
     );
   },
 
@@ -247,27 +259,31 @@ let NetworkPoliciesService = {
       aErrorMsg = "Application name shall be a string";
     }_appName
     if (aErrorMsg != "") {
-      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg });
+      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                            { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
 
     if (NetworkPoliciesCache.read(_appName)) {
       debug("Return policy from cache");
-      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: NetworkPoliciesCache.read(_appName) });
+      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                            { id: msg.id,
+                              policy: NetworkPoliciesCache.read(_appName) });
     } else {
       this._db.findPolicy(
         _appName,
         function(result) {
           if (!result && _appName != this.defaultPolicyName) {
             // Not found, Recover default policy
-            debug("Not found policies for " + _appName + " - Recovering default one");
+            debug("Not found policies for " + _appName + ". Get default one");
             msg.data = this.defaultPolicyName;
             msg.realAppName = _appName;
             this.getPolicy(msg);
             return;
           }
 
-          ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policy: result });
+          ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                                { id: msg.id, policy: result });
 
           // Adding policy into cache
           // If response is the default policy, we got the real application name
@@ -276,7 +292,10 @@ let NetworkPoliciesService = {
           }
           NetworkPoliciesCache.write(_appName, result);
         }.bind(this),
-        function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
+        function(aErrorMsg) {
+          ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                                { id: msg.id, errorMsg: aErrorMsg });
+        }
       );
     }
   },
@@ -296,9 +315,13 @@ let NetworkPoliciesService = {
         }
 
         // notify result
-        ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK", { id: msg.id, policies: aResult }); 
+        ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                              { id: msg.id, policies: aResult });
       },
-      function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
+      function(aErrorMsg) {
+        ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                              { id: msg.id, errorMsg: aErrorMsg });
+      }
     );
   }
 };
