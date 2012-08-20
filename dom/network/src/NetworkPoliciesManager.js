@@ -20,7 +20,7 @@ XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
                 .QueryInterface(Ci.nsISyncMessageSender);
 });
 
-const nsIClassInfo                      = Ci.nsIClassInfo;
+const nsIClassInfo = Ci.nsIClassInfo;
 
 // NetworkPolicyConnection & NetworkPolicy are not directly instantiated. They are used as interfaces.
 
