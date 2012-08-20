@@ -4,7 +4,6 @@
 
 "use strict"
 
-/* static functions */
 let DEBUG = true;
 if (DEBUG) {
   debug = function (s) { dump("-*- NetworkPoliciesManager: " + s + "\n"); }
