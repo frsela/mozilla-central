@@ -77,8 +77,9 @@ NetworkPoliciesDB.prototype = {
     this.newTxn("readwrite", function(txn, store) {
       debug("Going to store " + JSON.stringify(policy));
 
-      if (!txn.result)
+      if (!txn.result) {
         txn.result = {};
+      }
 
       store.put(policy).onsuccess = function(event){
         txn.result = policy;
@@ -98,8 +99,9 @@ NetworkPoliciesDB.prototype = {
     debug("Find: application:" + aAppId);
 
     this.newTxn("readonly", function (txn, store) {
-      if (!txn.result)
+      if (!txn.result) {
         txn.result = {};
+      }
 
       store.get(aAppId).onsuccess = function onsuccess(event){
         txn.result = event.target.result;
@@ -112,8 +114,9 @@ NetworkPoliciesDB.prototype = {
     debug("Delete: application:" + aAppId);
 
     this.newTxn("readwrite", function (txn, store) {
-      if (!txn.result)
+      if (!txn.result) {
         txn.result = {};
+      }
 
       store.delete(aAppId).onsuccess = function onsuccess(event){
         txn.result = aAppId;
@@ -126,8 +129,9 @@ NetworkPoliciesDB.prototype = {
     debug("getAllPolicies");
 
     this.newTxn("readonly", function (txn, store) {
-      if (!txn.result)
+      if (!txn.result) {
         txn.result = [];
+      }
 
       store.mozGetAll().onsuccess = function onsuccess(event) {
         txn.result = event.target.result;
