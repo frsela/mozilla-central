@@ -85,14 +85,14 @@ let NetworkPoliciesCache = {
 
     let time = Date.now();
     debug("NetworkPoliciesCache: Free time threshold: " + time);
-    let cacheInvalidationIndex = 0;
+    let cacheInvalidationFactor = 0;
     let itemId = null;
     for (let i in this.policiesCache) {
       let itemCII = (time - this.policiesCache[i].timestamp) /
                     this.policiesCache[i].queries;
       debug("Cache Invalidation Index for " + i + ": " + itemCII);
-      if (itemCII > cacheInvalidationIndex) {
-        cacheInvalidationIndex = itemCII;
+      if (itemCII > cacheInvalidationFactor) {
+        cacheInvalidationFactor = itemCII;
         itemId = i;
       }
     }
