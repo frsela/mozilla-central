@@ -7,11 +7,9 @@
 // set to true to see debug messages
 const DEBUG = true;
 
-const EXPORTED_SYMBOLS = ['NetworkPoliciesDB'];
+const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;
 
-const Cu = Components.utils;
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+const EXPORTED_SYMBOLS = ['NetworkPoliciesDB'];
 
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/IndexedDBHelper.jsm");
