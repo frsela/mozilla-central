@@ -160,16 +160,16 @@ NetworkPoliciesManager.prototype = {
         if (req) {
           debug(JSON.stringify(msg));
           if (msg.policy) {
-            let _policy = new NetworkPolicy(msg.policy);
-            debug("firing success: " + JSON.stringify(_policy));
-            Services.DOMRequest.fireSuccess(req, _policy);
+            let policy = new NetworkPolicy(msg.policy);
+            debug("firing success: " + JSON.stringify(policy));
+            Services.DOMRequest.fireSuccess(req, policy);
           } else {
-            let _policies = [];
-            for (let _policy in msg.policies) {
-              _policies.push(new NetworkPolicy(msg.policies[_policy]));
+            let policies = [];
+            for (let policy in msg.policies) {
+              policies.push(new NetworkPolicy(msg.policies[policy]));
             }
-            debug("firing success: " + JSON.stringify(_policies));
-            Services.DOMRequest.fireSuccess(req, _policies);
+            debug("firing success: " + JSON.stringify(policies));
+            Services.DOMRequest.fireSuccess(req, policies);
           }
         } else {
           debug("setPolicy: No request !")
@@ -212,7 +212,6 @@ NetworkPoliciesManager.prototype = {
     // Only pages with perm set can use the netstats.
     this.hasPrivileges = perm == Ci.nsIPermissionManager.ALLOW_ACTION;
     debug("has privileges :" + this.hasPrivileges);
-
   },
 
   // Called from DOMRequestIpcHelper

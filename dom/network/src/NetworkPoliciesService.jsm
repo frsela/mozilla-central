@@ -44,15 +44,15 @@ let NetworkPoliciesCache = {
     this.policiesCache = Object.create(null);
   },
 
-  write: function write(_key, _value) {
+  write: function write(policyKey, policyValue) {
     debug("NetworkPoliciesCache: write");
 
-    if (this.policiesCache[_key]) {
-      debug("NetworkPoliciesCache: Update cache for " + _key);
-      this.policiesCache[_key].value = _value;
+    if (this.policiesCache[policyKey]) {
+      debug("NetworkPoliciesCache: Update cache for " + policyKey);
+      this.policiesCache[policyKey].value = policyValue;
     } else {
-      debug("NetworkPoliciesCache: Add " + _key + " in cache");
-      this.policiesCache[_key] = { value: _value,
+      debug("NetworkPoliciesCache: Add " + policyKey + " in cache");
+      this.policiesCache[policyKey] = { value: policyValue,
                                         timestamp: new Date().getTime(),
                                         queries: 1 };
       this.cacheCounter++;
@@ -62,18 +62,18 @@ let NetworkPoliciesCache = {
     }
   },
 
-  read: function read(_key) {
+  read: function read(policyKey) {
     debug("NetworkPoliciesCache: read");
-    if (!this.policiesCache[_key]) {
+    if (!this.policiesCache[policyKey]) {
       debug("NetworkPoliciesCache: Not found ! ");
       return null;
     }
 
-    this.policiesCache[_key].queries++;
-    debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[_key].queries + " times. Value = " + JSON.stringify(this.policiesCache[_key].value));
-    return this.policiesCache[_key].value;
+    this.policiesCache[policyKey].queries++;
+    debug("NetworkPoliciesCache: found ! - Readed " + this.policiesCache[policyKey].queries + " times. Value = " + JSON.stringify(this.policiesCache[policyKey].value));
+    return this.policiesCache[policyKey].value;
   },
-  
+
   free: function free() {
     debug("NetworkPoliciesCache: free");
     debug(JSON.stringify(this.policiesCache));
@@ -209,14 +209,14 @@ let NetworkPoliciesService = {
 
   setPolicy: function setPolicy(msg) {
     debug("setPolicy for: " + JSON.stringify(msg));
-    let _policy = msg.data;
+    let policy = msg.data;
     let aErrorMsg = "";
 
     // TODO: Validate input data
-    if (_policy == null) {
+    if (policy == null) {
       aErrorMsg = "Policy not valid";
     }
-    if (typeof(_policy) != "object") {
+    if (typeof(policy) != "object") {
       aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
     }
     if (aErrorMsg != "") {
@@ -225,12 +225,12 @@ let NetworkPoliciesService = {
     }
 
     this._db.addPolicy(
-      _policy,
+      policy,
       function(result) { 
         ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:OK", { id: msg.id, policy: result });
 
         // Update cache
-        NetworkPoliciesCache.write(_policy.app, _policy);
+        NetworkPoliciesCache.write(policy.app, policy);
       }.bind(this),
       function(aErrorMsg) { ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO", { id: msg.id, errorMsg: aErrorMsg }); }
     );
@@ -291,8 +291,8 @@ let NetworkPoliciesService = {
     this._db.getAllPolicies(
       function(aResult) {
         // Update cache for all
-        for (let _policy in aResult) {
-          NetworkPoliciesCache.write(aResult[_policy].app, aResult[_policy]);
+        for (let policy in aResult) {
+          NetworkPoliciesCache.write(aResult[policy].app, aResult[policy]);
         }
 
         // notify result
