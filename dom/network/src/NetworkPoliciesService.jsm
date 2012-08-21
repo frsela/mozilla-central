@@ -126,7 +126,8 @@ let NetworkPoliciesService = {
       "NetworkPolicies:GetConnectionTypes",
       "NetworkPolicies:GetDefaultPolicyName",
       "NetworkPolicies:GetInterfacePolicyName",
-      "NetworkPolicies:GetAll", "NetworkPolicies:Get",
+      "NetworkPolicies:GetAll",
+      "NetworkPolicies:Get",
       "NetworkPolicies:Set"
     ];
     this.messages.forEach(function(msgName) {
@@ -145,6 +146,7 @@ let NetworkPoliciesService = {
   receiveMessage: function(aMessage) {
     debug("receiveMessage " + aMessage.name);
     let msg = aMessage.json;
+    let target = aMessage.target.QueryInterface(Ci.nsIFrameMessageManager);
     switch (aMessage.name) {
       case "NetworkPolicies:GetConnectionTypes":
         return this.connectionTypes;
@@ -162,14 +164,14 @@ let NetworkPoliciesService = {
 
         // Async
         if (msg.data == "") {        // All policies?
-          this.getAllPolicies(msg);
+          this.getAllPolicies(msg,  target);
         } else {
-          this.getPolicy(msg);
+          this.getPolicy(msg, target);
         }
         break;
 
       case "NetworkPolicies:Set":
-        this.setPolicy(msg);
+        this.setPolicy(msg, target);
         break;
     }
   },
@@ -204,7 +206,7 @@ let NetworkPoliciesService = {
     return connTypes;
   },
 
-  setPolicy: function setPolicy(msg) {
+  setPolicy: function setPolicy(msg, target) {
     debug("setPolicy for: " + JSON.stringify(msg));
     let policy = msg.data;
     let aErrorMsg = "";
@@ -217,28 +219,28 @@ let NetworkPoliciesService = {
       aErrorMsg = "Policy shall be a NetworkPoliciesPolicy object";
     }
     if (aErrorMsg != "") {
-      ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
-                            { id: msg.id, errorMsg: aErrorMsg });
+      target.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
+                              { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
 
     this._db.addPolicy(
       policy,
       function(result) { 
-        ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:OK",
-                              { id: msg.id, policy: result });
+        target.sendAsyncMessage("NetworkPolicies:Set:Return:OK",
+                                { id: msg.id, policy: result });
 
         // Update cache
         NetworkPoliciesCache.write(policy.app, policy);
       }.bind(this),
       function(aErrorMsg) {
-        ppmm.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
-                              { id: msg.id, errorMsg: aErrorMsg });
+        target.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
+                                { id: msg.id, errorMsg: aErrorMsg });
       }
     );
   },
 
-  getPolicy: function getPolicy(msg) {
+  getPolicy: function getPolicy(msg, target) {
     debug("getPolicy for: " + JSON.stringify(msg));
     let appName = msg.data;
 
@@ -249,16 +251,16 @@ let NetworkPoliciesService = {
       aErrorMsg = "Application name shall be a string";
     }
     if (aErrorMsg != "") {
-      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
-                            { id: msg.id, errorMsg: aErrorMsg });
+      target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                              { id: msg.id, errorMsg: aErrorMsg });
       return;
     }
 
     if (NetworkPoliciesCache.read(appName)) {
       debug("Return policy from cache");
-      ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
-                            { id: msg.id,
-                              policy: NetworkPoliciesCache.read(appName) });
+      target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                              { id: msg.id,
+                                policy: NetworkPoliciesCache.read(appName) });
     } else {
       this._db.findPolicy(
         appName,
@@ -272,8 +274,8 @@ let NetworkPoliciesService = {
             return;
           }
 
-          ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
-                                { id: msg.id, policy: result });
+          target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                                  { id: msg.id, policy: result });
 
           // Adding policy into cache
           // If response is the default policy, we got the real application name
@@ -283,8 +285,8 @@ let NetworkPoliciesService = {
           NetworkPoliciesCache.write(appName, result);
         }.bind(this),
         function(aErrorMsg) {
-          ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
-                                { id: msg.id, errorMsg: aErrorMsg });
+          target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                                  { id: msg.id, errorMsg: aErrorMsg });
         }
       );
     }
@@ -295,7 +297,7 @@ let NetworkPoliciesService = {
     return NetworkPoliciesCache.read(msg.data);
   },
 
-  getAllPolicies: function getAllPolicies(msg) {
+  getAllPolicies: function getAllPolicies(msg, target) {
     debug("getAllPolicies");
     this._db.getAllPolicies(
       function(aResult) {
@@ -305,12 +307,12 @@ let NetworkPoliciesService = {
         }
 
         // notify result
-        ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
-                              { id: msg.id, policies: aResult });
+        target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                                { id: msg.id, policies: aResult });
       },
       function(aErrorMsg) {
-        ppmm.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
-                              { id: msg.id, errorMsg: aErrorMsg });
+        target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                                { id: msg.id, errorMsg: aErrorMsg });
       }
     );
   }
