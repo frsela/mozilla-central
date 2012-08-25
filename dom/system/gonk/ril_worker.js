@@ -3233,6 +3233,16 @@ RIL.readSetupDataCall_v5 = function readSetupDataCall_v5(options) {
 };
 
 RIL[REQUEST_SETUP_DATA_CALL] = function REQUEST_SETUP_DATA_CALL(length, options) {
+  debug("__________________________________________________________________________________________");
+  debug("__________________________________________________________________________________________");
+  debug("__________________________________________________________________________________________");
+  debug(options.rilRequestError);
+  debug("__________________________________________________________________________________________");
+  debug(JSON.stringify(options));
+  debug("__________________________________________________________________________________________");
+  debug("__________________________________________________________________________________________");
+  debug("__________________________________________________________________________________________");
+
   if (options.rilRequestError) {
     // On Data Call generic errors, we shall notify caller
     this._sendDataCallError(options, options.rilRequestError);
