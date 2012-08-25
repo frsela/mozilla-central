@@ -56,13 +56,15 @@ const RIL_IPC_MSG_NAMES = [
   "RIL:SendUssd:Return:OK",
   "RIL:SendUssd:Return:KO",
   "RIL:CancelUssd:Return:OK",
-  "RIL:CancelUssd:Return:KO"
+  "RIL:CancelUssd:Return:KO",
+  "RIL:DataError"
 ];
 
 const kVoiceChangedTopic     = "mobile-connection-voice-changed";
 const kDataChangedTopic      = "mobile-connection-data-changed";
 const kCardStateChangedTopic = "mobile-connection-cardstate-changed";
 const kUssdReceivedTopic     = "mobile-connection-ussd-received";
+const kDataErrorTopic        = "mobile-connection-data-error";
 
 XPCOMUtils.defineLazyServiceGetter(this, "cpmm",
                                    "@mozilla.org/childprocessmessagemanager;1",
@@ -629,6 +631,9 @@ RILContentHelper.prototype = {
         if (request) {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
+      case "RIL:DataError":
+        this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
+        this._deliverDataCallback("notifyerror", msg.json.error);
         break;
     }
   },
@@ -754,6 +759,11 @@ RILContentHelper.prototype = {
         debug("callback handler for " + name + " threw an exception: " + e);
       }
     }
+  },
+
+  _deliverDataCallback: function _deliverDataCallback(name, args) {
+    debug("callback handler for " + name + " args: " + args);
+    Services.obs.notifyObservers(null, kDataErrorTopic, args);
   }
 };
 
