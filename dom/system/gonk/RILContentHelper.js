@@ -630,9 +630,10 @@ RILContentHelper.prototype = {
         if (request) {
           Services.DOMRequest.fireError(request, msg.json.errorMsg);
         }
+        break;
       case "RIL:DataError":
         this.updateConnectionInfo(msg.json, this.dataConnectionInfo);
-        this._deliverDataCallback("notifyerror", msg.json.error);
+        Services.obs.notifyObservers(null, kDataErrorTopic, msg.json.error);
         break;
     }
   },
@@ -758,11 +759,6 @@ RILContentHelper.prototype = {
         debug("callback handler for " + name + " threw an exception: " + e);
       }
     }
-  },
-
-  _deliverDataCallback: function _deliverDataCallback(name, args) {
-    debug("callback handler for " + name + " args: " + args);
-    Services.obs.notifyObservers(null, kDataErrorTopic, args);
   }
 };
 
