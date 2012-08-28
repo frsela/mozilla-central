@@ -593,6 +593,10 @@ RadioInterfaceLayer.prototype = {
    * Handle data errors
    */
   handleDataCallError: function handleDataCallError(message) {
+    if(message.apn != this.dataCallSettings["apn"]) {
+      return;
+    }
+
     // 3G Network revoked the data connection, possible unavailable APN
     RILNetworkInterface.reset();
     // Notify datacall error
