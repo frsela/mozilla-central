@@ -2451,7 +2451,6 @@ let RIL = {
     } else {
       message.error = RIL_DATACALL_FAILCAUSE_TO_GECKO_DATACALL_ERROR[errorCode];
     }
-    debug("PDP Error: " + JSON.stringify(message));
     this.sendDOMMessage(message);
   },
 
