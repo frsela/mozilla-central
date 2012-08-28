@@ -451,6 +451,7 @@
 #include "nsIDOMNavigatorDesktopNotification.h"
 #include "nsIDOMNavigatorDeviceStorage.h"
 #include "nsIDOMNavigatorGeolocation.h"
+#include "nsIDOMNavigatorPushNotification.h"
 #include "Navigator.h"
 
 #include "nsPluginArray.h"
@@ -1702,8 +1703,12 @@ static nsDOMClassInfoData sClassInfoData[] = {
                            EVENTTARGET_SCRIPTABLE_FLAGS)
   NS_DEFINE_CLASSINFO_DATA(LockedFile, nsEventTargetSH,
                            EVENTTARGET_SCRIPTABLE_FLAGS)
+
   NS_DEFINE_CLASSINFO_DATA(MozActivity, nsEventTargetSH,
                            EVENTTARGET_SCRIPTABLE_FLAGS)
+
+  NS_DEFINE_CLASSINFO_DATA(PushManager, nsDOMGenericSH,
+                           DOM_DEFAULT_SCRIPTABLE_FLAGS)
 };
 
 // Objects that should be constructable through |new Name();|
@@ -2483,7 +2488,7 @@ nsDOMClassInfo::Init()
 #endif
     DOM_CLASSINFO_MAP_ENTRY(nsIDOMNavigatorCamera)
     DOM_CLASSINFO_MAP_ENTRY(nsIDOMNavigatorSystemMessages)
-
+    DOM_CLASSINFO_MAP_ENTRY(nsIDOMNavigatorPushNotification)
   DOM_CLASSINFO_MAP_END
 
   DOM_CLASSINFO_MAP_BEGIN(Plugin, nsIDOMPlugin)
@@ -4520,6 +4525,10 @@ nsDOMClassInfo::Init()
     DOM_CLASSINFO_MAP_ENTRY(nsIDOMMozActivity)
     DOM_CLASSINFO_MAP_ENTRY(nsIDOMDOMRequest)
     DOM_CLASSINFO_MAP_ENTRY(nsIDOMEventTarget)
+  DOM_CLASSINFO_MAP_END
+
+  DOM_CLASSINFO_MAP_BEGIN(PushManager, nsIDOMPushManager)
+    DOM_CLASSINFO_MAP_ENTRY(nsIDOMPushManager)
   DOM_CLASSINFO_MAP_END
 
 #ifdef DEBUG

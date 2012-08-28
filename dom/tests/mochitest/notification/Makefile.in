@@ -10,7 +10,7 @@ relativesrcdir	= @relativesrcdir@
 
 include $(DEPTH)/config/autoconf.mk
 
-MOCHITEST_FILES	= \
+MOCHITEST_FILES	+= \
 		test_basic_notification.html \
 		test_basic_notification_click.html \
 		test_leak_windowClose.html \

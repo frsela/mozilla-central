@@ -1,0 +1,23 @@
+/* -*- Mode: IDL; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 ts=2 autoindent cindent expandtab: */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "nsISupports.idl"
+
+interface nsIDOMDOMRequest;
+
+[scriptable,uuid(af1ab247-9048-4794-8809-006230f7a354)]
+interface nsIDOMPushManager : nsISupports
+{
+  nsIDOMDOMRequest requestURL(in ACString token);
+  nsIDOMDOMRequest getCurrentURL();
+  nsIDOMDOMRequest revokeURL();
+};
+
+[scriptable,uuid(9c7808a1-94b9-41db-8113-008033bacd13)]
+interface nsIDOMNavigatorPushNotification : nsISupports
+{
+  readonly attribute nsIDOMPushManager mozPush;
+};

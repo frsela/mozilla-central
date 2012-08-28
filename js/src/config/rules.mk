@@ -1632,7 +1632,7 @@ endif
 define install_file_template
 libs:: $(2)/$(notdir $(1))
 $(2)/$(notdir $(1)): $(1) $$(call mkdir_deps,$(2))
-	$(INSTALL) $(3) $$< $${@D}
+	$(INSTALL) $(3) $$< $(2)
 endef
 $(foreach category,$(INSTALL_TARGETS),\
   $(if $($(category)_DEST),,$(error Missing $(category)_DEST))\

@@ -1,0 +1,1 @@
+REGISTERED&publicURL=http://localhost:8888/dom/tests/mochitest/general/file_pushnotification_send_notification.txt

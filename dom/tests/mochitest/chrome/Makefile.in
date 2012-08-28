@@ -46,6 +46,10 @@ MOCHITEST_CHROME_FILES = \
 		window_callback_wrapping.xul \
 		test_sandbox_postMessage.html \
 		test_sandbox_bindings.xul \
+		test_push_notification.html \
+		push_notification_uatoken.txt \
+		file_push_server_wsh.py \
+		push_notification_child.html \
 		$(NULL)
 
 ifeq (WINNT,$(OS_ARCH))

@@ -13,8 +13,11 @@ from tempfile import mkdtemp, gettempdir
 import manifestparser
 import mozinfo
 import random
+from websocketserver import WebSocketServer
 
 from automationutils import *
+
+DEFAULT_WEBSOCKET_PORT=9988
 
 #TODO: replace this with json.loads when Python 2.6 is required.
 def parse_json(j):
@@ -40,6 +43,18 @@ class XPCShellTests(object):
     self.log.setLevel(logging.INFO)
     self.log.addHandler(handler)
     self.nodeProc = None
+
+  def startWebSocketServer(self, rootdir):
+    """ Launch the websocket server """
+    env = dict(self.env)
+    env['PYTHONPATH'] = os.path.join(rootdir, 'pywebsocket')
+    self.wsserver = WebSocketServer(DEFAULT_WEBSOCKET_PORT,
+                                    rootdir, env, self.log,
+                                    self.interactive)
+    self.wsserver.start()
+
+  def stopWebSocketServer(self):
+    self.wsserver.stop()
 
   def buildTestList(self):
     """
@@ -670,6 +685,8 @@ class XPCShellTests(object):
       random.shuffle(self.alltests)
 
     xunitResults = []
+    
+    withWebsocket = False               # are there any request for websocket?
 
     for test in self.alltests:
       name = test['path']
@@ -701,6 +718,14 @@ class XPCShellTests(object):
         xunitResult["skipped"] = True
         xunitResults.append(xunitResult)
         continue
+
+      # This testcase must be running with websocket server.  Add a
+      # 'websocket = ' line for the sections of testcases required
+      # websocket server.
+      if (not withWebsocket) and 'websocket' in test:
+        self.startWebSocketServer(testsRootDir)
+        withWebsocket = True
+        pass
 
       # Check for known-fail tests
       expected = test['expected'] == 'pass'
@@ -837,6 +862,10 @@ class XPCShellTests(object):
 
       xunitResults.append(xunitResult)
 
+    if withWebsocket:
+      self.stopWebSocketServer()
+      pass
+    
     self.shutdownNode()
 
     if self.testCount == 0:
