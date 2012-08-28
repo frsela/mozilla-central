@@ -20,6 +20,7 @@ XPIDLSRCS = \
   nsIMobileConnectionProvider.idl \
   nsIDOMUSSDReceivedEvent.idl \
   nsIDOMTCPSocket.idl \
+  nsIDOMDataErrorEvent.idl \
   $(NULL)
 
 include $(topsrcdir)/config/rules.mk
