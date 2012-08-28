@@ -2446,7 +2446,7 @@ let RIL = {
 
   _sendDataCallError: function _sendDataCallError(message, errorCode) {
     message.rilMessageType = "datacallerror";
-    if(errorCode == ERROR_GENERIC_FAILURE) {
+    if (errorCode == ERROR_GENERIC_FAILURE) {
       message.error = RIL_ERROR_TO_GECKO_ERROR[errorCode];
     } else {
       message.error = RIL_DATACALL_FAILCAUSE_TO_GECKO_DATACALL_ERROR[errorCode];
@@ -2459,7 +2459,7 @@ let RIL = {
     // Check for possible PDP errors. We check earlier because the datacall
     //  can be removed if is the same as the current one.
     for each (let newDataCall in datacalls) {
-      if(newDataCall.status) {  // On Data Call (PDP) error, we shall notify
+      if (newDataCall.status) {  // On Data Call (PDP) error, we shall notify
         this._sendDataCallError(newDataCall, newDataCall.status);
       }
     }
