@@ -594,10 +594,6 @@ RadioInterfaceLayer.prototype = {
    */
   handleDataCallError: function handleDataCallError(message) {
     // 3G Network revoked the data connection, possible unavailable APN
-    debug("Received data registration error message. Failed APN " +
-          gSettingsService.getLock().get("ril.data.apn", this) +
-          " # " + JSON.stringify(message)
-         );
     RILNetworkInterface.reset();
     // Notify datacall error
     ppmm.sendAsyncMessage("RIL:DataError", message);
