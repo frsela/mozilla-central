@@ -140,7 +140,7 @@ MobileConnection::Observe(nsISupports* aSubject,
     return NS_OK;
   }
 
-  if(!strcmp(aTopic, kDataErrorTopic)) {
+  if (!strcmp(aTopic, kDataErrorTopic)) {
     nsString dataerror;
     dataerror.Assign(aData);
     nsRefPtr<DataErrorEvent> event = DataErrorEvent::Create(dataerror);
