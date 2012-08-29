@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Test for PushNotification</title>
+  <script type="text/javascript" src="/content/MochiKit/MochiKit.js"></script>
+  <script type="text/javascript" src="/content/tests/SimpleTest/SimpleTest.js"></script>
+  <link rel="stylesheet" type="text/css" href="/content/tests/SimpleTest/test.css" />
+</head>
+<body>
+
+<!-- Although we can't test that the vibrator works properly, we can test that
+     navigator.mozVibrate throws an exception where appropriate. -->
+
+<script class="testbody" type="text/javascript;version=1.7">
+const {classes: Cc,
+       interfaces: Ci,
+       utils: Cu,
+       results: Cr,
+       Constructor: CC} = Components;
+
+Cu.import("resource://gre/modules/Services.jsm");
+
+const kPUSHNOTIFICATION_TOPIC = "moz-push-notification";
+const kPUSHNOTIFICATION_PREF_BRANCH = "network.push-notification";
+const kNOTIFICATION_SERVER_URL = "http://mochi.test:8888/tests/dom/tests/mochitest/general/file_pushnotification_register.txt";
+const kNOTIFICATION_RECEIVER_PORT = 5000;
+const kPUBLIC_URL = "http://localhost:8888/dom/tests/mochitest/general/file_pushnotification_send_notification.txt";
+
+let prefB = Services.prefs.getBranch(kPUSHNOTIFICATION_PREF_BRANCH);
+prefB.setCharPref("notification-server", kNOTIFICATION_SERVER_URL);
+prefB.setIntPref("receiver-port", kNOTIFICATION_RECEIVER_PORT);
+
+SimpleTest.waitForExplicitFinish();
+// Test with the vibrator pref enabled.
+var req = navigator.mozPush.requestURL("");
+req.onsuccess = function success(e) {
+  ok(req.readyState == "done", "Incorrect readyState");
+  ok(req.result.url == kPUBLIC_URL, "Incorrect URL");
+  SimpleTest.finish();
+};
+req.onerror = function error(e) {
+  ok(false, "Incorrect readyState");
+  SimpleTest.finish();
+};
+
+</script>
+</body>
+
+</html>

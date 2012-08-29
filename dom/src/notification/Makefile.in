@@ -18,6 +18,7 @@ FORCE_STATIC_LIB = 1
 
 CPPSRCS		= \
 		nsDesktopNotification.cpp \
+		nsDOMPushManager.cpp \
 		$(NULL)
 
 LOCAL_INCLUDES = \

@@ -23,6 +23,7 @@ PARALLEL_DIRS = \
   protocol \
   system \
   ipc  \
+  push-notification \
   $(NULL)
 
 ifdef NECKO_WIFI

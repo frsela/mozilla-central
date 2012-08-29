@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+    Functional test for push notification API
+-->
+<head>
+  <title>Basic functional test</title>
+  <script type="text/javascript" src="/content/tests/SimpleTest/SimpleTest.js"></script>
+<link rel="stylesheet" type="text/css" href="/content/tests/SimpleTest/test.css" />
+</head>
+
+<body>
+<a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=573588">Basic property tests</a>
+<p id="display"></p>
+<div id="content" style="display: none">
+</div>
+<pre id="test">
+<script class="testbody" type="text/javascript">
+
+const {classes: Cc,
+       interfaces: Ci,
+       utils: Cu,
+       results: Cr,
+       Constructor: CC} = Components;
+
+const kPUSHNOTIFICATION_TOPIC = "moz-push-notification";
+const kPUSHNOTIFICATION_PREF_BRANCH = "network.push-notification.";
+const kPERMISSION_REQUEST_PUSH_NOTIFICATION = "request-push-notification";
+
+// information for setting preferences
+const kNOTIFICATION_SERVER_URL = "ws://localhost:9988/chrome/dom/tests/mochitest/chrome/file_push_server";
+const kUA_TOKEN_SERVER_URL = "http://mochi.test:8888/chrome/dom/tests/mochitest/chrome/push_notification_uatoken.txt";
+const kNOTIFICATION_RECEIVER_PORT = 5000;
+
+// Application information
+const kAPPURL = "http://mochi.test:8888/chrome/dom/tests/mochitest/chrome/push_notification_child.html";
+const kMANIFESTURL = "http://mochi.test:8888/manifest.webapp";
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/NetUtil.jsm");
+Cu.import("resource://gre/modules/Webapps.jsm");
+
+var gPushNotification;
+
+// ============================================================
+
+SimpleTest.waitForExplicitFinish();
+
+function registerUA() {
+  var request = gPushNotification.registerUA();
+  request.onSuccess = function () {
+    do_test();
+  };
+  request.onError = function () {
+    ok(false, "registerUA() is failed");
+    SimpleTest.finish();
+  };
+}
+
+gPushNotification =
+    Cc["@mozilla.org/network/push-notification;1"].
+    getService(Ci.nsIPushNotification);
+
+var prefB = Services.prefs.getBranch(kPUSHNOTIFICATION_PREF_BRANCH);
+prefB.setCharPref("notification-server", kNOTIFICATION_SERVER_URL);
+prefB.setCharPref("user-agent-token-server", kUA_TOKEN_SERVER_URL);
+prefB.setIntPref("receiver-port", kNOTIFICATION_RECEIVER_PORT);
+
+var prefRoot = Services.prefs.getBranch("");
+prefRoot.setBoolPref("dom.mozBrowserFramesEnabled", true);
+
+function install_app() {
+  var fakeApp = {
+    name: "Push notification testcase",
+    origin: kAPPURL,
+    installOrigin: "http://mochi.test:8888/",
+    installedAt: Date.now(),
+    modifiedAt: Date.now(),
+    receipts: [],
+    manifestURL: "http://mochi.test:8888/manifest.webapp",
+    manifest: {
+      name: "Push notification testcase",
+      description: "The app for push notification testcase",
+    }
+  };
+  DOMApplicationRegistry.confirmInstall({app: fakeApp}, true);
+}
+
+function allow_push() {
+  Services.perms.add(NetUtil.newURI("http://mochi.test:8888"),
+                     kPERMISSION_REQUEST_PUSH_NOTIFICATION,
+                     Ci.nsIPermissionManager.ALLOW_ACTION);
+}
+
+/*
+ * Step 1: test push_notification_child.html without permission.
+ * Step 2: test push_notification_child.html with permission.
+ */
+function do_test() {
+  function onLoadApp(e) {
+    var url = app.contentWindow.location.toString();
+    var idx = url.search("\\?");
+    if (idx >= 0) {
+      if (testStep == 0) {
+        // step 1
+        ok(url.substring(idx + 1) != "success", "app page must be failed!");
+
+        allow_push();
+
+        app.contentWindow.location = kAPPURL;
+
+        testStep = 1;
+      } else {
+        // step 2
+        ok(url.substring(idx + 1) == "success", "app page is failed!");
+        SimpleTest.finish();
+      }
+    }
+  }
+
+  var testStep = 0;
+  var app = document.createElement("iframe");
+  app.setAttribute("mozbrowser", "true");
+  app.setAttribute("mozapp", kMANIFESTURL);
+
+  app.addEventListener("load", onLoadApp);
+
+  app.setAttribute("src", kAPPURL);
+
+  var content = document.getElementById("content");
+  content.appendChild(app);
+}
+
+install_app();
+registerUA();
+
+</script>
+</pre>
+</body>
+</html>
