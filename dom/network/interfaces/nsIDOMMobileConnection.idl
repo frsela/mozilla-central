@@ -10,7 +10,7 @@ interface nsIDOMMozMobileConnectionInfo;
 interface nsIDOMMozMobileNetworkInfo;
 interface nsIDOMMozMobileCellInfo;
 
-[scriptable, builtinclass, uuid(e7309c47-9a2e-4e12-84ab-f8f39214eaba)]
+[scriptable, builtinclass, uuid(c07309ee-a424-11e1-a75c-00265511db39)]
 interface nsIDOMMozMobileConnection : nsIDOMEventTarget
 {
   /**
@@ -221,6 +221,12 @@ interface nsIDOMMozMobileConnection : nsIDOMEventTarget
    * received.
    */
   attribute nsIDOMEventListener onussdreceived;
+
+  /**
+   * The 'dataerror' event is notified whenever the data connection object
+   * receives an error from the RIL
+   */
+  attribute nsIDOMEventListener ondataerror;
 };
 
 [scriptable, uuid(5ea0e4a9-4684-40da-9930-8ebb61d187f3)]
