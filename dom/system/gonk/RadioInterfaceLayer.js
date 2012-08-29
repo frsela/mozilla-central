@@ -600,7 +600,7 @@ RadioInterfaceLayer.prototype = {
     // 3G Network revoked the data connection, possible unavailable APN
     RILNetworkInterface.reset();
     // Notify datacall error
-    ppmm.sendAsyncMessage("RIL:DataError", message);
+    ppmm.broadcastAsyncMessage("RIL:DataError", message);
   },
 
   handleSignalStrengthChange: function handleSignalStrengthChange(message) {

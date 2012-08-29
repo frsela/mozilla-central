@@ -2460,6 +2460,7 @@ let RIL = {
     for each (let newDataCall in datacalls) {
       // On Data Call (PDP) error, we shall notify
       if (newDataCall.status != DATACALL_FAIL_NONE) {
+        newDataCall.apn = newDataCallOptions.apn;
         this._sendDataCallError(newDataCall, newDataCall.status);
       }
     }
