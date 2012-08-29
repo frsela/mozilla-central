@@ -30,10 +30,9 @@ XPCOMUtils.defineLazyServiceGetter(this, "gIDBManager",
                                    "@mozilla.org/dom/indexeddb/manager;1",
                                    "nsIIndexedDatabaseManager");
 
-XPCOMUtils.defineLazyGetter(this, "ppmm", function() {
-  return Cc["@mozilla.org/parentprocessmessagemanager;1"].getService(
-    Ci.nsIFrameMessageManager);
-});
+XPCOMUtils.defineLazyServiceGetter(this, "ppmm",
+                                   "@mozilla.org/parentprocessmessagemanager;1",
+                                   "nsIMessageListenerManager");
 
 let myGlobal = this;
 
@@ -146,7 +145,7 @@ let NetworkPoliciesService = {
   receiveMessage: function(aMessage) {
     debug("receiveMessage " + aMessage.name);
     let msg = aMessage.json;
-    let target = aMessage.target.QueryInterface(Ci.nsIFrameMessageManager);
+    let target = aMessage.target.QueryInterface(Ci.nsIMessageSender);
     switch (aMessage.name) {
       case "NetworkPolicies:GetConnectionTypes":
         return this.connectionTypes;

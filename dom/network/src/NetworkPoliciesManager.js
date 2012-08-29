@@ -16,8 +16,7 @@ Cu.import("resource://gre/modules/NetworkPoliciesService.jsm");
 
 XPCOMUtils.defineLazyGetter(this, "cpmm", function() {
   return Cc["@mozilla.org/childprocessmessagemanager;1"]
-                .getService(Ci.nsIFrameMessageManager)
-                .QueryInterface(Ci.nsISyncMessageSender);
+         .getService(Ci.nsISyncMessageSender);
 });
 
 const nsIClassInfo = Ci.nsIClassInfo;
