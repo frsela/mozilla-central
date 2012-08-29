@@ -225,17 +225,18 @@ let NetworkPoliciesService = {
 
     this._db.addPolicy(
       policy,
-      function(result) { 
-        target.sendAsyncMessage("NetworkPolicies:Set:Return:OK",
-                                { id: msg.id, policy: result });
+      function(success, result) {
+        if (success) {
+          target.sendAsyncMessage("NetworkPolicies:Set:Return:OK",
+                                  { id: msg.id, policy: result });
 
-        // Update cache
-        NetworkPoliciesCache.write(policy.app, policy);
-      }.bind(this),
-      function(aErrorMsg) {
-        target.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
-                                { id: msg.id, errorMsg: aErrorMsg });
-      }
+          // Update cache
+          NetworkPoliciesCache.write(policy.app, policy);
+        } else {
+          target.sendAsyncMessage("NetworkPolicies:Set:Return:KO",
+                                  { id: msg.id, errorMsg: result });
+        }
+      }.bind(this)
     );
   },
 
@@ -263,30 +264,31 @@ let NetworkPoliciesService = {
     } else {
       this._db.findPolicy(
         appName,
-        function(result) {
-          if (!result && appName != this.defaultPolicyName) {
-            // Not found, Recover default policy
-            debug("Not found policies for " + appName + ". Get default one");
-            msg.data = this.defaultPolicyName;
-            msg.realAppName = appName;
-            this.getPolicy(msg);
-            return;
-          }
+        function(success, result) {
+          if (success) {
+            if (!result && appName != this.defaultPolicyName) {
+              // Not found, Recover default policy
+              debug("Not found policies for " + appName + ". Get default one");
+              msg.data = this.defaultPolicyName;
+              msg.realAppName = appName;
+              this.getPolicy(msg,target);
+              return;
+            }
 
-          target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
-                                  { id: msg.id, policy: result });
+            target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                                    { id: msg.id, policy: result });
 
-          // Adding policy into cache
-          // If response is the default policy, we got the real application name
-          if (appName == this.defaultPolicyName && msg.realAppName) {
-            appName = msg.realAppName;
+            // Adding policy into cache
+            // If response is the default policy, we got the real application name
+            if (appName == this.defaultPolicyName && msg.realAppName) {
+              appName = msg.realAppName;
+            }
+            NetworkPoliciesCache.write(appName, result);
+          } else {
+            target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                                    { id: msg.id, errorMsg: result });
           }
-          NetworkPoliciesCache.write(appName, result);
-        }.bind(this),
-        function(aErrorMsg) {
-          target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
-                                  { id: msg.id, errorMsg: aErrorMsg });
-        }
+        }.bind(this)
       );
     }
   },
@@ -299,19 +301,20 @@ let NetworkPoliciesService = {
   getAllPolicies: function getAllPolicies(msg, target) {
     debug("getAllPolicies");
     this._db.getAllPolicies(
-      function(aResult) {
-        // Update cache for all
-        for (let policy in aResult) {
-          NetworkPoliciesCache.write(aResult[policy].app, aResult[policy]);
-        }
+      function(success, aResult) {
+        if (success) {
+          // Update cache for all
+          for (let policy in aResult) {
+            NetworkPoliciesCache.write(aResult[policy].app, aResult[policy]);
+          }
 
-        // notify result
-        target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
-                                { id: msg.id, policies: aResult });
-      },
-      function(aErrorMsg) {
-        target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
-                                { id: msg.id, errorMsg: aErrorMsg });
+          // notify result
+          target.sendAsyncMessage("NetworkPolicies:Get:Return:OK",
+                                  { id: msg.id, policies: aResult });
+        } else {
+          target.sendAsyncMessage("NetworkPolicies:Get:Return:KO",
+                                  { id: msg.id, errorMsg: aResult });
+        }
       }
     );
   }

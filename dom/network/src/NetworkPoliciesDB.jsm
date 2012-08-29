@@ -25,6 +25,16 @@ function NetworkPoliciesDB(aGlobal) {
 NetworkPoliciesDB.prototype = {
   __proto__: IndexedDBHelper.prototype,
 
+  dbNewTxn: function dbNewTxn(txn_type, callback, txnCb) {
+    function successCb(result) {
+      txnCb(true, result);
+    }
+    function errorCb(error) {
+      txnCb(false, error);
+    }
+    return this.newTxn(txn_type, callback, successCb, errorCb);
+  },
+
   upgradeSchema: function upgradeSchema(aTransaction, aDb, aOldVersion,
                                         aNewVersion) {
     debug("upgrade schema from: " + aOldVersion + " to " + aNewVersion);
@@ -69,14 +79,14 @@ NetworkPoliciesDB.prototype = {
     return policy;
   },
 
-  addPolicy: function addPolicy(aPolicy, successCb, errorCb) {
+  addPolicy: function addPolicy(aPolicy, resultCb) {
     let policy = this.makeImport(aPolicy);
     if (policy == null) {
       errorCb("Policy definition error");
       return;
     }
 
-    this.newTxn("readwrite", function(txn, store) {
+    this.dbNewTxn("readwrite", function(txn, store) {
       debug("Going to store " + JSON.stringify(policy));
 
       if (!txn.result) {
@@ -87,20 +97,20 @@ NetworkPoliciesDB.prototype = {
         txn.result = policy;
       }
 
-    }.bind(this), successCb, errorCb);
+    }.bind(this), resultCb);
   },
 
-  clearPolicies: function clearPolicies(aSuccessCb, aErrorCb) {
-    this.newTxn("readwrite", function (txn, store) {
+  clearPolicies: function clearPolicies(resultCb) {
+    this.dbNewTxn("readwrite", function (txn, store) {
       debug("Going to clear all!");
       store.clear();
-    }, aSuccessCb, aErrorCb);
+    }, resultCb);
   },
 
-  findPolicy: function findPolicy(aAppId, aSuccessCb, aFailureCb) {
+  findPolicy: function findPolicy(aAppId, resultCb) {
     debug("Find: application:" + aAppId);
 
-    this.newTxn("readonly", function (txn, store) {
+    this.dbNewTxn("readonly", function (txn, store) {
       if (!txn.result) {
         txn.result = {};
       }
@@ -109,13 +119,13 @@ NetworkPoliciesDB.prototype = {
         txn.result = event.target.result;
       }.bind(this);
 
-    }.bind(this), aSuccessCb, aFailureCb);
+    }.bind(this), resultCb);
   },
 
-  deletePolicy: function deletePolicy(aAppId, aSuccessCb, aFailureCb) {
+  deletePolicy: function deletePolicy(aAppId, resultCb) {
     debug("Delete: application:" + aAppId);
 
-    this.newTxn("readwrite", function (txn, store) {
+    this.dbNewTxn("readwrite", function (txn, store) {
       if (!txn.result) {
         txn.result = {};
       }
@@ -124,13 +134,13 @@ NetworkPoliciesDB.prototype = {
         txn.result = aAppId;
       }.bind(this);
 
-    }.bind(this), aSuccessCb, aFailureCb);
+    }.bind(this), resultCb);
   },
 
-  getAllPolicies: function getAllPolicies(aSuccessCb, aFailureCb) {
+  getAllPolicies: function getAllPolicies(resultCb) {
     debug("getAllPolicies");
 
-    this.newTxn("readonly", function (txn, store) {
+    this.dbNewTxn("readonly", function (txn, store) {
       if (!txn.result) {
         txn.result = [];
       }
@@ -141,7 +151,7 @@ NetworkPoliciesDB.prototype = {
               txn.result.length + " = " + JSON.stringify(txn.result)
              );
       }
-    }, aSuccessCb, aFailureCb);
+    }, resultCb);
   },
 
   init: function init(aGlobal) {
