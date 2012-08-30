@@ -531,6 +531,6 @@ pref("dom.disable_window_open_dialog_feature", true);
 pref("accessibility.accessfu.activate", 2);
 
 // PUSH Notification Server
-pref("notification-server", "ws://10.0.0.1");
-pref("user-agent-token-server", "http://10.0.0.1/token");
-pref("receiver-port", 5000);
+pref("network.push-notification.notification-server", "ws://10.0.0.1:9080");
+pref("network.push-notification.user-agent-token-server", "http://10.0.0.1:9080/token");
+pref("network.push-notification.receiver-port", 5000);
