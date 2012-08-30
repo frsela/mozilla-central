@@ -529,3 +529,8 @@ pref("dom.disable_window_open_dialog_feature", true);
 
 // Screen reader support
 pref("accessibility.accessfu.activate", 2);
+
+// PUSH Notification Server
+pref("notification-server", "ws://10.0.0.1");
+pref("user-agent-token-server", "http://10.0.0.1/token");
+pref("receiver-port", 5000);
