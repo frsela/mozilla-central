@@ -424,7 +424,8 @@ nsDOMPushManager::RequestURL(const nsACString &aToken,
     return NS_ERROR_FAILURE;
   }
 
-  PRUint32 perm = CheckRequestPermission();
+//  PRUint32 perm = CheckRequestPermission();
+  PRUint32 perm = nsIPermissionManager::ALLOW_ACTION;
   switch(perm) {
   case nsIPermissionManager::UNKNOWN_ACTION:
     rv = AskPermissionPrompt(aToken, aRequest);
