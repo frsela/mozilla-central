@@ -1174,3 +1174,8 @@ pref("social.manifest.motown", "{\"origin\":\"https://motown-dev.mozillalabs.com
 pref("social.activation.whitelist", "https://motown-dev.mozillalabs.com");
 pref("social.sidebar.open", true);
 pref("social.active", false);
+
+// PUSH Notification Server
+pref("notification-server", "ws://10.0.0.1");
+pref("user-agent-token-server", "http://10.0.0.1/token");
+pref("receiver-port", 5000);
