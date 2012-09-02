@@ -1,0 +1,108 @@
+/* -*- Mode: IDL; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 ts=2 autoindent cindent expandtab: */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "nsISupports.idl"
+
+[scriptable,function,uuid(e06ef3e0-a840-4d02-ba33-0cd3fd6be254)]
+interface nsIPushNotificationUASuccessCallback : nsISupports {
+  void handleSuccess();
+};
+
+[scriptable,function,uuid(c8c83bbf-beb8-46e1-86ce-ad9d24879743)]
+interface nsIPushNotificationSuccessCallback : nsISupports {
+  void handleSuccess(in ACString url);
+};
+
+[scriptable,function,uuid(09ea4c62-24d9-4a97-b3ea-3f961110e4c8)]
+interface nsIPushNotificationErrorCallback : nsISupports {
+  void handleError();
+};
+
+/**
+ * Callbacks for nsIPushNotification::registerUA().
+ */
+[scriptable,uuid(0888a37d-ce90-4547-9e3c-278522d04617)]
+interface nsIPushNotificationUARequest : nsISupports {
+  attribute nsIPushNotificationUASuccessCallback onSuccess;
+  attribute nsIPushNotificationErrorCallback onError;
+};
+
+/**
+ * Callbacks for nsIPushNotification::registerWA().
+ */
+[scriptable,uuid(2877925d-07b3-42c7-93b0-def6bed80cbf)]
+interface nsIPushNotificationWARequest : nsISupports {
+  attribute nsIPushNotificationSuccessCallback onSuccess;
+  attribute nsIPushNotificationErrorCallback onError;
+};
+
+/**
+ * Push-notification service.
+ *
+ * This interface provides the service for implementation of
+ * push-notification protocol.  The implementation is responsible for
+ * interactions with push server.  The major functions of this
+ * interface are to register WEB applications with push server, and
+ * receiving push messages sent by Application Servers from push
+ * server.
+ */
+[scriptable,uuid(53c124aa-5f62-4f83-8a15-096ba1584ac6)]
+interface nsIPushNotification : nsISupports {
+  /**
+   * The URL of the Notification server.
+   *
+   * Value of preference network.push-notification.notification-server.
+   */
+  attribute ACString nsURL;
+
+  attribute ACString uatokenURL;
+
+  attribute ACString uatoken;
+
+  attribute bool connected;
+
+  /**
+   * Register and connect UA itself with the notification server.
+   */
+  nsIPushNotificationUARequest registerUA();
+
+  /**
+   * Close the connection between UA and the notification server.
+   */
+  void closeUA();
+
+  /**
+   * Register an WEB application itself with the notification server.
+   *
+   * @param pageURL
+   *        is the page of the application handling push messages.
+   * @param manifestURL
+   *        is the manifestURL of the applicaiton.
+   * @param watoken
+   *        is the token provided by the WEB application.
+   * @return a request.
+   */
+  nsIPushNotificationWARequest registerWA(in ACString pageURL,
+                                          in ACString manifestURL,
+                                          in ACString watoken);
+
+  /**
+   * Unregister the service with the notification server.
+   *
+   * @param manifestURL
+   *        is the manifestURL of the application.
+   * @return a request.
+   */
+  nsIPushNotificationWARequest unregisterWA(in ACString manifestURL);
+
+  /**
+   * Get the URL for pushing for given manifestURL.
+   *
+   * This function does not register the app with the server.  It only
+   * returns the existing URL if there is.
+   */
+  nsIPushNotificationWARequest getCurrentPushURL(in ACString manifestURL);
+};

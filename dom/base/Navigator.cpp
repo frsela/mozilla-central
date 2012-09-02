@@ -43,6 +43,7 @@
 #include "nsIPermissionManager.h"
 #include "nsNetUtil.h"
 #include "nsIHttpChannel.h"
+#include "nsDOMPushManager.h"
 
 #ifdef MOZ_MEDIA_NAVIGATOR
 #include "MediaManager.h"
@@ -126,6 +127,7 @@ NS_INTERFACE_MAP_BEGIN(Navigator)
 #endif
   NS_INTERFACE_MAP_ENTRY(nsIDOMNavigatorCamera)
   NS_INTERFACE_MAP_ENTRY(nsIDOMNavigatorSystemMessages)
+  NS_INTERFACE_MAP_ENTRY(nsIDOMNavigatorPushNotification)
   NS_DOM_INTERFACE_MAP_ENTRY_CLASSINFO(Navigator)
 NS_INTERFACE_MAP_END
 
@@ -209,6 +211,10 @@ Navigator::Invalidate()
     mDeviceStorageStores[i]->Shutdown();
   }
   mDeviceStorageStores.Clear();
+
+  if (mPushNotification) {
+    mPushNotification = nullptr;
+  }
 
 }
 
@@ -1252,6 +1258,28 @@ Navigator::GetMozBluetooth(nsIDOMBluetoothManager** aBluetooth)
   return NS_OK;
 }
 #endif //MOZ_B2G_BT
+
+//*****************************************************************************
+//    nsNavigator::nsIDOMNavigatorPushNotification
+//*****************************************************************************
+
+NS_IMETHODIMP
+Navigator::GetMozPush(nsIDOMPushManager** aPushNotification)
+{
+  if (!mPushNotification) {
+    nsCOMPtr<nsPIDOMWindow> window = do_QueryReferent(mWindow);
+    NS_ENSURE_TRUE(window, NS_ERROR_FAILURE);
+
+    mPushNotification = nsDOMPushManager::Create(window);
+  }
+
+  nsCOMPtr<nsIDOMPushManager> pushNotification =
+    static_cast<nsIDOMPushManager *>(mPushNotification);
+
+
+  pushNotification.forget(aPushNotification);
+  return NS_OK;
+}
 
 //*****************************************************************************
 //    nsNavigator::nsIDOMNavigatorSystemMessages

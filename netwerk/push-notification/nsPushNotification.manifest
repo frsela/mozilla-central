@@ -1,0 +1,4 @@
+# nsPushNotification.js
+component {b2138a49-ba0b-4465-a700-d5dfe582c9b9} nsPushNotification.js
+contract @mozilla.org/network/push-notification;1 {b2138a49-ba0b-4465-a700-d5dfe582c9b9}
+

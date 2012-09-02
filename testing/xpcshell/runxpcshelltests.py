@@ -13,8 +13,11 @@ from tempfile import mkdtemp, gettempdir
 import manifestparser
 import mozinfo
 import random
+from websocketserver import WebSocketServer
 
 from automationutils import *
+
+DEFAULT_WEBSOCKET_PORT=9988
 
 #TODO: replace this with json.loads when Python 2.6 is required.
 def parse_json(j):
@@ -33,6 +36,7 @@ class XPCShellTests(object):
 
   log = logging.getLogger()
   oldcwd = os.getcwd()
+  wsserver_running = False
 
   def __init__(self, log=sys.stdout):
     """ Init logging and node status """
@@ -40,6 +44,24 @@ class XPCShellTests(object):
     self.log.setLevel(logging.INFO)
     self.log.addHandler(handler)
     self.nodeProc = None
+
+  def startWebSocketServer(self, rootdir):
+    """ Launch the websocket server """
+    if self.wsserver_running:
+        return
+
+    env = dict(self.env)
+    env['PYTHONPATH'] = os.path.join(rootdir, 'pywebsocket')
+    self.wsserver = WebSocketServer(DEFAULT_WEBSOCKET_PORT,
+                                    rootdir, env, self.log,
+                                    self.interactive)
+    self.wsserver.start()
+    self.wsserver_running = True
+
+  def stopWebSocketServer(self):
+    if self.wsserver_running:
+      self.wsserver.stop()
+      self.wsserver_running = False
 
   def buildTestList(self):
     """
@@ -671,6 +693,8 @@ class XPCShellTests(object):
 
     xunitResults = []
 
+    withWebsocket = False               # are there any request for websocket?
+
     for test in self.alltests:
       name = test['path']
       if self.singleFile and not name.endswith(self.singleFile):
@@ -701,6 +725,13 @@ class XPCShellTests(object):
         xunitResult["skipped"] = True
         xunitResults.append(xunitResult)
         continue
+
+      # This testcase must be running with websocket server.  Add a
+      # 'websocket = ' line for the sections of testcases required
+      # websocket server.
+      if 'websocket' in test:
+        self.startWebSocketServer(testsRootDir)
+        pass
 
       # Check for known-fail tests
       expected = test['expected'] == 'pass'
@@ -837,6 +868,8 @@ class XPCShellTests(object):
 
       xunitResults.append(xunitResult)
 
+    self.stopWebSocketServer()
+    
     self.shutdownNode()
 
     if self.testCount == 0:

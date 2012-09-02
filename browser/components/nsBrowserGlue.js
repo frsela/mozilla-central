@@ -1,4 +1,4 @@
-# -*- indent-tabs-mode: nil -*-
+/* -*- Mode: Javascript; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2 -*- */
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -1602,8 +1602,9 @@ ContentPermissionPrompt.prototype = {
 
   prompt: function CPP_prompt(request) {
 
-    if (request.type != "geolocation") {
-        return;
+    if (request.type != "geolocation" &&
+        request.type != "push-notification") {
+      return;
     }
 
     var requestingPrincipal = request.principal;
@@ -1613,7 +1614,13 @@ ContentPermissionPrompt.prototype = {
     if (!(requestingURI instanceof Ci.nsIStandardURL))
       return;
 
-    var result = Services.perms.testExactPermissionFromPrincipal(requestingPrincipal, "geo");
+    let permission;
+    if (request.type == "geolocation") {
+      permission = "geo";
+    } else if (request.type == "push-notification") {
+      permission = "request-push-notification";
+    }
+    var result = Services.perms.testExactPermissionFromPrincipal(requestingPrincipal, permission);
 
     if (result == Ci.nsIPermissionManager.ALLOW_ACTION) {
       request.allow();
@@ -1639,13 +1646,24 @@ ContentPermissionPrompt.prototype = {
 
     var browserBundle = Services.strings.createBundle("chrome://browser/locale/browser.properties");
 
-    var mainAction = {
-      label: browserBundle.GetStringFromName("geolocation.shareLocation"),
-      accessKey: browserBundle.GetStringFromName("geolocation.shareLocation.accesskey"),
-      callback: function() {
-        request.allow();
-      },
-    };
+    var mainAction;
+    if (request.type == "geolocation") {
+      mainAction = {
+        label: browserBundle.GetStringFromName("geolocation.shareLocation"),
+        accessKey: browserBundle.GetStringFromName("geolocation.shareLocation.accesskey"),
+        callback: function() {
+          request.allow();
+        },
+      };
+    } else if (request.type == "push-notification") {
+      mainAction = {
+        label: browserBundle.GetStringFromName("pushnotification.usePush"),
+        accessKey: browserBundle.GetStringFromName("pushnotification.usePush.accesskey"),
+        callback: function() {
+          request.allow();
+        },
+      };
+    }
 
     var message;
     var secondaryActions = [];
@@ -1653,38 +1671,70 @@ ContentPermissionPrompt.prototype = {
     var chromeWin = getChromeWindow(requestingWindow).wrappedJSObject;
 
     // Different message/options if it is a local file
-    if (requestingURI.schemeIs("file")) {
-      message = browserBundle.formatStringFromName("geolocation.shareWithFile",
-                                                   [requestingURI.path], 1);
-    } else {
-      message = browserBundle.formatStringFromName("geolocation.shareWithSite",
+    if (request.type == "geolocation") {
+      if (requestingURI.schemeIs("file")) {
+        message = browserBundle.formatStringFromName("geolocation.shareWithFile",
+                                                     [requestingURI.path], 1);
+      } else {
+        message = browserBundle.formatStringFromName("geolocation.shareWithSite",
+                                                     [requestingURI.host], 1);
+
+        // Don't offer to "always/never share" in PB mode
+        if (("gPrivateBrowsingUI" in chromeWin) && !chromeWin.gPrivateBrowsingUI.privateWindow) {
+          secondaryActions.push({
+            label: browserBundle.GetStringFromName("geolocation.alwaysShareLocation"),
+            accessKey: browserBundle.GetStringFromName("geolocation.alwaysShareLocation.accesskey"),
+            callback: function () {
+              Services.perms.addFromPrincipal(requestingPrincipal, "geo", Ci.nsIPermissionManager.ALLOW_ACTION);
+              request.allow();
+            }
+          });
+          secondaryActions.push({
+            label: browserBundle.GetStringFromName("geolocation.neverShareLocation"),
+            accessKey: browserBundle.GetStringFromName("geolocation.neverShareLocation.accesskey"),
+            callback: function () {
+              Services.perms.addFromPrincipal(requestingPrincipal, "geo", Ci.nsIPermissionManager.DENY_ACTION);
+              request.cancel();
+            }
+          });
+        }
+      }
+    } else if (request.type == "push-notification") {
+      message = browserBundle.formatStringFromName("pushnotification.useWithSite",
                                                    [requestingURI.host], 1);
 
-      // Don't offer to "always/never share" in PB mode
-      if (("gPrivateBrowsingUI" in chromeWin) && !chromeWin.gPrivateBrowsingUI.privateWindow) {
-        secondaryActions.push({
-          label: browserBundle.GetStringFromName("geolocation.alwaysShareLocation"),
-          accessKey: browserBundle.GetStringFromName("geolocation.alwaysShareLocation.accesskey"),
-          callback: function () {
-            Services.perms.addFromPrincipal(requestingPrincipal, "geo", Ci.nsIPermissionManager.ALLOW_ACTION);
-            request.allow();
-          }
-        });
-        secondaryActions.push({
-          label: browserBundle.GetStringFromName("geolocation.neverShareLocation"),
-          accessKey: browserBundle.GetStringFromName("geolocation.neverShareLocation.accesskey"),
-          callback: function () {
-            Services.perms.addFromPrincipal(requestingPrincipal, "geo", Ci.nsIPermissionManager.DENY_ACTION);
-            request.cancel();
-          }
-        });
-      }
+      secondaryActions.push({
+        label: browserBundle.GetStringFromName("pushnotification.alwaysUsePush"),
+        accessKey: browserBundle.GetStringFromName("pushnotification.alwaysUsePush.accesskey"),
+        callback: function () {
+          Services.perms.addFromPrincipal(requestingPrincipal, "request-push-notification", Ci.nsIPermissionManager.ALLOW_ACTION);
+          request.allow();
+        }
+      });
+      secondaryActions.push({
+        label: browserBundle.GetStringFromName("pushnotification.neverUsePush"),
+        accessKey: browserBundle.GetStringFromName("pushnotification.neverUsePush.accesskey"),
+        callback: function () {
+          Services.perms.addFromPrincipal(requestingPrincipal, "request-push-notification", Ci.nsIPermissionManager.DENY_ACTION);
+          request.cancel();
+        }
+      });
     }
 
     var browser = chromeWin.gBrowser.getBrowserForDocument(requestingWindow.document);
 
-    chromeWin.PopupNotifications.show(browser, "geolocation", message, "geo-notification-icon",
-                                      mainAction, secondaryActions);
+    var id;
+    if (request.type == "geolocation") {
+      id = "geolocation";
+    } else if (request.type == "push-notification") {
+      id = "pushnotification";
+    }
+    chromeWin.PopupNotifications.show(browser,
+                                      id,
+                                      message,
+                                      "push-notification-icon",
+                                      mainAction,
+                                      secondaryActions);
   }
 };
 

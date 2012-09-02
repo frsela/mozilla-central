@@ -1,0 +1,1 @@
+REGISTERED&publicURL=http://example.com/notification-service/

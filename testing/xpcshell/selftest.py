@@ -62,6 +62,25 @@ tail =
 
 """ + "\n".join(testlines))
 
+    def prepareWebsocket(self):
+        import shutil
+
+        mochitest = os.path.join(os.path.dirname(__file__),
+                                 os.path.pardir,
+                                 'mochitest')
+
+        # copy pywebsocket_wrapper.py
+        pywebsocket_wrapper = os.path.join(mochitest,
+                                           'pywebsocket_wrapper.py')
+        mochitest_dst = os.path.join(self.tempdir, 'pywebsocket_wrapper.py')
+        shutil.copyfile(pywebsocket_wrapper, mochitest_dst)
+
+        # copy pywebsocket/
+        pywebsocket = os.path.join(mochitest, 'pywebsocket')
+        pywebsocket_dst = os.path.join(self.tempdir, 'pywebsocket')
+        shutil.copytree(pywebsocket, pywebsocket_dst)
+        pass
+
     def assertTestResult(self, expected, shuffle=False, xunitFilename=None):
         """
         Assert that self.x.runTests with manifest=self.manifest
@@ -305,6 +324,69 @@ tail =
 
         self.assertTrue(testcases[1].find("failure") is not None)
         self.assertTrue(testcases[2].find("skipped") is not None)
+
+    def testWebsocket(self):
+        self.prepareWebsocket()
+
+        manifest = [("test_websocket.js", "websocket =", "")]
+        self.writeManifest(manifest)
+
+        self.writeFile("file_websocket_test_wsh.py", '''
+def web_socket_do_extra_handshake(request):
+  request.ws_protocol = request.ws_requested_protocols[0]
+
+  if (request.ws_protocol == 'error'):
+      raise ValueError('Error')
+  pass
+def web_socket_transfer_data(req):
+  pass
+''')
+
+        self.writeFile("test_websocket.js",
+                       '''
+const {classes: Cc,
+       interfaces: Ci,
+       utils: Cu,
+       results: Cr,
+       Constructor: CC} = Components;
+
+const kWS_CONTRACTID = "@mozilla.org/network/protocol;1?name=ws";
+const kWS_URL = "ws://localhost:9988/file_websocket_test";
+
+function createWS(listener) {
+  ws = Cc[kWS_CONTRACTID].createInstance(Ci.nsIWebSocketChannel);
+  let uri = Cc["@mozilla.org/network/standard-url;1"].
+    createInstance(Ci.nsIURI);
+  uri.spec = kWS_URL;
+
+  ws.protocol = "test";
+  ws.asyncOpen(uri, kWS_URL, listener, null);
+}
+
+let make_sure_websocket_connected = {
+  onStart: function onStart(context) {
+    do_test_finished();
+  },
+  onStop: function onStop(context, status) {
+    if (status) do_throw("connecting error");
+    do_test_finished();
+  },
+  onMessageAvailable: function (context, msg) {},
+  onBinaryMessageAvailable: function (contxt, msg) {},
+  onAcknowledge: function (context, size) {},
+  onServerClose: function (context, code, reason) {}
+};
+
+function run_test() {
+  do_test_pending();
+  let ws = createWS(make_sure_websocket_connected);
+}
+''')
+
+        self.assertTestResult(True)
+        self.assertEquals(self.x.testCount, 1)
+        self.assertEquals(self.x.passCount, 1)
+        pass
 
 if __name__ == "__main__":
     unittest.main()

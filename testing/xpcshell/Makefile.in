@@ -16,11 +16,20 @@ MODULE		= testing_xpcshell
 # "example" folder:
 TEST_DIRS += example
 
+# Extra files for websocket server
+WEBSOCKET_FILES := \
+  $(topsrcdir)/testing/mochitest/pywebsocket_wrapper.py \
+  $(topsrcdir)/testing/mochitest/pywebsocket \
+  $(NULL)
+WEBSOCKET_DEST = $(testxpcobjdir)
+INSTALL_TARGETS += WEBSOCKET
+
 include $(topsrcdir)/config/rules.mk
 
 # Harness files from the srcdir
 TEST_HARNESS_FILES := \
   runxpcshelltests.py \
+  websocketserver.py \
   remotexpcshelltests.py \
   head.js \
   node-spdy \

@@ -16,6 +16,7 @@ GRE_MODULE     = 1
 
 XPIDLSRCS = nsIDOMNavigatorDesktopNotification.idl    \
             nsIDOMDesktopNotification.idl             \
+            nsIDOMNavigatorPushNotification.idl \
             $(NULL)
 
 include $(topsrcdir)/config/rules.mk
