@@ -46,7 +46,19 @@ MOCHITEST_CHROME_FILES = \
 		window_callback_wrapping.xul \
 		test_sandbox_postMessage.html \
 		test_sandbox_bindings.xul \
+		test_push_notification.html \
+		push_notification_uatoken.txt \
+		file_push_server_wsh.py \
+		push_notification_child.html \
 		$(NULL)
+
+# Testing against push-notification server running at 10.0.0.1:8080.
+ifdef DEBUG_PUSH_SERVER
+MOCHITEST_CHROME_FILES += \
+		test_push_notification-server.html \
+		push_notification_child-server.html \
+		$(NULL)
+endif
 
 ifeq (WINNT,$(OS_ARCH))
 MOCHITEST_CHROME_FILES += \

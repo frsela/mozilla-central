@@ -15,7 +15,7 @@ interface nsIInputStream;
 /** 
  *  You probably want nsI{Moz}WebSocket.idl
  */
-[uuid(0683E9A4-994D-11E1-9478-1E356188709B)]
+[scriptable,uuid(0683E9A4-994D-11E1-9478-1E356188709B)]
 interface nsIWebSocketChannel : nsISupports
 {
     /**

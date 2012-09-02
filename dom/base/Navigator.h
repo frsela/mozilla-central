@@ -40,6 +40,9 @@ class nsIDOMMozVoicemail;
 #include "nsIDOMNavigatorBluetooth.h"
 #endif
 
+// Push Notification
+#include "nsIDOMNavigatorPushNotification.h"
+
 #include "nsIDOMNavigatorSystemMessages.h"
 
 #include "nsIDOMNavigatorCamera.h"
@@ -69,6 +72,8 @@ namespace power {
 class PowerManager;
 } // namespace power
 
+class nsDOMPushManager;
+
 class Navigator : public nsIDOMNavigator
                 , public nsIDOMClientInformation
                 , public nsIDOMNavigatorDeviceStorage
@@ -88,6 +93,7 @@ class Navigator : public nsIDOMNavigator
 #endif
                 , public nsIDOMNavigatorCamera
                 , public nsIDOMNavigatorSystemMessages
+                , public nsIDOMNavigatorPushNotification
 {
 public:
   Navigator(nsPIDOMWindow *aInnerWindow);
@@ -113,6 +119,8 @@ public:
   NS_DECL_NSIDOMNAVIGATORBLUETOOTH
 #endif
   NS_DECL_NSIDOMNAVIGATORSYSTEMMESSAGES
+
+  NS_DECL_NSIDOMNAVIGATORPUSHNOTIFICATION
 
   static void Init();
 
@@ -163,6 +171,7 @@ private:
   nsRefPtr<nsDOMCameraManager> mCameraManager;
   nsCOMPtr<nsIDOMNavigatorSystemMessages> mMessagesManager;
   nsTArray<nsRefPtr<nsDOMDeviceStorage> > mDeviceStorageStores;
+  nsRefPtr<nsDOMPushManager> mPushNotification;
   nsWeakPtr mWindow;
 };
 

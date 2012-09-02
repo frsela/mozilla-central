@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+    Functional test for push notification API
+
+    Test two times, for without and with permission.
+-->
+<head>
+  <title>Basic functional test</title>
+  <script type="text/javascript" src="/content/tests/SimpleTest/SimpleTest.js"></script>
+<link rel="stylesheet" type="text/css" href="/content/tests/SimpleTest/test.css" />
+</head>
+
+<body>
+<a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=573588">Basic property tests</a>
+<p id="display"></p>
+<div id="content" style="display: none">
+</div>
+<pre id="test">
+<script class="testbody" type="text/javascript">
+
+const {classes: Cc,
+       interfaces: Ci,
+       utils: Cu,
+       results: Cr,
+       Constructor: CC} = Components;
+
+const kPUSHNOTIFICATION_TOPIC = "moz-push-notification";
+const kPUSHNOTIFICATION_PREF_BRANCH = "network.push-notification.";
+const kPERMISSION_REQUEST_PUSH_NOTIFICATION = "request-push-notification";
+
+const kNOTIFICATION_SERVER_URL = "ws://10.0.0.1:9080/";
+const kUA_TOKEN_SERVER_URL = "http://10.0.0.1:9080/token";
+const kPUBLIC_PUSH_URL_PREFIX = "http://10.0.0.1:9081/notify/";
+const kNOTIFICATION_RECEIVER_PORT = 5000;
+
+// Application info
+const kAPPURL = "http://mochi.test:8888/chrome/dom/tests/mochitest/chrome/push_notification_child-server.html";
+const kMANIFESTURL = "http://mochi.test:8888/manifest.webapp";
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/NetUtil.jsm");
+Cu.import("resource://gre/modules/Webapps.jsm");
+
+Cu.import("resource://services-crypto/utils.js");
+Cu.import("resource://services-common/utils.js");
+
+var gPushNotification;
+var gFakeServer;
+var gNotificationPublicURL;
+
+function sha256(msg) {
+  var hasher = Cc["@mozilla.org/security/hash;1"]
+    .createInstance(Ci.nsICryptoHash);
+  hasher.init(hasher.SHA256);
+
+  var bin = CryptoUtils.digestUTF8(msg, hasher);
+  var txt = CommonUtils.bytesAsHex(bin);
+  return txt;
+}
+
+// ============================================================
+
+SimpleTest.waitForExplicitFinish();
+
+function registerUA() {
+  var request = gPushNotification.registerUA();
+  request.onSuccess = function () {
+    do_test();
+  };
+  request.onError = function () {
+    ok(false, "registerUA() is failed");
+    SimpleTest.finish();
+  };
+}
+
+gPushNotification =
+    Cc["@mozilla.org/network/push-notification;1"].
+    getService(Ci.nsIPushNotification);
+
+/*
+ * Set preferences required for nsPushNotification.
+ */
+var prefB = Services.prefs.getBranch(kPUSHNOTIFICATION_PREF_BRANCH);
+prefB.setCharPref("notification-server", kNOTIFICATION_SERVER_URL);
+prefB.setCharPref("user-agent-token-server", kUA_TOKEN_SERVER_URL);
+prefB.setIntPref("receiver-port", kNOTIFICATION_RECEIVER_PORT);
+
+var prefRoot = Services.prefs.getBranch("");
+prefRoot.setBoolPref("dom.mozBrowserFramesEnabled", true);
+
+function install_app() {
+  var fakeApp = {
+    name: "Push notification testcase",
+    origin: kAPPURL,
+    installOrigin: "http://mochi.test:8888/",
+    installedAt: Date.now(),
+    modifiedAt: Date.now(),
+    receipts: [],
+    manifestURL: "http://mochi.test:8888/manifest.webapp",
+    manifest: {
+      name: "Push notification testcase",
+      description: "The app for push notification testcase",
+    }
+  };
+  DOMApplicationRegistry.confirmInstall({app: fakeApp}, true);
+}
+
+function allow_push() {
+  Services.perms.add(NetUtil.newURI("http://mochi.test:8888"),
+                     kPERMISSION_REQUEST_PUSH_NOTIFICATION,
+                     Ci.nsIPermissionManager.ALLOW_ACTION);
+}
+
+function do_test() {
+  /*
+   * To determines if the test running in iframe are success or fault, we
+   * check if the parameter part (?XXXX) is "success".
+   */
+  function onLoadApp(e) {
+    var url = app.contentWindow.location.toString();
+    var idx = url.search("\\?");
+    if (idx >= 0) {
+      if (testStep == 0) {
+        ok(url.substring(idx + 1) != "success", "app page must be failed!");
+
+        allow_push();
+
+        app.contentWindow.location = kAPPURL;
+
+        testStep = 1;
+      } else {
+        ok(url.substring(idx + 1) == "success", "app page is failed!");
+        SimpleTest.finish();
+      }
+    }
+  }
+
+  var testStep = 0;
+  var app = document.createElement("iframe");
+  app.setAttribute("mozbrowser", "true");
+  app.setAttribute("mozapp", kMANIFESTURL);
+
+  app.addEventListener("load", onLoadApp);
+
+  app.setAttribute("src", kAPPURL);
+
+  var content = document.getElementById("content");
+  content.appendChild(app);
+}
+
+install_app();
+registerUA();
+
+</script>
+</pre>
+</body>
+</html>

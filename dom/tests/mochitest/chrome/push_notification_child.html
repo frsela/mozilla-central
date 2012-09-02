@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+    Functional test for push notification API
+
+    Step 1: call navigator.mozPush.requestURL()
+    Step 2: call navigator.mozPush.getCurrentURL()
+    Step 3: (maybe) receive notifications through system messages.
+-->
+<head>
+  <title>Basic functional test</title>
+</head>
+
+<body>
+<p id="display"></p>
+<script class="testbody" type="text/javascript">
+
+const kPUSH_URL = "http://push.example.com/push";
+
+const kWATOKEN = "f82d7a74d20cde480d44ee32f24743a8";
+
+// ============================================================
+
+var hadPushURL = false;
+
+function ok(a, b) {
+  if (!a) {
+    window.location = window.location + "?error=" + b;
+  }
+}
+
+var SimpleTest = {
+  finish: function() {
+    if (hadPushURL) {
+      window.location = window.location + "?success";
+    } else {
+      window.location = window.location + "?error";
+    }
+  }
+};
+
+function hasPushURL() {
+  hadPushURL = true;
+}
+
+function do_test() {
+  ok(navigator.mozPush, "test for requestURL");
+  do_test_requestURL();
+}
+
+function do_test_requestURL() {
+  var req;
+  try {
+    req = navigator.mozPush.requestURL(kWATOKEN);
+  } catch(e) {
+    ok(false, "failed to requestURL");
+    return;
+  }
+  req.onsuccess = function (e) {
+    ok(req.result.url == kPUSH_URL, "have registered an WEB app");
+    do_test_getCurrentURL();
+  };
+  req.onerror = function (e) {
+    ok(false, "failed to register an WEB app");
+    SimpleTest.finish();
+  };
+}
+
+function do_test_getCurrentURL() {
+  ok(navigator.mozPush, "test for getCurrentURL");
+
+  var req = navigator.mozPush.getCurrentURL();
+  req.onsuccess = function (e) {
+    ok(req.result.url == kPUSH_URL, "get the pushing URL");
+    hasPushURL();
+    dump("before messagehandler\n");
+    try {
+      navigator.mozSetMessageHandler("push-notification",
+                                    function(msg) {
+        dump("in message handler\n");
+        SimpleTest.finish();
+      });
+    } catch(e) {
+      dump("Not implemented!" +
+           " This platform does not support system messages.\n");
+      SimpleTest.finish();
+    }
+  };
+  req.onerror = function (e) {
+    ok(false, "failed to getCurrentURL()");
+    SimpleTest.finish();
+  };
+}
+
+if (window.location.toString().search("\\?") < 0) {
+  do_test();
+}
+</script>
+</pre>
+</body>
+</html>
