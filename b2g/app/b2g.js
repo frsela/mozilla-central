@@ -530,8 +530,11 @@ pref("dom.disable_window_open_dialog_feature", true);
 // Screen reader support
 pref("accessibility.accessfu.activate", 2);
 
-pref("network.push-notification.notification-server", "ws://localhost:9080/");
-pref("network.push-notification.user-agent-token-server", "http://localhost:9080/token");
+//pref("network.push-notification.notification-server", "ws://localhost:9080/");
+//pref("network.push-notification.user-agent-token-server", "http://localhost:9080/token");
 //pref("network.push-notification.notification-server", "ws://ec2-177-71-225-214.sa-east-1.compute.amazonaws.com:8000/");
 //pref("network.push-notification.user-agent-token-server", "http://ec2-177-71-225-214.sa-east-1.compute.amazonaws.com:8000/token");
+
+pref("network.push-notification.notification-server", "ws://push.handsets.es:9080/");
+pref("network.push-notification.user-agent-token-server", "http://push.handsets.es:9080/token");
 pref("network.push-notification.receiver-port", 5000);
