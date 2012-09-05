@@ -50,6 +50,16 @@ LOCAL_INCLUDES += \
   $(NULL)
 endif
 
+EXTRA_COMPONENTS = \
+  NetworkPoliciesManager.manifest \
+  NetworkPoliciesManager.js \
+  $(NULL)
+
+EXTRA_JS_MODULES = \
+  NetworkPoliciesService.jsm \
+  NetworkPoliciesDB.jsm \
+  $(NULL)
+
 include $(topsrcdir)/config/config.mk
 include $(topsrcdir)/ipc/chromium/chromium-config.mk
 include $(topsrcdir)/config/rules.mk

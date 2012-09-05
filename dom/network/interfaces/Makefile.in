@@ -18,6 +18,9 @@ XPIDLSRCS = \
   nsIDOMConnection.idl \
   nsIDOMUSSDReceivedEvent.idl \
   nsIDOMTCPSocket.idl \
+  nsIDOMNetworkPoliciesManager.idl \
+  nsIDOMNetworkPolicy.idl \
+  nsIDOMNetworkPolicyConnection.idl \
   $(NULL)
 
 ifdef MOZ_B2G_RIL
