@@ -1172,6 +1172,14 @@ RadioInterfaceLayer.prototype = {
 
   handleStkProactiveCommand: function handleStkProactiveCommand(message) {
     debug("handleStkProactiveCommand " + JSON.stringify(message));
+    if (!this._sysMsgListenerReady) {
+      debug("System message listener not ready yet");
+      let response = {};
+      response.command = message;
+      response.resultCode = RIL.STK_RESULT_BEYOND_TERMINAL_CAPABILITY ;
+      this.sendStkResponse(response);
+      return;
+    }
     gSystemMessenger.broadcastMessage("icc-stkcommand", message);
     ppmm.broadcastAsyncMessage("RIL:StkCommand", message);
   },
