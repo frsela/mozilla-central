@@ -335,6 +335,8 @@
 @BINPATH@/components/xultmpl.xpt
 @BINPATH@/components/zipwriter.xpt
 @BINPATH@/components/telemetry.xpt
+@BINPATH@/components/Push.js
+@BINPATH@/components/Push.manifest
 
 ; JavaScript components
 @BINPATH@/components/ConsoleAPI.manifest

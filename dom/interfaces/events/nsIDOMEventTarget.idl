@@ -45,7 +45,7 @@ interface nsIScriptContext;
 interface nsIDOMEventListener;
 interface nsIDOMEvent;
 
-[scriptable, builtinclass, uuid(31e92e56-4d23-4a4a-9cfe-a6d12cf434bc)]
+[scriptable, uuid(31e92e56-4d23-4a4a-9cfe-a6d12cf434bc)]
 interface nsIDOMEventTarget : nsISupports
 {
   /**

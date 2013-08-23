@@ -411,7 +411,7 @@ pref("services.push.retryBaseInterval", 5000);
 // Interval at which to ping PushServer to check connection status. In
 // milliseconds. If no reply is received within requestTimeout, the connection
 // is considered closed.
-pref("services.push.pingInterval", 1800000); // 30 minutes
+pref("services.push.pingInterval", 800000); // 30 minutes
 // How long before a DOMRequest errors as timeout
 pref("services.push.requestTimeout", 10000);
 // enable udp wakeup support
