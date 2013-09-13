@@ -5,7 +5,7 @@
 "use strict";
 
 function debug(s) {
-  // dump("-*- PushService.jsm: " + s + "\n");
+  dump("-*- PushService.jsm: " + s + "\n");
 }
 
 const Cc = Components.classes;
@@ -527,6 +527,53 @@ this.PushService = {
   },
 
   /**
+   * Adaptative PING: The service will calculate the maximum PING timeout
+   * tolerable in current network.
+   * If the last sent PING is responded with a PONG a valid timeout is set
+   * in adaptativePingSetOK.
+   * If the last PING failed, an invalid timeout is set in adaptativePingSetKO.
+   * Finally, adaptativePingNext returns the next TIMEOUT to send a PING based
+   * on the OK and KO interval.
+   */
+  adaptativePingSetOK: function() {
+    debug("Adaptative PING: Setting last interval as a valid one: " +
+      prefs.get("adaptativeping.interval"))
+    prefs.set("adaptativeping.lastOK", prefs.get("adaptativeping.interval"));
+    debug("New OK: " + prefs.get("adaptativeping.lastOK"));
+  },
+
+  adaptativePingSetKO: function() {
+    debug("Adaptative PING: Setting last interval as an invalid one: " +
+      prefs.get("adaptativeping.interval"))
+    prefs.set("adaptativeping.lastKO", prefs.get("adaptativeping.interval"));
+    debug("New KO: " + prefs.get("adaptativeping.lastKO"));
+  },
+
+  adaptativePingNext: function() {
+    debug("Adaptative PING: Calculating next interval");
+    debug("OK: " + prefs.get("adaptativeping.lastOK"));
+    debug("KO: " + prefs.get("adaptativeping.lastKO"));
+    debug("tolerance: " + prefs.get("adaptativeping.tolerance"));
+    debug("interval: " + prefs.get("adaptativeping.interval"));
+    if (prefs.get("adaptativeping.lastKO") > 0) {
+      debug("Punto medio");
+      var adaptativePingMargin = prefs.get("adaptativeping.lastKO") -
+                                 prefs.get("adaptativeping.lastOK");
+      if (adaptativePingMargin > prefs.get("adaptativeping.tolerance")) {
+        prefs.set("adaptativeping.interval",
+          prefs.get("adaptativeping.lastOK") + adaptativePingMargin / 2);
+      }
+    } else if (prefs.get("adaptativeping.lastOK") > 0) {
+      debug("Duplicate = " + prefs.get("adaptativeping.lastOK") * 2);
+      prefs.set("adaptativeping.interval",
+        prefs.get("adaptativeping.lastOK") * 2);
+    }
+    debug("Adaptative PING: Next interval: " +
+      prefs.get("adaptativeping.interval"));
+    return prefs.get("adaptativeping.interval");
+  },
+
+  /**
    * How retries work:  The goal is to ensure websocket is always up on
    * networks not supporting UDP. So the websocket should only be shutdown if
    * onServerClose indicates UDP wakeup.  If WS is closed due to socket error,
@@ -546,10 +593,10 @@ this.PushService = {
   _reconnectAfterBackoff: function() {
     debug("reconnectAfterBackoff()");
 
-    // Calculate new timeout, but cap it to pingInterval.
+    // Calculate new timeout, but cap it to maxInterval.
     var retryTimeout = prefs.get("retryBaseInterval") *
                        Math.pow(2, this._retryFailCount);
-    retryTimeout = Math.min(retryTimeout, prefs.get("pingInterval"));
+    retryTimeout = Math.min(retryTimeout, prefs.get("maxInterval"));
 
     this._retryFailCount++;
 
@@ -676,8 +723,9 @@ this.PushService = {
    *    reconnect, repurposing the alarm for (3).
    *
    * 2) Send a ping.
-   *    The protocol sends a ping ({}) on the wire every pingInterval ms. Once
-   *    it sends the ping, the alarm goes to task (1) which is waiting for
+   *    The protocol sends a ping ({}) on the wire every
+   *    adaptativeping.interval ms.
+   *    Once it sends the ping, the alarm goes to task (1) which is waiting for
    *    a pong. If data is received after the ping is sent,
    *    _wsOnMessageAvailable() will reset the ping alarm (which cancels
    *    waiting for the pong). So as long as the connection is fine, pong alarm
@@ -699,6 +747,8 @@ this.PushService = {
       debug("Did not receive pong in time. Reconnecting WebSocket.");
       this._shutdownWS();
       this._reconnectAfterBackoff();
+      // Last PING interval is not valid
+      this.adaptativePingSetKO();
     }
     else if (this._currentState == STATE_READY) {
       // Send a ping.
@@ -1340,11 +1390,15 @@ this.PushService = {
   _wsOnMessageAvailable: function(context, message) {
     debug("wsOnMessageAvailable() " + message);
 
+    if (message === '{}') {
+      // PONG message received, this is a good interval
+      this.adaptativePingSetOK();
+    }
     this._waitingForPong = false;
 
     // Reset the ping timer.  Note: This path is executed at every step of the
     // handshake, so this alarm does not need to be set explicitly at startup.
-    this._setAlarm(prefs.get("pingInterval"));
+    this._setAlarm(this.adaptativePingNext());
 
     var reply = undefined;
     try {

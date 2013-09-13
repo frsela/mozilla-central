@@ -409,10 +409,15 @@ pref("services.push.userAgentID", "");
 // Exponential back-off start is 5 seconds like in HTTP/1.1.
 // Maximum back-off is pingInterval.
 pref("services.push.retryBaseInterval", 5000);
+pref("services.push.maxInterval", 1800000); // 30 minutes
+// Adaptative ping
 // Interval at which to ping PushServer to check connection status. In
 // milliseconds. If no reply is received within requestTimeout, the connection
 // is considered closed.
-pref("services.push.pingInterval", 1800000); // 30 minutes
+pref("services.push.adaptativeping.lastOK", 0);
+pref("services.push.adaptativeping.lastKO", 0);
+pref("services.push.adaptativeping.interval", 120000);  // start: 2 minutes
+pref("services.push.adaptativeping.tolerance", 120000); // tolerance: 2 minutes
 // How long before a DOMRequest errors as timeout
 pref("services.push.requestTimeout", 10000);
 // enable udp wakeup support
