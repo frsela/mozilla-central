@@ -432,7 +432,7 @@ pref("services.push.requestTimeout", 10000);
 // enable udp wakeup support
 pref("services.push.udp.wakeupEnabled", true);
 // port on which UDP server socket is bound
-pref("services.push.udp.port", 2442);
+pref("services.push.udp.port", -1);   // -1 => System assigned by default
 
 // NetworkStats
 #ifdef MOZ_B2G_RIL

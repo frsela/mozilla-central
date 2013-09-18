@@ -1295,6 +1295,10 @@ this.PushService = {
     // Since we've had a successful connection reset the retry fail count.
     this._retryFailCount = 0;
 
+    // Openning UDP. If _udpPort is -1 the system will assign a free one
+    // _listenForUDPWakeup will update _udpPort with the final one
+    this._listenForUDPWakeup();
+
     let data = {
       messageType: "hello",
     }
@@ -1415,7 +1419,6 @@ this.PushService = {
       debug("Server closed with promise to wake up");
       this._willBeWokenUpByUDP = true;
       // TODO: there should be no pending requests
-      this._listenForUDPWakeup();
     }
   },
 
@@ -1441,6 +1444,7 @@ this.PushService = {
                         .createInstance(Ci.nsIUDPServerSocket);
     this._udpServer.init(this._udpPort, false);
     this._udpServer.asyncListen(this);
+    this._udpPort = this._udpServer.port;
     debug("listenForUDPWakeup listening on " + this._udpPort);
   },
 
