@@ -436,6 +436,21 @@ this.PushService = {
    */
   _willBeWokenUpByUDP: false,
 
+  /**
+   * Sends a message to the PNS through an open websocket
+   */
+  sendWSMessage: function(msg) {
+    if (!this._ws) {
+      debug("No WebSocket initialized. We can not send a message");
+      return;
+    }
+    if (typeof(msg) != 'string') {
+      msg = JSON.stringify(msg);
+    }
+    debug("Sending message: " + msg);
+    this._ws.sendMsg(msg);
+  },
+
   init: function() {
     debug("init()");
     if (!prefs.get("enabled"))
@@ -730,7 +745,7 @@ this.PushService = {
       // handle the exception, as the lack of a pong will lead to the socket
       // being reset.
       try {
-        this._ws.sendMsg('{}');
+        this.sendWSMessage('{}');
       } catch (e) {
       }
 
@@ -949,7 +964,7 @@ this.PushService = {
       this._shutdownWS();
     }
 
-    this._ws.sendMsg(JSON.stringify(data));
+    this.sendWSMessage(data);
     // Process the next one as soon as possible.
     setTimeout(this._processNextRequestInQueue.bind(this), 0);
   },
@@ -1305,7 +1320,7 @@ this.PushService = {
       // On success, ids is an array, on error its not.
       data["channelIDs"] = ids.map ?
                            ids.map(function(el) { return el.channelID; }) : [];
-      this._ws.sendMsg(JSON.stringify(data));
+      this.sendWSMessage(data);
       this._currentState = STATE_WAITING_FOR_HELLO;
     }
 
