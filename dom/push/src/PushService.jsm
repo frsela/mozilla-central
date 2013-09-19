@@ -469,7 +469,7 @@ this.PushService = {
 
     this._requestTimeout = prefs.get("requestTimeout");
 
-    this._udpPort = prefs.get("udp.port");
+    this._udpPort = null;   // Opened UDP port
 
     this._startListeningIfChannelsPresent();
 
@@ -1442,7 +1442,7 @@ this.PushService = {
 
     this._udpServer = Cc["@mozilla.org/network/server-socket-udp;1"]
                         .createInstance(Ci.nsIUDPServerSocket);
-    this._udpServer.init(this._udpPort, false);
+    this._udpServer.init(-1, false);
     this._udpServer.asyncListen(this);
     this._udpPort = this._udpServer.port;
     debug("listenForUDPWakeup listening on " + this._udpPort);
@@ -1465,6 +1465,7 @@ this.PushService = {
    */
   onStopListening: function(aServ, aStatus) {
     debug("UDP Server socket was shutdown. Status: " + aStatus);
+    this._udpPort = null;
     this._beginWSSetup();
   },
 
