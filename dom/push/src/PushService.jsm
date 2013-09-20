@@ -439,7 +439,7 @@ this.PushService = {
   /**
    * Sends a message to the PNS through an open websocket
    */
-  sendWSMessage: function(msg) {
+  _wsSendMessage: function(msg) {
     if (!this._ws) {
       debug("No WebSocket initialized. We can not send a message");
       return;
@@ -745,7 +745,7 @@ this.PushService = {
       // handle the exception, as the lack of a pong will lead to the socket
       // being reset.
       try {
-        this.sendWSMessage('{}');
+        this._wsSendMessage('{}');
       } catch (e) {
       }
 
@@ -964,7 +964,7 @@ this.PushService = {
       this._shutdownWS();
     }
 
-    this.sendWSMessage(data);
+    this._wsSendMessage(data);
     // Process the next one as soon as possible.
     setTimeout(this._processNextRequestInQueue.bind(this), 0);
   },
@@ -1324,7 +1324,7 @@ this.PushService = {
       // On success, ids is an array, on error its not.
       data["channelIDs"] = ids.map ?
                            ids.map(function(el) { return el.channelID; }) : [];
-      this.sendWSMessage(data);
+      this._wsSendMessage(data);
       this._currentState = STATE_WAITING_FOR_HELLO;
     }
 
