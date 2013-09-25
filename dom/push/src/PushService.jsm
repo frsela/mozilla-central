@@ -437,16 +437,15 @@ this.PushService = {
   _willBeWokenUpByUDP: false,
 
   /**
-   * Sends a message to the PNS through an open websocket
+   * Sends a message to the Push Server through an open websocket.
+   * typeof(msg) shall be an object
    */
   _wsSendMessage: function(msg) {
     if (!this._ws) {
-      debug("No WebSocket initialized. We can not send a message");
+      debug("No WebSocket initialized. Cannot send a message.");
       return;
     }
-    if (typeof(msg) != 'string') {
-      msg = JSON.stringify(msg);
-    }
+    msg = JSON.stringify(msg);
     debug("Sending message: " + msg);
     this._ws.sendMsg(msg);
   },
@@ -468,8 +467,6 @@ this.PushService = {
     this._alarmID = null;
 
     this._requestTimeout = prefs.get("requestTimeout");
-
-    this._udpPort = null;   // Opened UDP port
 
     this._startListeningIfChannelsPresent();
 
@@ -745,7 +742,7 @@ this.PushService = {
       // handle the exception, as the lack of a pong will lead to the socket
       // being reset.
       try {
-        this._wsSendMessage('{}');
+        this._wsSendMessage({});
       } catch (e) {
       }
 
@@ -1295,9 +1292,9 @@ this.PushService = {
     // Since we've had a successful connection reset the retry fail count.
     this._retryFailCount = 0;
 
-    // Openning UDP. If _udpPort is -1 the system will assign a free one
-    // _listenForUDPWakeup will update _udpPort with the final one
-    this._listenForUDPWakeup();
+    // Openning an available UDP port.
+    // _listenForUDPWakeup will return the opened port number
+    this._udpPort = this._listenForUDPWakeup();
 
     let data = {
       messageType: "hello",
@@ -1444,8 +1441,9 @@ this.PushService = {
                         .createInstance(Ci.nsIUDPServerSocket);
     this._udpServer.init(-1, false);
     this._udpServer.asyncListen(this);
-    this._udpPort = this._udpServer.port;
     debug("listenForUDPWakeup listening on " + this._udpPort);
+
+    return this._udpServer.port;
   },
 
   /**
@@ -1465,7 +1463,7 @@ this.PushService = {
    */
   onStopListening: function(aServ, aStatus) {
     debug("UDP Server socket was shutdown. Status: " + aStatus);
-    this._udpPort = null;
+    this._udpPort = undefined;
     this._beginWSSetup();
   },
 
