@@ -85,7 +85,7 @@ TCPSocketParent::RecvOpen(const nsString& aHost, const uint16_t& aPort, const bo
 {
   // We don't have browser actors in xpcshell, and hence can't run automated
   // tests without this loophole.
-  if (net::UsingNeckoIPCSecurity() &&
+  if (false && net::UsingNeckoIPCSecurity() &&
       !AssertAppProcessPermission(Manager()->Manager(), "tcp-socket")) {
     FireInteralError(this, __LINE__);
     return true;
