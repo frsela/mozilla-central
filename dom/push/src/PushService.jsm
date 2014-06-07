@@ -668,10 +668,10 @@ this.PushService = {
    * nsISettingsServiceCallback
    */
   handle: function(name, result) {
-    if (name !== "ril.data.apnSettings") {
+    if (name !== "ril.data.apnSettings" || !result) {
       return;
     }
-    var apn = result[0].filter(function(e) {
+    let apn = result[0].filter(function(e) {
       return e.types[0] === "default";
     });
     if (apn.length === 0 || !apn[0].apn) {
@@ -1342,16 +1342,15 @@ this.PushService = {
       this._currentState = STATE_WAITING_FOR_HELLO;
     }
 
-    var self = this;
-    this._getNetworkState(function(networkState) {
+    this._getNetworkState((networkState) => {
       if (networkState.ip) {
         // Opening an available UDP port.
-        self._listenForUDPWakeup();
+        this._listenForUDPWakeup();
 
         // Host-port is apparently a thing.
         data["wakeup_hostport"] = {
           ip: networkState.ip,
-          port: self._udpServer && self._udpServer.port
+          port: this._udpServer && this._udpServer.port
         };
 
         data["mobilenetwork"] = {
@@ -1361,8 +1360,8 @@ this.PushService = {
         };
       }
 
-      self._db.getAllChannelIDs(sendHelloMessage.bind(self),
-                                sendHelloMessage.bind(self));
+      this._db.getAllChannelIDs(sendHelloMessage.bind(this),
+                                sendHelloMessage.bind(this));
     });
   },
 
@@ -1456,6 +1455,9 @@ this.PushService = {
     }
   },
 
+  /**
+   * This method shall be called only if the device is on a mobile network!
+   */
   _listenForUDPWakeup: function() {
     debug("listenForUDPWakeup()");
 
@@ -1505,14 +1507,14 @@ this.PushService = {
    * with an IP).
    */
   _getNetworkState: function(callback) {
-    if (!callback || typeof callback !== 'function') {
-      return;
+    if (typeof callback !== 'function') {
+      throw new Error("No callback method. Aborting push agent !");
     }
     debug("getNetworkState()");
     try {
       if (!prefs.get("udp.wakeupEnabled")) {
         debug("UDP support disabled, we do not send any carrier info");
-        throw "UDP disabled";
+        throw new Error("UDP disabled");
       }
 
       let nm = Cc["@mozilla.org/network/manager;1"].getService(Ci.nsINetworkManager);
@@ -1527,13 +1529,13 @@ this.PushService = {
         let iccInfo = icc.getIccInfo(clientId);
         if (iccInfo) {
           debug("Running on mobile data");
+
+          let ips = {};
+          let prefixLengths = {};
+          nm.active.getAddresses(ips, prefixLengths);
+
           this._getMobileNetworkId(function(netid) {
             debug("Recovered netID = " + netid);
-
-            let ips = {};
-            let prefixLengths = {};
-            nm.active.getAddresses(ips, prefixLengths);
-
             callback({
               mcc: iccInfo.mcc,
               mnc: iccInfo.mnc,
@@ -1541,10 +1543,12 @@ this.PushService = {
               netid: netid
             });
           });
+          return;
         }
-        return;
       }
-    } catch (e) {}
+    } catch (e) {
+      debug("Error recovering mobile network information: " + e);
+    }
 
     debug("Running on wifi");
     callback({
@@ -1566,17 +1570,17 @@ this.PushService = {
 
   // Get the mobile network ID (netid)
   _getMobileNetworkId: function(callback) {
-    if (!callback || typeof callback !== 'function') {
+    if (typeof callback !== 'function') {
       return;
     }
 
     function queryDNSForDomain(domain) {
-      debug("[_getMobileNetworkId:queryDNSForDomain] Quering DNS for " +
+      debug("[_getMobileNetworkId:queryDNSForDomain] Querying DNS for " +
         domain);
-      var netIDDNSListener = {
+      let netIDDNSListener = {
         onLookupComplete: function(aRequest, aRecord, aStatus) {
           if (aRecord) {
-            var netid = aRecord.getNextAddrAsString();
+            let netid = aRecord.getNextAddrAsString();
             debug("[_getMobileNetworkId:queryDNSForDomain] NetID found: " +
               netid);
             callback(netid);
@@ -1595,8 +1599,12 @@ this.PushService = {
        gDNSService.myHostName + ")");
 
     let netidAddress = prefs.get("udp.well-known_netidAddress");
-    if (netidAddress[netidAddress.length - 1] === '.' && this._apnDomain) {
-      queryDNSForDomain(netidAddress + this._apnDomain, callback);
+    if (netidAddress.endsWith(".") && this._apnDomain) {
+      if (this._apnDomain) {
+        queryDNSForDomain(netidAddress + this._apnDomain, callback);
+      } else {
+        callback(null);   // No netid could be recovered
+      }
     } else if(netidAddress) {
       queryDNSForDomain(netidAddress, callback);
     }
