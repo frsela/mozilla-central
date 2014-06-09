@@ -468,7 +468,7 @@ pref("services.push.udp.wakeupEnabled", true);
 // If finished with a dot, it will be added as a prefix to the PDP context
 // domain. If not, will be used as the DNS query.
 // If the DNS query is unsuccessful, the push agent will send a null netid and
-// is a server decission what to do with the mobile. If the MCC-MNC identifies a
+// is a server decision what to do with the device. If the MCC-MNC identifies a
 // unique network the server will change to UDP mode. Otherwise, a websocket
 // connection will be maintained.
 // [1] Packet Data Protocol

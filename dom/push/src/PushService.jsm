@@ -1456,7 +1456,7 @@ this.PushService = {
   },
 
   /**
-   * This method shall be called only if the device is on a mobile network!
+   * This method should be called only if the device is on a mobile network!
    */
   _listenForUDPWakeup: function() {
     debug("listenForUDPWakeup()");
@@ -1599,7 +1599,7 @@ this.PushService = {
        gDNSService.myHostName + ")");
 
     let netidAddress = prefs.get("udp.well-known_netidAddress");
-    if (netidAddress.endsWith(".") && this._apnDomain) {
+    if (netidAddress.endsWith(".")) {
       if (this._apnDomain) {
         queryDNSForDomain(netidAddress + this._apnDomain, callback);
       } else {
