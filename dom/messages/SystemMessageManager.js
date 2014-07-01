@@ -222,7 +222,7 @@ SystemMessageManager.prototype = {
                    : msg.msgQueue;
 
     // We only dispatch messages when a handler is registered.
-    let dispatcher = this._dispatchers[msg.type];
+    let dispatcher = this._dispatchers && this._dispatchers[msg.type];
     if (dispatcher) {
       if (aMessage.name == "SystemMessageManager:Message") {
         // Send an acknowledgement to parent to clean up the pending message
