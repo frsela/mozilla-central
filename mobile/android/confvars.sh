@@ -67,6 +67,9 @@ if test ! "$RELEASE_BUILD"; then
 MOZ_DATA_REPORTING=1
 fi
 
+# Enable the production cert for verifying signed packaged apps.
+MOZ_B2G_CERTDATA=1
+
 # Enable runtime locale switching.
 MOZ_LOCALE_SWITCHER=1
 
