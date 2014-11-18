@@ -52,6 +52,8 @@ const kUDP_WAKEUP_WS_STATUS_CODE = 4774;  // WebSocket Close status code sent
 const kCHILD_PROCESS_MESSAGES = ["Push:Register", "Push:Unregister",
                                  "Push:Registrations"];
 
+const kWS_MAX_WENTDOWN = 3;
+
 // This is a singleton
 this.PushDB = function PushDB() {
   debug("PushDB()");
@@ -141,7 +143,7 @@ this.PushDB.prototype = {
         index.get(aPushEndpoint).onsuccess = function setTxnResult(aEvent) {
           aTxn.result = aEvent.target.result;
           debug("Fetch successful " + aEvent.target.result);
-        }
+        };
       },
       aSuccessCb,
       aErrorCb
@@ -160,7 +162,7 @@ this.PushDB.prototype = {
         aStore.get(aChannelID).onsuccess = function setTxnResult(aEvent) {
           aTxn.result = aEvent.target.result;
           debug("Fetch successful " + aEvent.target.result);
-        }
+        };
       },
       aSuccessCb,
       aErrorCb
@@ -191,7 +193,7 @@ this.PushDB.prototype = {
             aTxn.result.push(cursor.value);
             cursor.continue();
           }
-        }
+        };
       },
       aSuccessCb,
       aErrorCb
@@ -207,7 +209,7 @@ this.PushDB.prototype = {
       function txnCb(aTxn, aStore) {
         aStore.mozGetAll().onsuccess = function(event) {
           aTxn.result = event.target.result;
-        }
+        };
       },
       aSuccessCb,
       aErrorCb
@@ -238,7 +240,7 @@ this.PushDB.prototype = {
  */
 this.PushWebSocketListener = function(pushService) {
   this._pushService = pushService;
-}
+};
 
 this.PushWebSocketListener.prototype = {
   onStart: function(context) {
@@ -272,7 +274,7 @@ this.PushWebSocketListener.prototype = {
         return;
     this._pushService._wsOnServerClose(context, aStatusCode, aReason);
   }
-}
+};
 
 // websocket states
 // websocket is off
@@ -482,6 +484,12 @@ this.PushService = {
   _upperLimit: 0,
 
   /**
+   * Count the times WebSocket goes down without receiving Pings
+   * so we can re-enable the ping recalculation alghoritm
+   */
+  _wsWentDownCounter: 0,
+
+  /**
    * Sends a message to the Push Server through an open websocket.
    * typeof(msg) shall be an object
    */
@@ -678,7 +686,20 @@ this.PushService = {
       return;
     }
 
+    if (!wsWentDown && this._wsWentDownCounter > 0) {
+      debug('Ponemos contador a 0 de nuevo');
+      this._wsWentDownCounter = 0;
+    }
+
     if (!this._recalculatePing && !wsWentDown) {
+      debug('Deshabilitado el recalculo, incrementamos contador');
+      this._wsWentDownCounter++;
+      if (this._wsWentDownCounter > kWS_MAX_WENTDOWN) {
+        debug('Ha fallado varias veces sin recibir datos, volvemos a iniciar el calculo de ping');
+        this._wsWentDownCounter = 0;
+        this._recalculatePing = true;
+        this._lastGoodPingIntervals = 0;
+      }
       debug('We do not need to recalculate the ping now, based on previous data');
       return;
     }
@@ -1180,11 +1201,11 @@ this.PushService = {
       else {
         debug("No significant version change: " + aLatestVersion);
       }
-    }
+    };
 
     let recoverNoSuchChannelID = function(aChannelIDFromServer) {
       debug("Could not get channelID " + aChannelIDFromServer + " from DB");
-    }
+    };
 
     this._db.getByChannelID(aChannelID,
                             compareRecordVersionAndNotify.bind(this),
@@ -1398,7 +1419,7 @@ this.PushService = {
       debug("unregister() fail() error " + error);
       let message = {requestID: aPageRecord.requestID, error: error};
       aMessageManager.sendAsyncMessage("PushService:Unregister:KO", message);
-    }
+    };
 
     this._db.getByPushEndpoint(aPageRecord.pushEndpoint, function(record) {
       // If the endpoint didn't exist, let's just fail.
@@ -1481,8 +1502,8 @@ this.PushService = {
     this._retryFailCount = 0;
 
     let data = {
-      messageType: "hello",
-    }
+      messageType: "hello"
+    };
 
     if (this._UAID)
       data["uaid"] = this._UAID;
@@ -1704,7 +1725,7 @@ this.PushService = {
             mcc: iccInfo.mcc,
             mnc: iccInfo.mnc,
             ip:  ips.value[0]
-          }
+          };
         }
       }
     } catch (e) {
@@ -1798,4 +1819,4 @@ this.PushService = {
       ".mcc" + ("00" + networkInfo.mcc).slice(-3) + ".3gppnetwork.org";
     queryDNSForDomain(netidAddress, callback);
   }
-}
+};
