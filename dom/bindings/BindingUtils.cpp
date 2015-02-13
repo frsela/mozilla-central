@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <stdarg.h>
+#include <unistd.h> // for getpid()
 
 #include "mozilla/DebugOnly.h"
 #include "mozilla/FloatingPoint.h"
@@ -2377,9 +2378,12 @@ EnumerateGlobal(JSContext* aCx, JS::Handle<JSObject*> aObj)
 bool
 CheckPermissions(JSContext* aCx, JSObject* aObj, const char* const aPermissions[])
 {
+  printf_stderr("FRS: CheckPermissions - Empezamos chequeo de permisos ... %s con PID: %d", *aPermissions, getpid());
+
   JS::Rooted<JSObject*> rootedObj(aCx, aObj);
   nsPIDOMWindow* window = xpc::WindowGlobalOrNull(rootedObj);
   if (!window) {
+    printf_stderr("FRS: CheckPermissions - No hay window ! - PID: %d", getpid());
     return false;
   }
 
@@ -2390,9 +2394,11 @@ CheckPermissions(JSContext* aCx, JSObject* aObj, const char* const aPermissions[
     uint32_t permission = nsIPermissionManager::DENY_ACTION;
     permMgr->TestPermissionFromWindow(window, *aPermissions, &permission);
     if (permission == nsIPermissionManager::ALLOW_ACTION) {
+      printf_stderr("FRS: CheckPermissions - Permiso aceptado \\o/ - %s con PID: %d", *aPermissions, getpid());
       return true;
     }
   } while (*(++aPermissions));
+  printf_stderr("FRS: CheckPermissions - Permiso rechazado :( - %s con PID: %d", *aPermissions, getpid());
   return false;
 }
 
