@@ -286,6 +286,7 @@ loop.roomViews = (function(mozL10n) {
 
   var DesktopRoomEditContextView = React.createClass({displayName: "DesktopRoomEditContextView",
     mixins: [React.addons.LinkedStateMixin],
+    maxRoomNameLength: 124,
 
     propTypes: {
       dispatcher: React.PropTypes.instanceOf(loop.Dispatcher).isRequired,
@@ -512,6 +513,7 @@ loop.roomViews = (function(mozL10n) {
             React.createElement("input", {className: "room-context-name", 
               onKeyDown: this.handleTextareaKeyDown, 
               placeholder: mozL10n.get("context_edit_name_placeholder"), 
+              maxLength: this.maxRoomNameLength, 
               type: "text", 
               valueLink: this.linkState("newRoomName")}), 
             React.createElement("input", {className: "room-context-url", 
