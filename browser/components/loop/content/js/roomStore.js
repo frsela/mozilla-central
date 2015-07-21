@@ -524,7 +524,9 @@ loop.store = loop.store || {};
           var isValidURL = false;
           try {
             isValidURL = new URL(newRoomURL.location);
-          } catch(ex) {}
+          } catch(ex) {
+            // URL may throw, default to false;
+          }
           if (isValidURL) {
             roomData.urls = [newRoomURL];
           }

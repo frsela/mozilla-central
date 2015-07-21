@@ -431,7 +431,9 @@ describe("loop.panel", function() {
         try {
           TestUtils.findRenderedComponentWithType(view, loop.panel.ToSView);
           sinon.assert.fail("Should not find the ToSView if it has been 'seen'");
-        } catch (ex) {}
+        } catch (ex) {
+          // Do nothing
+        }
       });
 
       it("should render a GettingStarted view", function() {
@@ -452,7 +454,9 @@ describe("loop.panel", function() {
         try {
           TestUtils.findRenderedComponentWithType(view, loop.panel.GettingStartedView);
           sinon.assert.fail("Should not find the GettingStartedView if it has been seen");
-        } catch (ex) {}
+        } catch (ex) {
+          // Do nothing
+        }
       });
 
       it("should render a SignInRequestView when mozLoop.hasEncryptionKey is false", function() {
@@ -469,7 +473,9 @@ describe("loop.panel", function() {
         try {
           TestUtils.findRenderedComponentWithType(view, loop.panel.SignInRequestView);
           sinon.assert.fail("Should not find the GettingStartedView if it has been seen");
-        } catch (ex) {}
+        } catch (ex) {
+          // Do nothing
+        }
       });
     });
   });

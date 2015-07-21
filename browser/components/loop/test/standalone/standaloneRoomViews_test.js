@@ -553,8 +553,8 @@ describe("loop.standaloneRoomViews", function() {
               videoMuted: true
             });
 
-            expect(view.getDOMNode().querySelector(".local .avatar")).
-              not.eql(null);
+            expect(view.getDOMNode().querySelector(".local .avatar")).not.eql(
+              null);
           });
       });
 
