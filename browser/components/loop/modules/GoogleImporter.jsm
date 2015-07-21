@@ -178,8 +178,8 @@ this.GoogleImporter.prototype = {
         success: success
       };
     }.bind(this)).then(stats => callback(null, stats),
-                       error => callback(error))
-                 .then(null, ex => log.error(ex.fileName + ":" + ex.lineNumber + ": " + ex.message));
+                       error => callback(error)).
+                 then(null, ex => log.error(ex.fileName + ":" + ex.lineNumber + ": " + ex.message));
   },
 
   /**
@@ -259,8 +259,8 @@ this.GoogleImporter.prototype = {
    */
   _promiseTokenSet: function(code) {
     return new Promise(function(resolve, reject) {
-      let request = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-                      .createInstance(Ci.nsIXMLHttpRequest);
+      let request = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].
+                      createInstance(Ci.nsIXMLHttpRequest);
 
       request.open("POST", getUrlParam("https://accounts.google.com/o/oauth2/",
                                        "loop.oauth.google.URL",
@@ -296,8 +296,8 @@ this.GoogleImporter.prototype = {
 
   _promiseRequestXML: function(URL, tokenSet) {
     return new Promise((resolve, reject) => {
-      let request = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-                      .createInstance(Ci.nsIXMLHttpRequest);
+      let request = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].
+                      createInstance(Ci.nsIXMLHttpRequest);
 
       request.open("GET", URL);
 
@@ -547,14 +547,18 @@ this.GoogleImporter.prototype = {
           let email;
           try {
             email = getPreferred(contact);
-          } catch (ex) {}
+          } catch (ex) {
+            // Do nothing
+          }
           if (email) {
             contact.name = [email.value];
           } else {
             let tel;
             try {
               tel = getPreferred(contact, "tel");
-            } catch (ex) {}
+            } catch (ex) {
+              // Do nothing
+            }
             if (tel) {
               contact.name = [tel.value];
             }

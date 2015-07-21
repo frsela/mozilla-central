@@ -71,8 +71,8 @@ CallProgressSocket.prototype = {
 
     // Allow _websocket to be set for testing.
     if (!this._websocket) {
-      this._websocket = Cc["@mozilla.org/network/protocol;1?name=" + uri.scheme]
-                          .createInstance(Ci.nsIWebSocketChannel);
+      this._websocket = Cc["@mozilla.org/network/protocol;1?name=" + uri.scheme].
+                          createInstance(Ci.nsIWebSocketChannel);
 
       this._websocket.initLoadInfo(null, // aLoadingNode
                                    Services.scriptSecurityManager.getSystemPrincipal(),

@@ -184,8 +184,8 @@ add_task(function* test_infoBar() {
   testBarProps();
 
   // Test hiding the infoBar.
-  getInfoBar().querySelector(".notification-button")
-              .getElementsByTagNameNS(kNSXUL, "menuitem")[0].click();
+  getInfoBar().querySelector(".notification-button").
+              getElementsByTagNameNS(kNSXUL, "menuitem")[0].click();
   Assert.equal(getInfoBar(), null, "The notification should be hidden now");
   Assert.strictEqual(Services.prefs.getBoolPref(kPrefBrowserSharingInfoBar), false,
     "The pref should be set to false when the menu item is clicked");

@@ -25,10 +25,10 @@ describe("loop.Client", function() {
     callback = sinon.spy();
     fakeToken = "fakeTokenText";
     mozLoop = {
-      getLoopPref: sandbox.stub()
-        .returns(null)
-        .withArgs("hawk-session-token")
-        .returns(fakeToken),
+      getLoopPref: sandbox.stub().
+        returns(null).
+        withArgs("hawk-session-token").
+        returns(fakeToken),
       hawkRequest: sinon.stub(),
       LOOP_SESSION_TYPE: {
         GUEST: 1,

@@ -364,8 +364,8 @@ loop.store.ActiveRoomStore = (function() {
 
         var dispatcher = this.dispatcher;
 
-        crypto.decryptBytes(roomCryptoKey, result.context.value)
-              .then(function(decryptedResult) {
+        crypto.decryptBytes(roomCryptoKey, result.context.value).
+        then(function(decryptedResult) {
           var realResult = JSON.parse(decryptedResult);
 
           roomInfoData.description = realResult.description;

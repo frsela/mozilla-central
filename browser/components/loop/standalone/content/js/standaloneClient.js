@@ -88,8 +88,8 @@ loop.StandaloneClient = (function($) {
         throw new Error("Missing required callback function");
       }
 
-      $.get(this.settings.baseServerUrl + "/calls/" + loopToken)
-        .done(function(callUrlInfo) {
+      $.get(this.settings.baseServerUrl + "/calls/" + loopToken).
+        done(function(callUrlInfo) {
           cb(null, callUrlInfo);
         }).fail(this._failureHandler.bind(this, cb));
     },

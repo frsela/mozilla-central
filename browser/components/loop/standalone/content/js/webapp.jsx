@@ -348,8 +348,8 @@ loop.webapp = (function($, _, OT, mozL10n) {
     },
 
     propTypes: {
-      websocket: React.PropTypes.instanceOf(loop.CallConnectionWebSocket)
-                      .isRequired
+      websocket: React.PropTypes.instanceOf(loop.CallConnectionWebSocket).
+                      isRequired
     },
 
     componentDidMount: function() {
@@ -578,8 +578,8 @@ loop.webapp = (function($, _, OT, mozL10n) {
    */
   var EndedConversationView = React.createClass({
     propTypes: {
-      conversation: React.PropTypes.instanceOf(sharedModels.ConversationModel)
-                         .isRequired,
+      conversation: React.PropTypes.instanceOf(sharedModels.ConversationModel).
+                         isRequired,
       dispatcher: React.PropTypes.instanceOf(loop.Dispatcher).isRequired,
       onAfterFeedbackReceived: React.PropTypes.func.isRequired,
       sdk: React.PropTypes.object.isRequired
@@ -651,8 +651,8 @@ loop.webapp = (function($, _, OT, mozL10n) {
         React.PropTypes.instanceOf(FxOSConversationModel)
       ]).isRequired,
       dispatcher: React.PropTypes.instanceOf(loop.Dispatcher).isRequired,
-      notifications: React.PropTypes.instanceOf(sharedModels.NotificationCollection)
-                          .isRequired,
+      notifications: React.PropTypes.instanceOf(sharedModels.NotificationCollection).
+                          isRequired,
       sdk: React.PropTypes.object.isRequired
     },
 
@@ -950,8 +950,8 @@ loop.webapp = (function($, _, OT, mozL10n) {
         React.PropTypes.instanceOf(FxOSConversationModel)
       ]).isRequired,
       dispatcher: React.PropTypes.instanceOf(loop.Dispatcher).isRequired,
-      notifications: React.PropTypes.instanceOf(sharedModels.NotificationCollection)
-                          .isRequired,
+      notifications: React.PropTypes.instanceOf(sharedModels.NotificationCollection).
+                          isRequired,
       sdk: React.PropTypes.object.isRequired,
       standaloneAppStore: React.PropTypes.instanceOf(
         loop.store.StandaloneAppStore).isRequired

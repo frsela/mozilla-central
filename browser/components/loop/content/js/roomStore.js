@@ -42,8 +42,8 @@ loop.store = loop.store || {};
    * @param {Object} values Room property values.
    */
   function Room(values) {
-    var validatedData = new loop.validate.Validator(roomSchema || {})
-                                         .validate(values || {});
+    var validatedData = new loop.validate.Validator(roomSchema || {}).
+                        validate(values || {});
     for (var prop in validatedData) {
       this[prop] = validatedData[prop];
     }
@@ -205,12 +205,12 @@ loop.store = loop.store || {};
       if (!rawRoomList) {
         return [];
       }
-      return rawRoomList
-        .map(function(rawRoom) {
+      return rawRoomList.
+        map(function(rawRoom) {
           return new Room(rawRoom);
-        })
-        .slice()
-        .sort(function(a, b) {
+        }).
+        slice().
+        sort(function(a, b) {
           return b.ctime - a.ctime;
         });
     },
@@ -524,7 +524,9 @@ loop.store = loop.store || {};
           var isValidURL = false;
           try {
             isValidURL = new URL(newRoomURL.location);
-          } catch(ex) {}
+          } catch(ex) {
+            // URL may throw, default to false;
+          }
           if (isValidURL) {
             roomData.urls = [newRoomURL];
           }

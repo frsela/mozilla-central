@@ -720,8 +720,8 @@ describe("loop.store.RoomStore", function () {
 
         activeRoomStore.setStoreState({serverData: fakeServerData});
 
-        expect(fakeStore.getStoreState().activeRoom.serverData)
-          .eql(fakeServerData);
+        expect(fakeStore.getStoreState().activeRoom.serverData).
+          eql(fakeServerData);
       });
 
       it("should trigger a change event when the substore is updated",

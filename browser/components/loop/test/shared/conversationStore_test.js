@@ -358,8 +358,8 @@ describe("loop.store.ConversationStore", function () {
         new sharedActions.SetupWindowData(fakeSetupWindowData));
 
       expect(store.getStoreState("contact")).eql(contact);
-      expect(store.getStoreState("callType"))
-        .eql(sharedUtils.CALL_TYPES.AUDIO_VIDEO);
+      expect(store.getStoreState("callType")).
+        eql(sharedUtils.CALL_TYPES.AUDIO_VIDEO);
     });
 
     describe("incoming calls", function() {
@@ -860,8 +860,8 @@ describe("loop.store.ConversationStore", function () {
           peerHungup: false
         }));
 
-        expect(store.getStoreState("callStateReason"))
-          .eql("peerNetworkDisconnected");
+        expect(store.getStoreState("callStateReason")).
+          eql("peerNetworkDisconnected");
     });
   });
 
@@ -922,8 +922,8 @@ describe("loop.store.ConversationStore", function () {
 
       store.retryCall(new sharedActions.RetryCall());
 
-      expect(store.getStoreState("callState"))
-        .eql(CALL_STATES.GATHER);
+      expect(store.getStoreState("callState")).
+        eql(CALL_STATES.GATHER);
     });
 
     it("should request the outgoing call data", function() {

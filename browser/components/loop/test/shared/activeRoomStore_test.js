@@ -316,9 +316,8 @@ describe("loop.store.ActiveRoomStore", function () {
         mozLoop: fakeMozLoop,
         sdkDriver: {}
       });
-      fakeMozLoop.rooms.get.
-        withArgs(fakeToken).
-        callsArgOnWith(1, // index of callback argument
+      fakeMozLoop.rooms.get.withArgs(fakeToken).callsArgOnWith(
+        1, // index of callback argument
         store, // |this| to call it on
         null, // args to call the callback with...
         fakeRoomData
@@ -333,8 +332,8 @@ describe("loop.store.ActiveRoomStore", function () {
           roomToken: fakeToken
         }));
 
-        expect(store.getStoreState()).
-          to.have.property("roomState", ROOM_STATES.GATHER);
+        expect(store.getStoreState()).to.have.property(
+          "roomState", ROOM_STATES.GATHER);
       });
 
     it("should dispatch an SetupRoomInfo action if the get is successful",
@@ -375,9 +374,8 @@ describe("loop.store.ActiveRoomStore", function () {
       function() {
 
         var fakeError = new Error("fake error");
-        fakeMozLoop.rooms.get.
-          withArgs(fakeToken).
-          callsArgOnWith(1, // index of callback argument
+        fakeMozLoop.rooms.get.withArgs(fakeToken).callsArgOnWith(
+          1, // index of callback argument
           store, // |this| to call it on
           fakeError); // args to call the callback with...
 
@@ -604,14 +602,14 @@ describe("loop.store.ActiveRoomStore", function () {
 
       store.videoDimensionsChanged(new sharedActions.VideoDimensionsChanged(actionData));
 
-      expect(store.getStoreState().localVideoDimensions)
-        .to.have.property(actionData.videoType, actionData.dimensions);
+      expect(store.getStoreState().localVideoDimensions).
+        to.have.property(actionData.videoType, actionData.dimensions);
 
       actionData.isLocal = false;
       store.videoDimensionsChanged(new sharedActions.VideoDimensionsChanged(actionData));
 
-      expect(store.getStoreState().remoteVideoDimensions)
-        .to.have.property(actionData.videoType, actionData.dimensions);
+      expect(store.getStoreState().remoteVideoDimensions).
+        to.have.property(actionData.videoType, actionData.dimensions);
     });
   });
 
@@ -690,8 +688,8 @@ describe("loop.store.ActiveRoomStore", function () {
       store.updateSocialShareInfo(new sharedActions.UpdateSocialShareInfo(fakeSocialShareInfo));
 
       var state = store.getStoreState();
-      expect(state.socialShareProviders)
-        .eql(fakeSocialShareInfo.socialShareProviders);
+      expect(state.socialShareProviders).
+        eql(fakeSocialShareInfo.socialShareProviders);
     });
   });
 

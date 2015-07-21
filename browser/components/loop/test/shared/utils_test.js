@@ -27,13 +27,13 @@ describe("loop.shared.utils", function() {
     });
 
     it("should detect Windows Phone", function() {
-      expect(sharedUtils.getUnsupportedPlatform("Windows Phone"))
-        .eql("windows_phone");
+      expect(sharedUtils.getUnsupportedPlatform("Windows Phone")).
+        eql("windows_phone");
     });
 
     it("should detect BlackBerry", function() {
-      expect(sharedUtils.getUnsupportedPlatform("BlackBerry"))
-        .eql("blackberry");
+      expect(sharedUtils.getUnsupportedPlatform("BlackBerry")).
+        eql("blackberry");
     });
 
     it("shouldn't detect other platforms", function() {
@@ -319,8 +319,8 @@ describe("loop.shared.utils", function() {
     });
 
     it("should decode encoded URIs", function() {
-      expect(sharedUtils.formatURL("http://invalid.com/?a=Foo%20Bar"))
-        .eql({
+      expect(sharedUtils.formatURL("http://invalid.com/?a=Foo%20Bar")).
+        eql({
           location: "http://invalid.com/?a=Foo Bar",
           hostname: "invalid.com"
         });
@@ -330,8 +330,8 @@ describe("loop.shared.utils", function() {
       // Note, this is based on the browser's list of what does/doesn't get
       // altered for punycode, so if the list changes this could change in the
       // future.
-      expect(sharedUtils.formatURL("http://\u0261oogle.com/"))
-        .eql({
+      expect(sharedUtils.formatURL("http://\u0261oogle.com/")).
+        eql({
           location: "http://xn--oogle-qmc.com/",
           hostname: "xn--oogle-qmc.com"
         });

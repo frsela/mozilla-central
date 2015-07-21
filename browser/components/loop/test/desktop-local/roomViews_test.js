@@ -259,8 +259,8 @@ describe("loop.roomViews", function () {
       it("should show the 'Add some context' link", function() {
         view = mountTestComponent();
 
-        expect(view.getDOMNode().querySelector(".room-invitation-addcontext")).
-          to.not.eql(null);
+        expect(view.getDOMNode().querySelector(
+          ".room-invitation-addcontext")).to.not.eql(null);
       });
 
       it("should call a callback when the link is clicked", function() {
@@ -511,8 +511,8 @@ describe("loop.roomViews", function () {
 
            view = mountTestComponent();
 
-           expect(view.getDOMNode().querySelector(".local .loading-stream"))
-               .not.eql(null);
+           expect(view.getDOMNode().querySelector(".local .loading-stream")).
+              not.eql(null);
          });
 
       it("should not display a loading spinner when local stream available",
@@ -524,8 +524,8 @@ describe("loop.roomViews", function () {
 
            view = mountTestComponent();
 
-           expect(view.getDOMNode().querySelector(".local .loading-stream"))
-               .eql(null);
+           expect(view.getDOMNode().querySelector(".local .loading-stream")).
+             eql(null);
          });
 
       it("should display loading spinner when remote stream is not available",
@@ -537,8 +537,8 @@ describe("loop.roomViews", function () {
 
            view = mountTestComponent();
 
-           expect(view.getDOMNode().querySelector(".remote .loading-stream"))
-               .not.eql(null);
+           expect(view.getDOMNode().querySelector(".remote .loading-stream")).
+             not.eql(null);
          });
 
       it("should not display a loading spinner when remote stream available",
@@ -550,8 +550,8 @@ describe("loop.roomViews", function () {
 
            view = mountTestComponent();
 
-           expect(view.getDOMNode().querySelector(".remote .loading-stream"))
-               .eql(null);
+           expect(view.getDOMNode().querySelector(".remote .loading-stream")).
+             eql(null);
          });
 
       it("should display an avatar for remote video when the room has participants but video is not enabled",
@@ -613,8 +613,8 @@ describe("loop.roomViews", function () {
 
           view = mountTestComponent();
 
-          expect(view.getDOMNode().querySelector(".local-stream-audio"))
-            .not.eql(null);
+          expect(view.getDOMNode().querySelector(".local-stream-audio")).
+            not.eql(null);
         });
     });
 
@@ -700,8 +700,8 @@ describe("loop.roomViews", function () {
         var dropdownNodes = node.querySelectorAll(".dropdown-menu-item");
         expect(dropdownNodes.length).to.eql(2);
         expect(dropdownNodes[1].querySelector("img").src).to.eql(fakeProvider.iconURL);
-        expect(dropdownNodes[1].querySelector("span").textContent)
-          .to.eql(fakeProvider.name);
+        expect(dropdownNodes[1].querySelector("span").textContent).
+          to.eql(fakeProvider.name);
       });
     });
 

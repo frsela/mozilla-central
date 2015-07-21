@@ -74,8 +74,8 @@ describe("loop.shared.views.FeedbackView", function() {
       feedbackStore.setStoreState({feedbackState: FEEDBACK_STATES.SENT});
 
       expect(comp.getDOMNode().querySelectorAll(".thank-you")).not.eql(null);
-      expect(comp.getDOMNode().querySelector("button.fx-embedded-btn-back"))
-        .eql(null);
+      expect(comp.getDOMNode().querySelector("button.fx-embedded-btn-back")).
+        eql(null);
     });
 
     it("should not display the countdown text if noCloseText is true", function() {
@@ -99,8 +99,8 @@ describe("loop.shared.views.FeedbackView", function() {
     it("should render a back button", function() {
       feedbackStore.setStoreState({feedbackState: FEEDBACK_STATES.DETAILS});
 
-      expect(comp.getDOMNode().querySelector("button.fx-embedded-btn-back"))
-        .not.eql(null);
+      expect(comp.getDOMNode().querySelector("button.fx-embedded-btn-back")).
+        not.eql(null);
     });
 
     it("should reset the view when clicking the back button", function() {

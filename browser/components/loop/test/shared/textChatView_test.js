@@ -201,8 +201,8 @@ describe("loop.shared.views.TextChatView", function () {
       });
       node = view.getDOMNode();
 
-      expect(node.querySelectorAll(".text-chat-entry-timestamp").length)
-          .to.eql(2);
+      expect(node.querySelectorAll(".text-chat-entry-timestamp").length).
+        to.eql(2);
     });
 
     it("should show timestamps if they are 1 minute apart (SENT)", function() {
@@ -221,8 +221,8 @@ describe("loop.shared.views.TextChatView", function () {
       });
       node = view.getDOMNode();
 
-      expect(node.querySelectorAll(".text-chat-entry-timestamp").length)
-          .to.eql(2);
+      expect(node.querySelectorAll(".text-chat-entry-timestamp").length).
+        to.eql(2);
     });
 
     it("should show timestamps if they are 1 minute apart (RECV)", function() {
@@ -241,8 +241,8 @@ describe("loop.shared.views.TextChatView", function () {
       });
       node = view.getDOMNode();
 
-      expect(node.querySelectorAll(".text-chat-entry-timestamp").length)
-          .to.eql(2);
+      expect(node.querySelectorAll(".text-chat-entry-timestamp").length).
+        to.eql(2);
     });
 
     it("should not show timestamps from msgs sent in the same minute", function() {
@@ -261,8 +261,8 @@ describe("loop.shared.views.TextChatView", function () {
       });
       node = view.getDOMNode();
 
-      expect(node.querySelectorAll(".text-chat-entry-timestamp").length)
-          .to.eql(1);
+      expect(node.querySelectorAll(".text-chat-entry-timestamp").length).
+        to.eql(1);
     });
   });
 
@@ -315,8 +315,8 @@ describe("loop.shared.views.TextChatView", function () {
 
       var node = view.getDOMNode();
 
-      expect(node.querySelectorAll(".text-chat-entry-timestamp").length)
-          .to.eql(2);
+      expect(node.querySelectorAll(".text-chat-entry-timestamp").length).
+        to.eql(2);
     });
 
     it("should not display the view if no messages and text chat not enabled", function() {

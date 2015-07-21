@@ -670,8 +670,8 @@ let LoopRoomsInternal = {
     //     membership and forceDisconnect() all current participants.
     let room = this.rooms.get(roomToken);
     let url = "/rooms/" + encodeURIComponent(roomToken);
-    MozLoopService.hawkRequest(this.sessionType, url, "DELETE")
-      .then(response => {
+    MozLoopService.hawkRequest(this.sessionType, url, "DELETE").
+      then(response => {
         this.rooms.delete(roomToken);
         eventEmitter.emit("delete", room);
         eventEmitter.emit("delete:" + room.roomToken, room);

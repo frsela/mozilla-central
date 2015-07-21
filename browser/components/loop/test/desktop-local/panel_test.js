@@ -137,8 +137,8 @@ describe("loop.panel", function() {
       });
 
       it("should toggle the value of mozLoop.doNotDisturb", function() {
-        var availableMenuOption = view.getDOMNode()
-                                    .querySelector(".dnd-make-available");
+        var availableMenuOption = view.getDOMNode().
+                                    querySelector(".dnd-make-available");
 
         TestUtils.Simulate.click(availableMenuOption);
 
@@ -146,8 +146,8 @@ describe("loop.panel", function() {
       });
 
       it("should toggle the dropdown menu", function() {
-        var availableMenuOption = view.getDOMNode()
-                                    .querySelector(".dnd-status span");
+        var availableMenuOption = view.getDOMNode().
+                                    querySelector(".dnd-status span");
 
         TestUtils.Simulate.click(availableMenuOption);
 
@@ -198,8 +198,8 @@ describe("loop.panel", function() {
           mozLoop: fakeMozLoop
         }));
 
-      expect(view.getDOMNode().querySelectorAll(".icon-account"))
-        .to.have.length.of(0);
+      expect(view.getDOMNode().querySelectorAll(".icon-account")).
+        to.have.length.of(0);
     });
 
     describe("TabView", function() {
@@ -222,16 +222,16 @@ describe("loop.panel", function() {
         TestUtils.Simulate.click(
           view.getDOMNode().querySelector("li[data-tab-name=\"contacts\"]"));
 
-        expect(contactsTab.getDOMNode().classList.contains("selected"))
-          .to.be.true;
+        expect(contactsTab.getDOMNode().classList.contains("selected")).
+          to.be.true;
       });
 
       it("should select rooms tab when clicking tab button", function() {
         TestUtils.Simulate.click(
           view.getDOMNode().querySelector("li[data-tab-name=\"rooms\"]"));
 
-        expect(roomsTab.getDOMNode().classList.contains("selected"))
-          .to.be.true;
+        expect(roomsTab.getDOMNode().classList.contains("selected")).
+          to.be.true;
       });
     });
 
@@ -306,10 +306,10 @@ describe("loop.panel", function() {
 
           var view = mountTestComponent();
 
-          expect(view.getDOMNode().querySelectorAll(".icon-signout"))
-            .to.have.length.of(0);
-          expect(view.getDOMNode().querySelectorAll(".icon-signin"))
-            .to.have.length.of(1);
+          expect(view.getDOMNode().querySelectorAll(".icon-signout")).
+            to.have.length.of(0);
+          expect(view.getDOMNode().querySelectorAll(".icon-signin")).
+            to.have.length.of(1);
         });
 
       it("should show a signout entry when user is authenticated", function() {
@@ -317,10 +317,10 @@ describe("loop.panel", function() {
 
         var view = mountTestComponent();
 
-        expect(view.getDOMNode().querySelectorAll(".icon-signout"))
-          .to.have.length.of(1);
-        expect(view.getDOMNode().querySelectorAll(".icon-signin"))
-          .to.have.length.of(0);
+        expect(view.getDOMNode().querySelectorAll(".icon-signout")).
+          to.have.length.of(1);
+        expect(view.getDOMNode().querySelectorAll(".icon-signin")).
+          to.have.length.of(0);
       });
 
       it("should show an account entry when user is authenticated", function() {
@@ -328,8 +328,8 @@ describe("loop.panel", function() {
 
         var view = mountTestComponent();
 
-        expect(view.getDOMNode().querySelectorAll(".icon-account"))
-          .to.have.length.of(1);
+        expect(view.getDOMNode().querySelectorAll(".icon-account")).
+          to.have.length.of(1);
       });
 
       it("should open the FxA settings when the account entry is clicked", function() {
@@ -349,8 +349,8 @@ describe("loop.panel", function() {
 
           var view = mountTestComponent();
 
-          expect(view.getDOMNode().querySelectorAll(".icon-account"))
-            .to.have.length.of(0);
+          expect(view.getDOMNode().querySelectorAll(".icon-account")).
+            to.have.length.of(0);
         });
 
       it("should sign in the user on click when unauthenticated", function() {
@@ -398,8 +398,8 @@ describe("loop.panel", function() {
       it("should open a tab to the support page", function() {
         view = mountTestComponent();
 
-        TestUtils.Simulate
-          .click(view.getDOMNode().querySelector(".icon-help"));
+        TestUtils.Simulate.
+          click(view.getDOMNode().querySelector(".icon-help"));
 
         sinon.assert.calledOnce(fakeMozLoop.openURL);
         sinon.assert.calledWithExactly(fakeMozLoop.openURL, supportUrl);
@@ -408,8 +408,8 @@ describe("loop.panel", function() {
       it("should close the panel", function() {
         view = mountTestComponent();
 
-        TestUtils.Simulate
-          .click(view.getDOMNode().querySelector(".icon-help"));
+        TestUtils.Simulate.
+          click(view.getDOMNode().querySelector(".icon-help"));
 
         sinon.assert.calledOnce(fakeWindow.close);
       });
@@ -431,7 +431,9 @@ describe("loop.panel", function() {
         try {
           TestUtils.findRenderedComponentWithType(view, loop.panel.ToSView);
           sinon.assert.fail("Should not find the ToSView if it has been 'seen'");
-        } catch (ex) {}
+        } catch (ex) {
+          // Do nothing
+        }
       });
 
       it("should render a GettingStarted view", function() {
@@ -452,7 +454,9 @@ describe("loop.panel", function() {
         try {
           TestUtils.findRenderedComponentWithType(view, loop.panel.GettingStartedView);
           sinon.assert.fail("Should not find the GettingStartedView if it has been seen");
-        } catch (ex) {}
+        } catch (ex) {
+          // Do nothing
+        }
       });
 
       it("should render a SignInRequestView when mozLoop.hasEncryptionKey is false", function() {
@@ -469,7 +473,9 @@ describe("loop.panel", function() {
         try {
           TestUtils.findRenderedComponentWithType(view, loop.panel.SignInRequestView);
           sinon.assert.fail("Should not find the GettingStartedView if it has been seen");
-        } catch (ex) {}
+        } catch (ex) {
+          // Do nothing
+        }
       });
     });
   });
@@ -693,9 +699,7 @@ describe("loop.panel", function() {
 
         roomEntry.setProps({room: updatedRoom});
 
-        expect(
-          roomEntry.getDOMNode().textContent)
-        .eql("New room name");
+        expect(roomEntry.getDOMNode().textContent).eql("New room name");
       });
     });
   });

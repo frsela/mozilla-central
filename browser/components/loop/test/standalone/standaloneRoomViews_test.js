@@ -154,24 +154,24 @@ describe("loop.standaloneRoomViews", function() {
           function() {
             activeRoomStore.setStoreState({roomState: ROOM_STATES.JOINED});
 
-            expect(view.getDOMNode().querySelector(".empty-room-message"))
-              .not.eql(null);
+            expect(view.getDOMNode().querySelector(".empty-room-message")).
+              not.eql(null);
           });
 
         it("should display an empty room message on SESSION_CONNECTED",
           function() {
             activeRoomStore.setStoreState({roomState: ROOM_STATES.SESSION_CONNECTED});
 
-            expect(view.getDOMNode().querySelector(".empty-room-message"))
-              .not.eql(null);
+            expect(view.getDOMNode().querySelector(".empty-room-message")).
+              not.eql(null);
           });
 
         it("shouldn't display an empty room message on HAS_PARTICIPANTS",
           function() {
             activeRoomStore.setStoreState({roomState: ROOM_STATES.HAS_PARTICIPANTS});
 
-            expect(view.getDOMNode().querySelector(".empty-room-message"))
-              .eql(null);
+            expect(view.getDOMNode().querySelector(".empty-room-message")).
+              eql(null);
           });
       });
 
@@ -180,8 +180,8 @@ describe("loop.standaloneRoomViews", function() {
           function() {
             activeRoomStore.setStoreState({roomState: ROOM_STATES.MEDIA_WAIT});
 
-            expect(view.getDOMNode().querySelector(".prompt-media-message"))
-              .not.eql(null);
+            expect(view.getDOMNode().querySelector(".prompt-media-message")).
+              not.eql(null);
           });
       });
 
@@ -190,8 +190,8 @@ describe("loop.standaloneRoomViews", function() {
           function() {
             activeRoomStore.setStoreState({roomState: ROOM_STATES.FULL});
 
-            expect(view.getDOMNode().querySelector(".full-room-message"))
-              .not.eql(null);
+            expect(view.getDOMNode().querySelector(".full-room-message")).
+              not.eql(null);
           });
       });
 
@@ -201,8 +201,8 @@ describe("loop.standaloneRoomViews", function() {
         });
 
         it("should display a failed room message on FAILED", function() {
-          expect(view.getDOMNode().querySelector(".failed-room-message"))
-            .not.eql(null);
+          expect(view.getDOMNode().querySelector(".failed-room-message")).
+            not.eql(null);
         });
 
         it("should display a retry button", function() {
@@ -264,8 +264,8 @@ describe("loop.standaloneRoomViews", function() {
             "screenShareVideoObject": null
           });
 
-          expect(view.getDOMNode().querySelector(".screen .loading-stream"))
-              .not.eql(null);
+          expect(view.getDOMNode().querySelector(".screen .loading-stream")).
+            not.eql(null);
         });
 
         it("should not show loading screen if receivingScreenShare is false " +
@@ -275,8 +275,8 @@ describe("loop.standaloneRoomViews", function() {
                "screenShareVideoObject": null
              });
 
-             expect(view.getDOMNode().querySelector(".screen .loading-stream"))
-                 .eql(null);
+             expect(view.getDOMNode().querySelector(".screen .loading-stream")).
+               eql(null);
         });
 
         it("should not show a loading screen if screenShareVideoObject is set",
@@ -288,8 +288,8 @@ describe("loop.standaloneRoomViews", function() {
                "screenShareVideoObject": videoElement
              });
 
-             expect(view.getDOMNode().querySelector(".screen .loading-stream"))
-                 .eql(null);
+             expect(view.getDOMNode().querySelector(".screen .loading-stream")).
+               eql(null);
         });
       });
 
@@ -326,8 +326,8 @@ describe("loop.standaloneRoomViews", function() {
                remoteSrcVideoObject: null
              });
 
-             expect(view.getDOMNode().querySelector(".local .loading-stream"))
-                 .not.eql(null);
+             expect(view.getDOMNode().querySelector(".local .loading-stream")).
+               not.eql(null);
         });
 
         it("should not render local loading screen when srcVideoObject is set",
@@ -337,8 +337,8 @@ describe("loop.standaloneRoomViews", function() {
                localSrcVideoObject: videoElement
              });
 
-             expect(view.getDOMNode().querySelector(".local .loading-stream"))
-                  .eql(null);
+             expect(view.getDOMNode().querySelector(".local .loading-stream")).
+               eql(null);
         });
 
         it("should not render remote loading screen when srcVideoObject is set",
@@ -348,8 +348,8 @@ describe("loop.standaloneRoomViews", function() {
                remoteSrcVideoObject: videoElement
              });
 
-             expect(view.getDOMNode().querySelector(".remote .loading-stream"))
-                  .eql(null);
+             expect(view.getDOMNode().querySelector(".remote .loading-stream")).
+               eql(null);
         });
 
         it("should render remote video when the room HAS_PARTICIPANTS and" +
@@ -541,8 +541,8 @@ describe("loop.standaloneRoomViews", function() {
               videoMuted: true
             });
 
-            expect(view.getDOMNode().querySelector(".local .avatar"))
-              .not.eql(null);
+            expect(view.getDOMNode().querySelector(".local .avatar")).
+              not.eql(null);
           });
 
         it("should render a local avatar if the room HAS_PARTICIPANTS and" +
@@ -553,8 +553,8 @@ describe("loop.standaloneRoomViews", function() {
               videoMuted: true
             });
 
-            expect(view.getDOMNode().querySelector(".local .avatar")).
-              not.eql(null);
+            expect(view.getDOMNode().querySelector(".local .avatar")).not.eql(
+              null);
           });
       });
 

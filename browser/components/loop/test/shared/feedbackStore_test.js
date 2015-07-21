@@ -39,8 +39,8 @@ describe("loop.store.FeedbackStore", function () {
         feedbackClient: feedbackClient
       });
 
-      expect(fakeStore.getStoreState("feedbackState"))
-          .eql(FEEDBACK_STATES.INIT);
+      expect(fakeStore.getStoreState("feedbackState")).
+        eql(FEEDBACK_STATES.INIT);
     });
   });
 

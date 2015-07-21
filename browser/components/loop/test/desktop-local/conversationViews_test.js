@@ -413,8 +413,8 @@ describe("loop.conversationViews", function () {
 
         sinon.assert.calledWithExactly(document.mozL10n.get,
           "contact_unavailable_title",
-          {contactName: loop.conversationViews
-                            ._getContactDisplayName(fakeContact)});
+          {contactName: loop.conversationViews.
+                            _getContactDisplayName(fakeContact)});
       });
 
     it("should show 'contact unavailable' when the reason is WEBSOCKET_REASONS.BUSY",
@@ -425,8 +425,8 @@ describe("loop.conversationViews", function () {
 
         sinon.assert.calledWithExactly(document.mozL10n.get,
           "contact_unavailable_title",
-          {contactName: loop.conversationViews
-                            ._getContactDisplayName(fakeContact)});
+          {contactName: loop.conversationViews.
+                            _getContactDisplayName(fakeContact)});
       });
 
     it("should show 'something went wrong' when the reason is 'setup'",
@@ -447,8 +447,8 @@ describe("loop.conversationViews", function () {
 
         sinon.assert.calledWithExactly(document.mozL10n.get,
           "contact_unavailable_title",
-          {contactName: loop.conversationViews
-                            ._getContactDisplayName(fakeContact)});
+          {contactName: loop.conversationViews.
+                            _getContactDisplayName(fakeContact)});
       });
 
     it("should show 'no media' when the reason is FAILURE_DETAILS.UNABLE_TO_PUBLISH_MEDIA",
@@ -798,8 +798,8 @@ describe("loop.conversationViews", function () {
           callerId: "fake@invalid.com"
         });
 
-        var primaryBtn = callView.getDOMNode()
-                                 .querySelector(".fx-embedded-btn-icon-video");
+        var primaryBtn = callView.getDOMNode().
+                                 querySelector(".fx-embedded-btn-icon-video");
 
         expect(primaryBtn).not.to.eql(null);
       });
@@ -810,8 +810,8 @@ describe("loop.conversationViews", function () {
           callerId: "fake@invalid.com"
         });
 
-        var primaryBtn = callView.getDOMNode()
-                                 .querySelector(".fx-embedded-btn-icon-audio");
+        var primaryBtn = callView.getDOMNode().
+                                 querySelector(".fx-embedded-btn-icon-audio");
 
         expect(primaryBtn).not.to.eql(null);
       });
@@ -822,8 +822,8 @@ describe("loop.conversationViews", function () {
           callerId: "fake@invalid.com"
         });
 
-        var primaryBtn = callView.getDOMNode()
-                                 .querySelector(".fx-embedded-btn-icon-video");
+        var primaryBtn = callView.getDOMNode().
+                                 querySelector(".fx-embedded-btn-icon-video");
 
         React.addons.TestUtils.Simulate.click(primaryBtn);
 
@@ -840,8 +840,8 @@ describe("loop.conversationViews", function () {
           callerId: "fake@invalid.com"
         });
 
-        var primaryBtn = callView.getDOMNode()
-                                 .querySelector(".fx-embedded-btn-icon-audio");
+        var primaryBtn = callView.getDOMNode().
+                                 querySelector(".fx-embedded-btn-icon-audio");
 
         React.addons.TestUtils.Simulate.click(primaryBtn);
 
@@ -859,8 +859,8 @@ describe("loop.conversationViews", function () {
             callerId: "fake@invalid.com"
           });
 
-          var secondaryBtn = callView.getDOMNode()
-          .querySelector(".fx-embedded-btn-video-small");
+          var secondaryBtn = callView.getDOMNode().querySelector(
+            ".fx-embedded-btn-video-small");
 
           React.addons.TestUtils.Simulate.click(secondaryBtn);
 
@@ -878,8 +878,8 @@ describe("loop.conversationViews", function () {
             callerId: "fake@invalid.com"
           });
 
-          var secondaryBtn = callView.getDOMNode()
-          .querySelector(".fx-embedded-btn-audio-small");
+          var secondaryBtn = callView.getDOMNode().querySelector(
+            ".fx-embedded-btn-audio-small");
 
           React.addons.TestUtils.Simulate.click(secondaryBtn);
 
@@ -967,8 +967,8 @@ describe("loop.conversationViews", function () {
            failureReason: FAILURE_DETAILS.UNABLE_TO_PUBLISH_MEDIA
          });
 
-         expect(callView.getDOMNode().querySelector("h2").textContent)
-         .eql("no_media_failure_message");
+         expect(callView.getDOMNode().querySelector("h2").textContent).eql(
+           "no_media_failure_message");
      });
 
     it("should show 'no media' for FAILURE_DETAILS.NO_MEDIA reason", function() {
@@ -977,16 +977,16 @@ describe("loop.conversationViews", function () {
         failureReason: FAILURE_DETAILS.NO_MEDIA
       });
 
-      expect(callView.getDOMNode().querySelector("h2").textContent)
-          .eql("no_media_failure_message");
+      expect(callView.getDOMNode().querySelector("h2").textContent).eql(
+        "no_media_failure_message");
     });
 
     it("should show 'generic_failure_title' when no reason is specified",
        function() {
          callView = mountTestComponent({cancelCall: function() {}});
 
-         expect(callView.getDOMNode().querySelector("h2").textContent)
-            .eql("generic_failure_title");
+         expect(callView.getDOMNode().querySelector("h2").textContent).eql(
+           "generic_failure_title");
      });
   });
 });

@@ -23,9 +23,9 @@ add_task(function* test_mozLoop_appVersionInfo() {
                Services.prefs.getCharPref("app.update.channel"),
                "appVersionInfo.channel should match the application channel");
 
-  var appInfo = Cc["@mozilla.org/xre/app-info;1"]
-                  .getService(Ci.nsIXULAppInfo)
-                  .QueryInterface(Ci.nsIXULRuntime);
+  var appInfo = Cc["@mozilla.org/xre/app-info;1"].
+                  getService(Ci.nsIXULAppInfo).
+                  QueryInterface(Ci.nsIXULRuntime);
 
   Assert.equal(appVersionInfo.version,
                appInfo.version,

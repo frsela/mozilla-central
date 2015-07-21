@@ -59,8 +59,8 @@ PushSocket.prototype = {
     this._onClose = onClose;
 
     if (!this._websocket) {
-      this._websocket = Cc["@mozilla.org/network/protocol;1?name=wss"]
-                          .createInstance(Ci.nsIWebSocketChannel);
+      this._websocket = Cc["@mozilla.org/network/protocol;1?name=wss"].
+                          createInstance(Ci.nsIWebSocketChannel);
       this._websocket.initLoadInfo(null, // aLoadingNode
                                    Services.scriptSecurityManager.getSystemPrincipal(),
                                    null, // aTriggeringPrincipal
@@ -206,7 +206,9 @@ PushSocket.prototype = {
     try {
       this._websocket.close(this._websocket.CLOSE_NORMAL);
     }
-    catch (e) {}
+    catch (e) {
+      // Do nothing
+    }
   }
 };
 
@@ -683,8 +685,8 @@ let MozLoopPushHandler = {
         if (update.channelID in this.registeredChannels) {
           consoleLog.log("PushHandler: notification: version = ", update.version,
                          ", channelID = ", update.channelID);
-          this.channels.get(update.channelID)
-            .onNotification(update.version, update.channelID);
+          this.channels.get(update.channelID).
+            onNotification(update.version, update.channelID);
           ackChannels.push(update);
         } else {
           consoleLog.error("PushHandler: notification received for unknown channelID: ",
@@ -721,8 +723,8 @@ let MozLoopPushHandler = {
       case 200:
         consoleLog.info("PushHandler: channel registered: ", msg.channelID);
         this.registeredChannels[msg.channelID] = msg.pushEndpoint;
-        this.channels.get(msg.channelID)
-          .onRegistered(null, msg.pushEndpoint, msg.channelID);
+        this.channels.get(msg.channelID).
+          onRegistered(null, msg.pushEndpoint, msg.channelID);
         this._registerNext();
         break;
 
@@ -783,13 +785,15 @@ let MozLoopPushHandler = {
     try {
       this.pushServerUri = Services.prefs.getCharPref("loop.debug.pushserver");
     }
-    catch (e) {}
+    catch (e) {
+      // Do nothing
+    }
 
     if (!this.pushServerUri) {
       // Get push server to use from the Loop server
       let pushUrlEndpoint = Services.prefs.getCharPref("loop.server") + "/push-server-config";
-      let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].
-                  createInstance(Ci.nsIXMLHttpRequest);
+      let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(
+                Ci.nsIXMLHttpRequest);
       req.open("GET", pushUrlEndpoint);
       req.onload = () => {
         if (req.status >= 200 && req.status < 300) {

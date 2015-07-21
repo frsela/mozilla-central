@@ -19,19 +19,19 @@ describe("Validator", function() {
   describe("#validate", function() {
     it("should check for a single required dependency when no option passed",
       function() {
-        expect(create({x: Number}, {}))
-          .to.Throw(TypeError, /missing required x$/);
+        expect(create({x: Number}, {})).
+          to.Throw(TypeError, /missing required x$/);
       });
 
     it("should check for a missing required dependency, undefined passed",
       function() {
-        expect(create({x: Number}, {x: undefined}))
-          .to.Throw(TypeError, /missing required x$/);
+        expect(create({x: Number}, {x: undefined})).
+          to.Throw(TypeError, /missing required x$/);
       });
 
     it("should check for multiple missing required dependencies", function() {
-      expect(create({x: Number, y: String}, {}))
-        .to.Throw(TypeError, /missing required x, y$/);
+      expect(create({x: Number, y: String}, {})).
+        to.Throw(TypeError, /missing required x, y$/);
     });
 
     it("should check for required dependency types", function() {
@@ -67,8 +67,8 @@ describe("Validator", function() {
     });
 
     it("should check for a native constructor dependency", function() {
-      expect(create({foo: mozRTCSessionDescription}, {foo: "x"}))
-        .to.Throw(TypeError,
+      expect(create({foo: mozRTCSessionDescription}, {foo: "x"})).
+        to.Throw(TypeError,
                   /invalid dependency: foo; expected mozRTCSessionDescription/);
     });
 

@@ -387,19 +387,19 @@ describe("loop.shared.mixins", function() {
         it("should register video dimension updates correctly", function() {
           view.updateVideoDimensions(localVideoDimensions, remoteVideoDimensions);
 
-          expect(view._videoDimensionsCache.local.camera.width)
-            .eql(localVideoDimensions.camera.width);
-          expect(view._videoDimensionsCache.local.camera.height)
-            .eql(localVideoDimensions.camera.height);
+          expect(view._videoDimensionsCache.local.camera.width).
+            eql(localVideoDimensions.camera.width);
+          expect(view._videoDimensionsCache.local.camera.height).
+            eql(localVideoDimensions.camera.height);
           expect(view._videoDimensionsCache.local.camera.aspectRatio.width).eql(1);
           expect(view._videoDimensionsCache.local.camera.aspectRatio.height).eql(0.75);
-          expect(view._videoDimensionsCache.remote.camera.width)
-            .eql(remoteVideoDimensions.camera.width);
-          expect(view._videoDimensionsCache.remote.camera.height)
-            .eql(remoteVideoDimensions.camera.height);
+          expect(view._videoDimensionsCache.remote.camera.width).
+            eql(remoteVideoDimensions.camera.width);
+          expect(view._videoDimensionsCache.remote.camera.height).
+            eql(remoteVideoDimensions.camera.height);
           expect(view._videoDimensionsCache.remote.camera.aspectRatio.width).eql(1);
-          expect(view._videoDimensionsCache.remote.camera.aspectRatio.height)
-            .eql(0.32857142857142857);
+          expect(view._videoDimensionsCache.remote.camera.aspectRatio.height).
+            eql(0.32857142857142857);
         });
 
         it("should unregister video dimension updates correctly", function() {

@@ -49,16 +49,16 @@ describe("loop.StandaloneClient", function() {
       describe("should make the requests to the server", function() {
 
         it("should throw if loopToken is missing", function() {
-          expect(client.requestCallUrlInfo).to
-                                .throw(/Missing required parameter loopToken/);
+          expect(client.requestCallUrlInfo).to.
+            throw(/Missing required parameter loopToken/);
         });
 
         it("should make a GET request for the call url creation date", function() {
           client.requestCallUrlInfo("fakeCallUrlToken", function() {});
 
           expect(requests).to.have.length.of(1);
-          expect(requests[0].url)
-                            .to.eql("http://fake.api/calls/fakeCallUrlToken");
+          expect(requests[0].url).
+            to.eql("http://fake.api/calls/fakeCallUrlToken");
           expect(requests[0].method).to.eql("GET");
         });
 

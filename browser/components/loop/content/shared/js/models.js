@@ -324,8 +324,7 @@ loop.shared.models = (function(l10n) {
      * @param  {StreamEvent} event
      */
     _streamCreated: function(event) {
-      this.set("ongoing", true)
-          .trigger("session:stream-created", event);
+      this.set("ongoing", true).trigger("session:stream-created", event);
     },
 
     /**
@@ -343,9 +342,9 @@ loop.shared.models = (function(l10n) {
     },
 
     _signalEnd: function(eventName, event) {
-      this.set("connected", false)
-          .set("ongoing", false)
-          .trigger(eventName, event);
+      this.set("connected", false).
+          set("ongoing", false).
+          trigger(eventName, event);
     },
 
     /**

@@ -528,8 +528,8 @@ loop.store = loop.store || {};
         if (contact.hasOwnProperty(property)) {
           contact[property].forEach(function(item) {
             if (strip) {
-              contactAddresses.push(item.value
-                .replace(/^(\+)?(.*)$/g, function(m, prefix, number) {
+              contactAddresses.push(item.value.
+                replace(/^(\+)?(.*)$/g, function(m, prefix, number) {
                   return (prefix || "") + number.replace(/[\D]+/g, "");
                 }));
             } else {

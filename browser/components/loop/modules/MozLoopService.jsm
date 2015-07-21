@@ -948,8 +948,8 @@ let MozLoopServiceInternal = {
 
         injectLoopAPI(window);
 
-        let ourID = window.QueryInterface(Ci.nsIInterfaceRequestor)
-            .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID;
+        let ourID = window.QueryInterface(Ci.nsIInterfaceRequestor).
+            getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID;
 
         let onPCLifecycleChange = (pc, winID, type) => {
           if (winID != ourID) {

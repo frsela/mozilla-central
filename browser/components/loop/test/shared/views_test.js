@@ -275,8 +275,8 @@ describe("loop.shared.views", function() {
         publishStream: publishStream
       });
 
-      expect(comp.getDOMNode().querySelector("button.btn-hangup").textContent)
-            .eql("foo");
+      expect(comp.getDOMNode().querySelector("button.btn-hangup").textContent).
+        eql("foo");
     });
 
     it("should accept a enableHangup optional prop", function() {
@@ -286,8 +286,8 @@ describe("loop.shared.views", function() {
         publishStream: publishStream
       });
 
-      expect(comp.getDOMNode().querySelector("button.btn-hangup").disabled)
-            .eql(true);
+      expect(comp.getDOMNode().querySelector("button.btn-hangup").disabled).
+        eql(true);
     });
 
     it("should hangup when hangup button is clicked", function() {
@@ -863,8 +863,8 @@ describe("loop.shared.views", function() {
         url: "http://wonderful.invalid"
       });
 
-      expect(view.getDOMNode().querySelector(".context-preview").getAttribute("src"))
-        .eql("shared/img/icons-16x16.svg#globe");
+      expect(view.getDOMNode().querySelector(".context-preview").getAttribute("src")).
+        eql("shared/img/icons-16x16.svg#globe");
     });
 
     it("should use a default thumbnail for desktop if one is not supplied", function() {
@@ -873,8 +873,8 @@ describe("loop.shared.views", function() {
         url: "http://wonderful.invalid"
       });
 
-      expect(view.getDOMNode().querySelector(".context-preview").getAttribute("src"))
-        .eql("loop/shared/img/icons-16x16.svg#globe");
+      expect(view.getDOMNode().querySelector(".context-preview").getAttribute("src")).
+        eql("loop/shared/img/icons-16x16.svg#globe");
     });
 
     it("should not display a title if by default", function() {
@@ -900,8 +900,8 @@ describe("loop.shared.views", function() {
         url: "http://wonderful.invalid"
       });
 
-      expect(view.getDOMNode().querySelector(".context-url").href)
-        .eql("http://wonderful.invalid/");
+      expect(view.getDOMNode().querySelector(".context-url").href).
+        eql("http://wonderful.invalid/");
     });
 
     it("should dispatch an action to record link clicks", function() {
