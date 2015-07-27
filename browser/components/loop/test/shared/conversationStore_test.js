@@ -1026,13 +1026,11 @@ describe("loop.store.ConversationStore", function () {
   describe("#fetchRoomEmailLink", function() {
     it("should request a new call url to the server", function() {
       store.fetchRoomEmailLink(new sharedActions.FetchRoomEmailLink({
-        roomOwner: "bob@invalid.tld",
         roomName: "FakeRoomName"
       }));
 
       sinon.assert.calledOnce(fakeMozLoop.rooms.create);
       sinon.assert.calledWithMatch(fakeMozLoop.rooms.create, {
-        roomOwner: "bob@invalid.tld",
         roomName: "FakeRoomName"
       });
     });
@@ -1043,7 +1041,6 @@ describe("loop.store.ConversationStore", function () {
           cb(null, {roomUrl: "http://fake.invalid/"});
         };
         store.fetchRoomEmailLink(new sharedActions.FetchRoomEmailLink({
-          roomOwner: "bob@invalid.tld",
           roomName: "FakeRoomName"
         }));
 
@@ -1059,7 +1056,6 @@ describe("loop.store.ConversationStore", function () {
           cb(new Error("error"));
         };
         store.fetchRoomEmailLink(new sharedActions.FetchRoomEmailLink({
-          roomOwner: "bob@invalid.tld",
           roomName: "FakeRoomName"
         }));
 
