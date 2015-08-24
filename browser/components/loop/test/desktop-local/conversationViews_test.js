@@ -647,7 +647,8 @@ describe("loop.conversationViews", function () {
       function() {
         conversationStore.setStoreState({
           callState: CALL_STATES.TERMINATED,
-          contact: contact
+          contact: contact,
+          outgoing: true
         });
 
         view = mountTestComponent();
