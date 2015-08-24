@@ -674,7 +674,8 @@ describe("loop.conversationViews", function () {
     it("should render the AcceptCallView for incoming calls when the call state is 'alerting'", function() {
       conversationStore.setStoreState({
         callState: CALL_STATES.ALERTING,
-        outgoing: false
+        outgoing: false,
+        callerId: "fake@invalid.com"
       });
 
       view = mountTestComponent();
