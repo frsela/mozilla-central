@@ -270,7 +270,8 @@ describe("loop.conversationViews", function () {
       return TestUtils.renderIntoDocument(
         React.createElement(loop.conversationViews.CallFailedView, {
           dispatcher: dispatcher,
-          contact: options.contact
+          contact: options.contact,
+          outgoing: true
         }));
     }
 
